@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tz %}
+{% block content %}
+
+{% if form_saved %}
+
+<!-- Toast that shows the host form has been saved -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div class="toast bg-success text-white" role="alert" aria-live="assertive" id="liveToast" aria-atomic="true">
+        <div class="toast-header bg-success text-white">
+            <strong class="me-auto">Saved</strong>
+            <small class="text-white"><i class="bi bi-clock"></i> Now</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Settings saved <i class="bi-hand-thumbs-up"></i>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    window.onload = function() {
+        var toastLiveExample = document.getElementById('liveToast');
+        var toast = new bootstrap.Toast(toastLiveExample);
+        toast.show();
+        };
+
+
+</script>
+
+{% endif %}
+<!--- Beginning of page -->
+
+<!-- modal that allows to change the host name -->
+<div class="modal fade" id="changeHostNameModal" data-bs-backdrop="static" tabindex="-1"
+     aria-labelledby="changeHostNameModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addDeviceModalLabel">Change host name</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post">
+                    <input type="hidden" id="ChangeHostNameForm" name="ChangeHostNameForm" value="ChangeHostNameForm">
+                    {% csrf_token %}
+                    {{ host_name_form|crispy }}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--- End of change host name modal -->
+
+
+<form action="{{ request.get_full_path }}" method="post">
+    {% csrf_token %}
+    <!-- table that contains host data -->
+    <table class="table table-striped col-sm-9 table-borderless">
+        <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Host Name:</td>
+            <td><i class="bi bi-info-circle" style="font-size: 1.2rem;"></i> {{ host.name}} &nbsp;<i
+                    class="bi bi-pencil" style="font-size: 1rem;" data-bs-toggle="modal"
+                    data-bs-target="#changeHostNameModal"></i></td>
+        </tr>
+        <tr>
+            <td>IP:</td>
+            <td><i class="bi bi-info-circle" style="font-size: 1.2rem;"></i> {{ host.ip }}</td>
+        </tr>
+        <tr>
+            <td>MAC:</td>
+            <td><i class="bi bi-info-circle" style="font-size: 1.2rem;"></i> {{ host.mac }}</td>
+        </tr>
+        <tr>
+            <td>Is Home?</td>
+            <td><i class="bi bi-info-circle" style="font-size: 1.2rem;"></i> {{ host.is_home }}</td>
+        </tr>
+        <tr>
+            <td>First Seen</td>
+            <td><i class="bi bi-info-circle" style="font-size: 1.2rem;"></i> {{ host.first_seen }}</td>
+        </tr>
+        <tr>
+            <td>Last Seen</td>
+            <td><i class="bi bi-info-circle" style="font-size: 1.2rem;"></i> {{ host.last_seen }}</td>
+        </tr>
+        <tr>
+            <td>Target</td>
+            <td>{{host_form.target|as_crispy_field}}</td>
+        </tr>
+        <tr>
+            <td>Device Type</td>
+            <td>{{host_form.device_type|as_crispy_field}}</td>
+        </tr>
+        </tbody>
+
+    </table>
+</form>
+
+{% if logdata_query %}
+                <div class="container">
+                        <ul class="timeline">
+                            {% for log in logdata_query %}
+                            {% if log.check_out %}
+                            <li class="event" data-date="{{log.check_out|date:' d M G:i'}}">
+                                <h3>{{ log.host}} Left Home.</h3>
+                                <p>After being home for {{ log.time_home }}</p>
+                            </li>
+
+                            {% endif %}
+
+                            <li class="event" data-date="{{log.check_in|date:' d M G:i'}}">
+                                {% if log.time_away %}
+                                    <h3>{{ log.host}} came back home.</h3>
+                                    <p>Afer being away for {{ log.time_away }}.</p>
+                                {% else %}
+                                    <h3>{{log.host}} Checked in.</h3>
+                                    <p>It's {{log.host}}'s first time!</p>
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                </div>
+{% endif %}
+
+{% endblock content %}

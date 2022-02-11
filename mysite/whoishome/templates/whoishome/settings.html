@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<h4>Scanner status</h4>
+<!-- Rounded switch -->
+<label class="switch">
+    <input type="checkbox" id="startstop" {% if scanner_running %} checked {% endif %} onclick="scannerSwitch()">
+    <span class="slider round"></span>
+</label>
+
+<br/>
+
+<h4>e-mail notifications</h4>
+<label class="switch">
+    <input type="checkbox" id="emailerSwitchId" {% if email.email_switch %} checked {% endif %}
+           onclick="emailerSwitch()"><span class="slider round"></span>
+</label>
+
+<br/>
+
+<div class="content-shape">
+    <h4>new MAC alerting (not implemented yet)</h4>
+    <label class="switch">
+        <input type="checkbox" {% if scanner_running %} checked onclick="location.href='{% url 'settings' %}'"
+               {% else %} onclick="location.href='{% url 'settings' %}'" {% endif %}>
+        <span class="slider round"></span>
+    </label>
+</div>
+
+<br/>
+
+
+{% endblock content %}

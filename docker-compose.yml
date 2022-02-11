@@ -1,0 +1,9 @@
+version: "3.8"
+   
+services:
+  web:
+    network_mode: "host"
+    build: .
+    command: python mysite/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/mysite

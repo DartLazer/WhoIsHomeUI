@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+{% if logdata_query %}
+<div class="container">
+    <ul class="timeline">
+        {% for log in sorted_log_dict.values %}
+        {% if not log.arrival %}
+        <li class="event" data-date="{{log.time|date:' d M G:i'}}">
+            <h3>{{ log.host}} Left Home.</h3>
+            <p>After being home for {{ log.logdata.time_home }}</p>
+        </li>
+
+        {% else %}
+
+        <li class="event" data-date="{{log.time|date:' d M G:i'}}">
+            {% if log.logdata.time_away %}
+            <h3>{{ log.host}} came back home.</h3>
+            <p>Afer being away for {{ log.logdata.time_away }}.</p>
+            {% else %}
+            <h3>{{log.host}} Checked in.</h3>
+            <p>It's {{log.host}}'s first time!</p>
+            {% endif %}
+        </li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+
+{% endblock content %}

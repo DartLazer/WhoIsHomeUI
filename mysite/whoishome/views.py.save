@@ -1,0 +1,47 @@
+from django.http import HttpResponse
+from django.shortcuts import render
+import os
+import pickle
+import datetime
+from .models import Host
+
+def import_database(my_filename):  # imports the database if it exists. else creates new one
+    if os.path.isfile(my_filename):
+        with open(my_filename, 'rb') as data_json:
+            print('Database found.')
+            data_dict = pickle.load(data_json)
+    else:
+        print('Dataset not found ...\nCreating new dataset.')
+        data_dict = {}
+    return data_dict
+
+
+def index(request):
+    return HttpResponse("Hello, world. You're at the polls index.")
+
+
+def getresults(request):
+    imported_database = import_database('/home/pi/WhoIsHome3/datastorage')
+    context = {'last_seen_values': []}
+    for name, value in imported_database.items():
+        if value['last_seen'] != ':
+            last_seen_value = value['last_seen'].strftime("last seen at: %H:%M:%S on %d-%b-%Y ")
+        else:
+            last_seen_value = 'not scanned before.'
+        value = '{name} was {lastseen}'.format(name=name, lastseen=last_seen_value)
+        print(value)
+        context['last_seen_values'].append(value)
+    return render(request, 'whoishome/now.html', context)
+
+def update(request):
+    if request.method == 'GET':
+        pass
+        #do_something()
+    elif request.method == 'POST':
+        pass
+
+        #do_something_else()
+    context = {}
+    return render(request, 'whoishome/update.html', context)
+
+
