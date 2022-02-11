@@ -17,8 +17,12 @@ class LogDataAdmin(admin.ModelAdmin):
     list_display = ('id', 'host', 'check_in', 'check_out')
 
 
+class ScannerConfigAdmin(admin.ModelAdmin):
+    fields =['not_home_treshold', 'internet_interface', 'ip_subnet', 'ip_range_start', 'ip_range_end']
+
+
 admin.site.register(Host, HostAdmin)
 admin.site.register(Target, TargetAdmin)
-admin.site.register(ScannerConfig)
+admin.site.register(ScannerConfig, ScannerConfigAdmin)
 admin.site.register(EmailConfig)
 admin.site.register(LogData, LogDataAdmin)
