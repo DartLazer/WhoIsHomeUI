@@ -72,7 +72,7 @@ class LogData(models.Model):
 
     def time_home(self):
         time_home = (self.check_out - self.check_in)
-        return build_timedelta_string((time_home))
+        return build_timedelta_string(time_home)
 
     def time_away(self):
         if self.previous_check_out is not None:
@@ -103,7 +103,7 @@ class EmailConfig(models.Model):
     arrival_mail_body = models.CharField(max_length=500)
 
     def enable_emailer(self):
-        self.email_switch = True;
+        self.email_switch = True
         self.save()
         print('emailer gaat aan!')
 

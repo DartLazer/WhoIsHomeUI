@@ -1,9 +1,14 @@
 from django.http import HttpResponse, HttpResponseRedirect, HttpRequest, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from .scanner_functions import *
 from .backgroundtasks import schedule_scan, scan
 from background_task.models import Task
-from .forms import HostForm, ChangeHostNameForm
+from .forms import HostForm, ChangeHostNameForm, ScannerSettingsForm, EmailSettingsForm
+from urllib.parse import urlencode
+import logging
+
+logger = logging.getLogger('log_to_file')
 
 
 def index(request):
@@ -12,13 +17,64 @@ def index(request):
 
 def settings(request):
     email_settings = EmailConfig.objects.get(pk=1)
+
     context = {'email': email_settings}
     background_tasks = Task.objects.all()
-
+    saved_indicator = 0
+    saved_flag = request.GET.get('saved')
     for background_task in background_tasks:
         context['scanner_running'] = True
         break
-    return render(request, 'whoishome/settings.html', context)
+
+    if 'update_scanner_settings' in request.POST:
+        scanner_settings_form = ScannerSettingsForm(request.POST, request=request)
+        if scanner_settings_form.is_valid():
+            base_url = reverse('settings')
+            if scanner_settings_form.has_changed():
+                scanner_config = ScannerConfig.objects.get(pk=1)
+                saved_indicator = 1  # forms has changed, toggling saved flag
+                if 'email' in scanner_settings_form.changed_data:
+                    user = request.user
+                    setattr(user, 'email', scanner_settings_form.cleaned_data['email'])
+                    user.save()
+                    scanner_settings_form.changed_data.remove('email')
+                for changed_data in scanner_settings_form.changed_data:
+                    setattr(scanner_config, changed_data, scanner_settings_form.cleaned_data[changed_data])
+                scanner_config.save()
+            query_string = urlencode({'saved': saved_indicator})  # for saved modal
+            url = '{}?{}'.format(base_url, query_string)
+            return redirect(url)
+
+    elif 'update_email_settings' in request.POST:
+        email_settings_form = EmailSettingsForm(request.POST, request=request)
+        if email_settings_form.is_valid():
+            base_url = reverse('settings')
+            if email_settings_form.has_changed():
+                email_config = EmailConfig.objects.get(pk=1)
+                saved_indicator = 1  # forms has changed, toggling saved flag
+                if 'email' in email_settings_form.changed_data:
+                    user = request.user
+                    setattr(user, 'email', email_settings_form.cleaned_data['email'])
+                    user.save()
+                    email_settings_form.changed_data.remove('email')
+                for changed_data in email_settings_form.changed_data:
+                    setattr(email_config, changed_data, email_settings_form.cleaned_data[changed_data])
+                email_config.save()
+            query_string = urlencode({'saved': saved_indicator})  # for saved modal
+            url = '{}?{}'.format(base_url, query_string)
+            return redirect(url)
+
+    with open('logfile.log') as file:
+        logfile = file.readlines()
+        if len(logfile) > 30:
+            logfile = logfile[-30:]
+
+    scanner_settings_form = ScannerSettingsForm(request=request)
+    email_settings_form = EmailSettingsForm(request=request)
+
+    return render(request, 'whoishome/settings.html',
+                  {'email': email_settings, 'scanner_settings_form': scanner_settings_form, 'email_settings_form': email_settings_form, 'saved_flag': saved_flag,
+                   "logfile": logfile})
 
 
 def view_host(request, host_id):
@@ -58,7 +114,7 @@ def view_host(request, host_id):
         return render(request, 'whoishome/view_host.html', {'host': host, 'host_form': host_form, 'host_name_form': host_name_form, 'form_saved': form_saved,
                                                             'logdata_query': logdata_query})
 
-    print('host not found')
+    logger.error(f'host: \'{host_id}\' not found')
     return HttpResponseRedirect('/whoishome/')
 
 
@@ -68,8 +124,6 @@ def getresults(request):
             host_id = int(request.POST.get('host_id'))
             host = Host.objects.get(pk=host_id)
             host.mark_seen()
-        if request.POST.get('scanner'):  # for testing
-            print(request.POST)
 
     context = {'targets': [], 'home_hosts_list': [], 'new_hosts': [], 'scanner_running': False}  # dictionary to be send to the html page
     try:
@@ -123,18 +177,20 @@ def network_timeline(request):
 def enable_emailer(request):
     email_settings = EmailConfig.objects.get(pk=1)
     email_settings.enable_emailer()
+    logger.warning("Emailer Enabled.")
     return HttpResponseRedirect('/whoishome/settings')
 
 
 def disable_emailer(request):
     email_settings = EmailConfig.objects.get(pk=1)
     email_settings.disable_emailer()
+    logger.warning("Emailer Disabled.")
     return HttpResponseRedirect('/whoishome/settings')
 
 
 def start_scanner(request):
     schedule_scan(repeat=60)
-    print('Scan Scheduled')
+    logger.warning("Scanner started. Scanning in 1 minute.")
     return HttpResponseRedirect('/')
 
 
@@ -142,7 +198,7 @@ def stop_scanner(request):
     background_tasks = Task.objects.filter(task_name='whoishome.backgroundtasks.background_network_scan')
     for background_task in background_tasks:
         background_task.delete()
-    print('Scan canceled.')
+    logger.warning("Scanner stopped.")
     return HttpResponseRedirect('/')
 
 

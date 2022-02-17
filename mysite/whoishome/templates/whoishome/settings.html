@@ -1,10 +1,37 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% load crispy_forms_tags %}
 
 {% block content %}
+{% if saved_flag %}
 
-<h4>Scanner status</h4>
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div class="toast bg-success text-white" role="alert" aria-live="assertive" id="liveToast" aria-atomic="true">
+        <div class="toast-header bg-success text-white">
+            <strong class="me-auto">Saved</strong>
+            <small class="text-white"><i class="bi bi-clock"></i> Now</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Settings saved
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    window.onload = function() {
+        var toastLiveExample = document.getElementById('liveToast');
+        var toast = new bootstrap.Toast(toastLiveExample);
+        toast.body = "what";
+        toast.show();
+        };
+
+
+
+</script>
+{% endif %}
+
+<h3>Scanner On/Off</h3>
 <!-- Rounded switch -->
 <label class="switch">
     <input type="checkbox" id="startstop" {% if scanner_running %} checked {% endif %} onclick="scannerSwitch()">
@@ -12,25 +39,50 @@
 </label>
 
 <br/>
+<br/>
+<h3>Scanner Settings</h3>
 
-<h4>e-mail notifications</h4>
+<div class="modal-body">
+
+    <form action="{% url 'settings' %}" method="post">
+
+        {% csrf_token %}
+        {{ scanner_settings_form | crispy }}
+        <div class="modal-footer">
+            <br/>
+            <button type="submit" class="btn btn-primary" name="update_scanner_settings">Save Settings</button>
+        </div>
+    </form>
+</div>
+
+<h3>Email Settings</h3>
+Email notifications: &nbsp;
 <label class="switch">
     <input type="checkbox" id="emailerSwitchId" {% if email.email_switch %} checked {% endif %}
            onclick="emailerSwitch()"><span class="slider round"></span>
 </label>
+&nbsp; On/Off
+<div class="modal-body">
 
-<br/>
+    <form action="{% url 'settings' %}" method="post">
 
-<div class="content-shape">
-    <h4>new MAC alerting (not implemented yet)</h4>
-    <label class="switch">
-        <input type="checkbox" {% if scanner_running %} checked onclick="location.href='{% url 'settings' %}'"
-               {% else %} onclick="location.href='{% url 'settings' %}'" {% endif %}>
-        <span class="slider round"></span>
-    </label>
+        {% csrf_token %}
+        {{ email_settings_form | crispy }}
+        <div class="modal-footer">
+            <br/>
+            <button type="submit" class="btn btn-primary" name="update_email_settings">Save Settings</button>
+        </div>
+    </form>
 </div>
 
 <br/>
+<br/>
+<h4>Error Log</h4>
+
+{% for log in logfile %}
+<samp>{{ log }}</samp>
+<br/>
+{% endfor %}
 
 
 {% endblock content %}

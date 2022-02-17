@@ -3,6 +3,9 @@ from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Host, ScannerConfig, EmailConfig, Target, LogData
 import smtplib
+import logging
+
+logger = logging.getLogger('log_to_file')
 
 
 def scan_network():  # scans the network using arp-scan module. Performs a scan in the specified ip range
@@ -15,6 +18,10 @@ def scan_network():  # scans the network using arp-scan module. Performs a scan 
     online_hosts = {}
     raw_scan_output = os.popen(arp_string + internet_interface + ' --retry 3 ' + ip_subnet + ip_range_start + '-' +
                                ip_subnet + ip_range_end).read()
+
+    if raw_scan_output == "":
+        logger.error("Scan output is empty. Did you correctly set the adapter and subnet in settings page?")
+
     split_output = raw_scan_output.split('\n')[2:-5]  # Split command output by \n, index [2:-5] contains target data.
     for host in split_output:
         stripped_host = host.split(
@@ -104,7 +111,16 @@ def email_sender(host, email_type):  # sends arrival/departure emails
         body = getattr(email, 'departure_mail_body').format(target=target, departure_time=departure_time, arrival_time=arrival_time)
 
     smtp_server = smtplib.SMTP_SSL(smtp_domain, int(smtp_port))
-    smtp_server.login(sender_address, account_password)
+    try:
+        smtp_server.login(sender_address, account_password)
+    except smtplib.SMTPAuthenticationError as e:
+        logger.error(f'Email Error during authentication. Make sure email setup is correct.\n: {e}')
+        return
+
     message = f"Subject: {subject}\n\n{body}"
-    smtp_server.sendmail(sender_address, receiver_address, message)
+    try:
+        smtp_server.sendmail(sender_address, receiver_address, message)
+    except smtplib.SMTPException as e:
+        logger.error(f'Unknown email error. Printing out:\n {e}')
+
     smtp_server.close()
