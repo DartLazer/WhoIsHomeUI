@@ -11,7 +11,7 @@ WhoIsHomeUI scans devices on your network using ARP-Scan. It keeps track of all 
 The system registers a device "away from home" when it misses a certain amount of scans. The "not home threshold". I would recommend leaving this at around 20, since Apple devices tend to disconnect from the network a lot to save battery power. Lowering this value will cause a lot of false departures from Apple devices.
 
 ****Installation Instructions****
-  - First install Docker and Docker Compose on your Raspberry Pi (or other similar device) following the link until step 5:
+  - First install Docker and Docker Compose on your Raspberry Pi (or other similar device) following the link upto and including step 6:
 https://dev.to/elalemanyo/how-to-install-docker-and-docker-compose-on-raspberry-pi-1mo
   - Git clone thise repo to your raspberry pi: "git clone https://github.com/DartLazer/WhoIsHomeUI"
   - In the cloned folder execute the following command: "docker-compose up -d"
