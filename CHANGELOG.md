@@ -2,8 +2,20 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+## [0.12] - 2022-03-12
+Minor update in preparation for bigger update.
+
+### Added
+- Added a random secret key in settings.py
+- Added variable current_version in settings.py and latest_version.txt to be able to update checks.
  
-## [0.1.1] - 2022-02-17
+### Changed
+ - Typo in models.py
+### Fixed
+ - Dockerfile changed 'FROM python:3' to 'FROM python:3-buster' to increase compatibility on raspberry platforms.
+
+ 
+## [0.11] - 2022-02-17
  
 Major rehaul for the settings page
  
