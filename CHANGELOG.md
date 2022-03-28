@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ## [0.13] - 2022-03-28
 Remote update check added an small bugfix.
+Please run `docker-compose up --build` once to add python-requests module to the docker container.
 
 ### Added
 - Now remotely checks for update and notifies user in the menu bar.
