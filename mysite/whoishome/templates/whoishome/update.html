@@ -1,3 +1,20 @@
-<h1>UPDATE</h1>
-<form method="post">{% csrf_token %}
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
 
+<h2>An update is availble on GitHub</h2>
+
+Your current version of WhoIsHomeUI is: {{current_version}}. The version available on GitHub is: {{github_version}}.
+<br />
+<br />
+<a href="https://github.com/DartLazer/WhoIsHomeUI">Click here to go to the GitHub page</a>
+<br />
+
+<hr />
+{% for line in changelog %}
+<samp>{{line}}</samp>
+<br />
+{% endfor %}
+
+
+{% endblock content %}

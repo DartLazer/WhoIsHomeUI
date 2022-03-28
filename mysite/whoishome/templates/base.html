@@ -28,6 +28,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="{% url 'index' %}">
                         <i class="bi bi-house-door" style="font-size: 1.2rem;"></i>
@@ -35,35 +36,28 @@
                     </a>
                 </li>
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'network_timeline' %}">
-                        <i class="bi bi-journal-text" style="font-size: 1.2rem;"></i>
-                        Timeline
-                    </a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{% url 'network_timeline' %}">
+                            <i class="bi bi-journal-text" style="font-size: 1.2rem;"></i>
+                            Timeline
+                        </a>
+                    </li>
 
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'settings' %}">
-                        <i class="bi bi-gear" style="font-size: 1.2rem;"></i>
-                        Settings
-                    </a>
-                </li>
-                {% if request.user.is_authenticated %}
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="">
-                        <i class="bi bi-box-arrow-right" style="font-size: 1.2rem;"></i>
-                        Logout
-                    </a>
-                </li>
-                {% else %}
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="">
-                        <i class="bi bi-box-arrow-in-right" style="font-size: 1.2rem;"></i>
-                        Login
-                    </a>
-                </li>
-                {% endif %}
-            </ul>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{% url 'settings' %}">
+                            <i class="bi bi-gear" style="font-size: 1.2rem;"></i>
+                            Settings
+                        </a>
+                    </li>
+                    {% if update_available %}
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{% url 'update' %}">
+                            <i class="bi bi-exclamation-circle" style="font-size: 1.2rem; color: red;"></i>
+                            Update Available!
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
         </div>
     </div>
 </nav>
@@ -89,6 +83,8 @@
             this.parentElement.classList.toggle("active");
         });
     }
+
+
 </script>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -103,4 +99,6 @@
         }
         $.get(view,)
     };
+
+
 </script>

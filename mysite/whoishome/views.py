@@ -1,12 +1,19 @@
+import requests
 from django.http import HttpResponse, HttpResponseRedirect, HttpRequest, JsonResponse
 from django.shortcuts import render, redirect
+from django.conf import settings as django_settings
 from django.urls import reverse
+from django.utils import timezone
 from .scanner_functions import *
 from .backgroundtasks import schedule_scan, scan
 from background_task.models import Task
 from .forms import HostForm, ChangeHostNameForm, ScannerSettingsForm, EmailSettingsForm
 from urllib.parse import urlencode
 import logging
+
+last_time_checked = False
+update_available = False
+github_version = False
 
 logger = logging.getLogger('log_to_file')
 
@@ -22,9 +29,9 @@ def settings(request):
     background_tasks = Task.objects.all()
     saved_indicator = 0
     saved_flag = request.GET.get('saved')
-    for background_task in background_tasks:
-        context['scanner_running'] = True
-        break
+    scanner_running = False
+    if len(background_tasks) > 0:
+        scanner_running = True
 
     if 'update_scanner_settings' in request.POST:
         scanner_settings_form = ScannerSettingsForm(request.POST, request=request)
@@ -43,6 +50,7 @@ def settings(request):
                 scanner_config.save()
             query_string = urlencode({'saved': saved_indicator})  # for saved modal
             url = '{}?{}'.format(base_url, query_string)
+            logger.warning('Scanner settings updated.')
             return redirect(url)
 
     elif 'update_email_settings' in request.POST:
@@ -62,6 +70,7 @@ def settings(request):
                 email_config.save()
             query_string = urlencode({'saved': saved_indicator})  # for saved modal
             url = '{}?{}'.format(base_url, query_string)
+            logger.warning('Email settings updated.')
             return redirect(url)
 
     with open('logfile.log') as file:
@@ -73,8 +82,9 @@ def settings(request):
     email_settings_form = EmailSettingsForm(request=request)
 
     return render(request, 'whoishome/settings.html',
-                  {'email': email_settings, 'scanner_settings_form': scanner_settings_form, 'email_settings_form': email_settings_form, 'saved_flag': saved_flag,
-                   "logfile": logfile})
+                  {'email': email_settings, 'scanner_settings_form': scanner_settings_form, 'email_settings_form': email_settings_form,
+                   'saved_flag': saved_flag,
+                   "logfile": logfile, 'update_available': update_check(), 'scanner_running': scanner_running})
 
 
 def view_host(request, host_id):
@@ -112,7 +122,7 @@ def view_host(request, host_id):
             # contains_logdata = True
 
         return render(request, 'whoishome/view_host.html', {'host': host, 'host_form': host_form, 'host_name_form': host_name_form, 'form_saved': form_saved,
-                                                            'logdata_query': logdata_query})
+                                                            'logdata_query': logdata_query, 'update_available': update_check()})
 
     logger.error(f'host: \'{host_id}\' not found')
     return HttpResponseRedirect('/whoishome/')
@@ -125,7 +135,8 @@ def getresults(request):
             host = Host.objects.get(pk=host_id)
             host.mark_seen()
 
-    context = {'targets': [], 'home_hosts_list': [], 'new_hosts': [], 'scanner_running': False}  # dictionary to be send to the html page
+    context = {'targets': [], 'home_hosts_list': [], 'new_hosts': [], 'scanner_running': False,
+               'update_available': update_check()}  # dictionary to be send to the html page
     try:
         for host in Host.objects.all():
             try:
@@ -169,9 +180,24 @@ def network_timeline(request):
         sorted_log_dict[x] = log_dict[sorted_index]
         x += 1
 
-    context = {'logdata_query': logdata_query, 'sorted_log_dict': sorted_log_dict}
+    context = {'logdata_query': logdata_query, 'sorted_log_dict': sorted_log_dict, 'update_available': update_check()}
 
     return render(request, 'whoishome/network_timeline.html', context)
+
+
+def update_page(request):
+    changelog_url = 'https://raw.githubusercontent.com/DartLazer/WhoIsHomeUI/main/CHANGELOG.md'
+    r = requests.get(changelog_url)
+    if r.status_code == 200:
+        changelog = r.text
+        changelog = changelog.split('\n')
+        print(changelog)
+    else:
+        changelog = 'Unable to retrieve changelog.'
+
+    context = {'current_version': django_settings.CURRENT_VERSION, 'github_version': github_version, 'update_available': update_check(), 'changelog': changelog}
+
+    return render(request, 'whoishome/update.html', context)
 
 
 def enable_emailer(request):
@@ -205,3 +231,28 @@ def stop_scanner(request):
 def scan_now(request):
     scan()
     return HttpResponseRedirect('/whoishome/')
+
+
+def update_check():
+    global update_available
+    if update_available:
+        return True
+    now = timezone.now()
+    global last_time_checked
+    if last_time_checked is False or (now - last_time_checked).seconds >= 3600:
+        version_check_url = 'https://raw.githubusercontent.com/DartLazer/WhoIsHomeUI/main/mysite/latest_version.txt'
+        r = requests.get(version_check_url)
+        if r.status_code == 200:
+            last_time_checked = now
+            remote_version = float(r.text)
+            global github_version
+            github_version = remote_version
+            if remote_version > django_settings.CURRENT_VERSION:
+                update_available = True
+                return True
+            else:
+                update_available = False
+                return False
+    else:
+        update_available = False
+        return False
