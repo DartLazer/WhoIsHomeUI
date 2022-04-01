@@ -18,6 +18,8 @@ Settings page update and bugfix
 ## [0.13] - 2022-03-28
 Remote update check added an small bugfix.
 
+Please run `docker-compose up --build` once to add python-requests module to the docker container.
+
 ### Added
 - Now remotely checks for update and notifies user in the menu bar.
 - New update.html page that shows the user the changelog and an url to the github page.
