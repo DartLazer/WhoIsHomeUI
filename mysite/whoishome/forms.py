@@ -34,7 +34,7 @@ class ScannerSettingsForm(forms.Form):
         self.fields['internet_interface'] = forms.CharField(label="Internet Interface", initial=scanner_config.internet_interface, required=False)
         self.fields['ip_subnet'] = forms.CharField(label="IP Subnet", initial=scanner_config.ip_subnet, required=False)
         self.fields['ip_range_start'] = forms.CharField(label="IP Range start", initial=scanner_config.ip_range_start, required=False)
-        self.fields['ip_ranged_end'] = forms.CharField(label="IP Range end", initial=scanner_config.ip_range_end, required=False)
+        self.fields['ip_range_end'] = forms.CharField(label="IP Range end", initial=scanner_config.ip_range_end, required=False)
 
 
 class EmailSettingsForm(forms.Form):

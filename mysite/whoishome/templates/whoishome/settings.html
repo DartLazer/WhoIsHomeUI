@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-{% if saved_flag %}
+
 
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
     <div class="toast bg-success text-white" role="alert" aria-live="assertive" id="liveToast" aria-atomic="true">
@@ -17,7 +17,7 @@
         </div>
     </div>
 </div>
-
+{% if saved_flag %}
 <script type="text/javascript">
     window.onload = function() {
         var toastLiveExample = document.getElementById('liveToast');
@@ -25,64 +25,98 @@
         toast.body = "what";
         toast.show();
         };
-
-
-
 </script>
+
 {% endif %}
 
-<h3>Scanner On/Off</h3>
+<h3>Settings</h3>
 <!-- Rounded switch -->
-<label class="switch">
+
+<div class="btn-group btn-group-toggle" data-toggle="buttons">
+  <label class="btn btn-{% if scanner_running %}success{% else %}danger{% endif %} active" id="scannerButton">Scanner Status
     <input type="checkbox" id="startstop" {% if scanner_running %} checked {% endif %} onclick="scannerSwitch()">
-    <span class="slider round"></span>
-</label>
-
-<br/>
-<br/>
-<h3>Scanner Settings</h3>
-
-<div class="modal-body">
-
-    <form action="{% url 'settings' %}" method="post">
-
-        {% csrf_token %}
-        {{ scanner_settings_form | crispy }}
-        <div class="modal-footer">
-            <br/>
-            <button type="submit" class="btn btn-primary" name="update_scanner_settings">Save Settings</button>
-        </div>
-    </form>
-</div>
-
-<h3>Email Settings</h3>
-Email notifications: &nbsp;
-<label class="switch">
-    <input type="checkbox" id="emailerSwitchId" {% if email.email_switch %} checked {% endif %}
-           onclick="emailerSwitch()"><span class="slider round"></span>
-</label>
-&nbsp; On/Off
-<div class="modal-body">
-
-    <form action="{% url 'settings' %}" method="post">
-
-        {% csrf_token %}
-        {{ email_settings_form | crispy }}
-        <div class="modal-footer">
-            <br/>
-            <button type="submit" class="btn btn-primary" name="update_email_settings">Save Settings</button>
-        </div>
-    </form>
+     </label>
 </div>
 
 <br/>
 <br/>
-<h4>Error Log</h4>
+<p>
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseScannerSettings"
+            aria-expanded="false" aria-controls="collapseExample">
+        Scanner Settings
+    </button>
+</p>
+<div class="collapse" id="collapseScannerSettings">
+
+    <div class="modal-body">
+
+        <form action="{% url 'settings' %}" method="post">
+
+            {% csrf_token %}
+            {{ scanner_settings_form | crispy }}
+            <div class="modal-footer">
+                <br/>
+                <button type="submit" class="btn btn-primary" name="update_scanner_settings">Save Settings</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<p>
+    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEmailSettings"
+            aria-expanded="false" aria-controls="collapseExample">
+        E-Mail Settings
+    </button>
+</p>
+<div class="collapse" id="collapseEmailSettings">
+    Email notifications: &nbsp;
+    <label class="switch">
+        <input type="checkbox" id="emailerSwitchId" {% if email.email_switch %} checked {% endif %}
+               onclick="emailerSwitch()"><span class="slider round"></span>
+    </label>
+    &nbsp; On/Off
+    <div class="modal-body">
+
+        <form action="{% url 'settings' %}" method="post">
+
+            {% csrf_token %}
+            {{ email_settings_form | crispy }}
+            <div class="modal-footer">
+                <br/>
+                <button type="submit" class="btn btn-primary" name="update_email_settings">Save Settings</button>
+            </div>
+        </form>
+    </div>
+</div>
+<br/>
+<br/>
+<h4>Console Log</h4>
 
 {% for log in logfile %}
 <samp>{{ log }}</samp>
 <br/>
 {% endfor %}
+<script>
 
+    function scannerSwitch() {
+        const startStopInput = document.getElementById('startstop');
+         var toastLiveExample = document.getElementById('liveToast');
+         var toast = new bootstrap.Toast(toastLiveExample);
+         var scannerButton = document.getElementById('scannerButton');
+        if (startStopInput.checked) {
+            view = '/start_scanner';
+            toast.show();
+            scannerButton.className = 'btn btn-success';
+        } else {
+            view = '/stop_scanner';
+            toast.show();
+            scannerButton.className = 'btn btn-danger';
+        }
+        $.get(view,)
+    };
+
+
+</script>
 
 {% endblock content %}

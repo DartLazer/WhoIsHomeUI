@@ -1,3 +1,5 @@
+import time
+
 import requests
 from django.http import HttpResponse, HttpResponseRedirect, HttpRequest, JsonResponse
 from django.shortcuts import render, redirect
@@ -30,7 +32,7 @@ def settings(request):
     saved_indicator = 0
     saved_flag = request.GET.get('saved')
     scanner_running = False
-    if len(background_tasks) > 0:
+    for background_task in background_tasks:
         scanner_running = True
 
     if 'update_scanner_settings' in request.POST:
@@ -222,6 +224,10 @@ def start_scanner(request):
 
 def stop_scanner(request):
     background_tasks = Task.objects.filter(task_name='whoishome.backgroundtasks.background_network_scan')
+    for background_task in background_tasks:
+        background_task.delete()
+
+    background_tasks = Task.objects.filter(task_name='whoishome.backgroundtasks.schedule_scan')
     for background_task in background_tasks:
         background_task.delete()
     logger.warning("Scanner stopped.")

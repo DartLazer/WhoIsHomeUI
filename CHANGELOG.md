@@ -2,6 +2,19 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+## [0.14] - 2022-03-28
+Settings page update and bugfix
+
+### Added
+- New scanner on/off button on settings page.
+ 
+### Changed
+- Collapsables on settings page to make it look more neat
+- Changed text 'Error Log' to 'Console Log'
+
+### Fixed
+ - IP-Range end wouldn't update after saving settings (fixed)
+- Scanner switch didn't properly reflect status of schedules scans (fixed)
 ## [0.13] - 2022-03-28
 Remote update check added an small bugfix.
 
