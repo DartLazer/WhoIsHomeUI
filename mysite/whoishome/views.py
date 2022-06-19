@@ -161,11 +161,14 @@ def getresults(request):
 
 
 def network_timeline(request):
-    logdata_query = LogData.objects.filter().order_by('-time_saved')[:10]
+    log_data_query = LogData.objects.filter().order_by('-time_saved')
+    if len(log_data_query) > 50:
+        log_data_query = log_data_query[:50]
     log_dict = {}
     sort_log = {}
     x = 0
-    for log in logdata_query:
+    for log in log_data_query:
+        print(log.host.name)
         if log.check_out:
             log_dict[x] = {"time": log.check_out, 'arrival': False, 'host': log.host, 'logdata': log}
             sort_log[x] = log.check_out
@@ -182,7 +185,7 @@ def network_timeline(request):
         sorted_log_dict[x] = log_dict[sorted_index]
         x += 1
 
-    context = {'logdata_query': logdata_query, 'sorted_log_dict': sorted_log_dict, 'update_available': update_check()}
+    context = {'logdata_query': log_data_query, 'sorted_log_dict': sorted_log_dict, 'update_available': update_check()}
 
     return render(request, 'whoishome/network_timeline.html', context)
 

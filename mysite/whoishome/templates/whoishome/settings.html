@@ -70,13 +70,15 @@
     </button>
 </p>
 <div class="collapse" id="collapseEmailSettings">
-    Email notifications: &nbsp;
-    <label class="switch">
-        <input type="checkbox" id="emailerSwitchId" {% if email.email_switch %} checked {% endif %}
-               onclick="emailerSwitch()"><span class="slider round"></span>
-    </label>
-    &nbsp; On/Off
     <div class="modal-body">
+        In the email subjects and bodys use can use the following tags to load data into the emails:
+        <ul>
+            <li>{target} for the name of the target/host</li>
+            <li>{arrival_time} time the host arrived</li>
+            <li>{departure_time} time the host left</li>
+            <li>{time_home}</li>
+            <li>{time_away}</li>
+        </ul>
 
         <form action="{% url 'settings' %}" method="post">
 

@@ -47,6 +47,8 @@
                     <input type="hidden" id="ChangeHostNameForm" name="ChangeHostNameForm" value="ChangeHostNameForm">
                     {% csrf_token %}
                     {{ host_name_form|crispy }}
+                    <br />
+                    <button type="submit" class="btn btn-secondary">Save</button>
                 </form>
             </div>
         </div>

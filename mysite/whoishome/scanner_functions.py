@@ -93,10 +93,13 @@ def is_home_check():  # checks and if necessary alters the 'is_home' state of th
 
 
 def email_sender(host, email_type):  # sends arrival/departure emails
+    print('Sending email')
     email = EmailConfig.objects.get(pk=1)
     target = getattr(host, 'name')
     arrival_time = getattr(host, 'arrival_time').strftime("%H:%M:%S on %d-%b-%Y ")
     departure_time = getattr(host, 'departure_time').strftime("last seen at: %H:%M:%S on %d-%b-%Y ")
+    time_home = getattr(host, 'arrival_time') - getattr(host, 'departure_time')
+    time_away = getattr(host, 'departure_time') - getattr(host, 'arrival_time')
     sender_address = getattr(email, 'sender_address')
     receiver_address = getattr(email, 'to_address')
     account_password = getattr(email, 'your_password')
@@ -104,11 +107,15 @@ def email_sender(host, email_type):  # sends arrival/departure emails
     smtp_port = getattr(email, 'smtp_port')
 
     if email_type == 'arrival':  # if target is home formats the string according to the arrival email. Else departure email
-        subject = getattr(email, 'arrival_mail_suject').format(target=target, arrival_time=arrival_time)
-        body = getattr(email, 'arrival_mail_body').format(target=target, arrival_time=arrival_time)
+        subject = getattr(email, 'arrival_mail_suject').format(target=target, arrival_time=arrival_time, depature_time=departure_time, time_away=time_away,
+                                                          time_home = time_home)
+        body = getattr(email, 'arrival_mail_body').format(target=target, arrival_time=arrival_time, departure_time=departure_time, time_away=time_away,
+                                                          time_home = time_home)
     else:
-        subject = getattr(email, 'departure_mail_subject').format(target=target, departure_time=departure_time)
-        body = getattr(email, 'departure_mail_body').format(target=target, departure_time=departure_time, arrival_time=arrival_time)
+        subject = getattr(email, 'departure_mail_subject').format(target=target, departure_time=departure_time, time_away=time_away,
+                                                          time_home = time_home)
+        body = getattr(email, 'departure_mail_body').format(target=target, departure_time=departure_time, arrival_time=arrival_time, time_away=time_away,
+                                                          time_home = time_home)
 
     smtp_server = smtplib.SMTP_SSL(smtp_domain, int(smtp_port))
     try:

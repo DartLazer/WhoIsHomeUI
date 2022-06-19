@@ -49,6 +49,6 @@ class EmailSettingsForm(forms.Form):
         self.fields['smtp_domain'] = forms.CharField(initial=email_config.smtp_domain, required=False)
         self.fields['smtp_port'] = forms.CharField(initial=email_config.smtp_port, required=False)
         self.fields['departure_mail_subject'] = forms.CharField(initial=email_config.departure_mail_subject, required=False)
-        self.fields['departure_mail_body']= forms.CharField(initial=email_config.departure_mail_body, required=False)
+        self.fields['departure_mail_body']= forms.CharField(initial=email_config.departure_mail_body, required=False, widget=forms.Textarea)
         self.fields['arrival_mail_suject'] = forms.CharField(initial=email_config.arrival_mail_suject, required=False)
-        self.fields['arrival_mail_body'] = forms.CharField(initial=email_config.arrival_mail_body, required=False)
+        self.fields['arrival_mail_body'] = forms.CharField(initial=email_config.arrival_mail_body, required=False, widget=forms.Textarea)

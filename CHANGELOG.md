@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+## [0.15] - 2022-06-19
+Fixed timeline, custom e-mail messages working and minor fixes
+
+### Added
+- Save button to change target name
+- Email subjects and Message are now working. Explanation added for template tags
+ 
+### Changed
+- Timeline now shows last 50 entries
+
+
 ## [0.14] - 2022-03-28
 Settings page update and bugfix
 
