@@ -10,6 +10,13 @@ At the tool's current state the Django server is ran in Debug mode with the deve
 WhoIsHomeUI scans devices on your network using ARP-Scan. It keeps track of all hosts, based on MAC Addresses in a database.
 The system registers a device "away from home" when it misses a certain amount of scans. The "not home threshold". I would recommend leaving this at around 20, since Apple devices tend to disconnect from the network a lot to save battery power. Lowering this value will cause a lot of false departures from Apple devices.
 
+****Update Instructions****
+Unless otherwise stated in the changelog section ### Update Instructions
+ - In the folder containing whoishomeui: "git pull"
+ - Then the following command "docker-compose up -d --build" (if this does not work try adding sudo in front)
+ - That should be it!
+
+
 ****Installation Instructions****
   - First install Docker and Docker Compose on your Raspberry Pi (or other similar device) following the link upto and including step 6:
 https://dev.to/elalemanyo/how-to-install-docker-and-docker-compose-on-raspberry-pi-1mo
@@ -26,7 +33,7 @@ https://dev.to/elalemanyo/how-to-install-docker-and-docker-compose-on-raspberry-
   - Press SAVE. Let the page reload and now enable the scanner
   - If you want email notifications set up email settings as well.
   - In the email body and subject you can access the following variables by putting them in curly brackets {}
-  - target (gives target name), arrival_time, departure_time.
+  - target (gives target name), arrival_time, departure_time , time_away, time_home.
 
   - Go to ip:8000/settings/
 
