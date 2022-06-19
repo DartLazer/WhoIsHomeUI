@@ -6,6 +6,7 @@ from . import views
 urlpatterns = [
     path('', views.getresults, name='index'),
     path('settings/', views.settings, name='settings'),
+    path('clear_new_hosts/', views.clear_new_hosts, name='clear_new_hosts'),
     # path('now/', views.getresults, name='now'),
     # path('index', views.index, name='index'),
     path('start_scanner/', views.start_scanner, name='start_scanner'),

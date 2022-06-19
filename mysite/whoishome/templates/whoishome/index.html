@@ -44,6 +44,7 @@
 
 {% if new_hosts %}
 <h4>New Hosts Detection:</h4>
+<a href="{% url 'clear_new_hosts' %}" type="button" class="btn btn-light">Clear all new hosts</a>
 {% for host in new_hosts %}
 <a href='{% url "view_host" host_id=host.id %}' class="list-group-item list-group-item-action d-flex gap-3 py-3"
    aria-current="true">

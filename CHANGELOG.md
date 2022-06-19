@@ -2,6 +2,17 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+## [0.16] - 2022-06-19
+Button to clear all hosts and docker-restart enabled
+
+### Added
+- Button to clear all new hosts at once at the home page.
+- Restart: Always to docker-compose file so WhoIsHome will reboot if it crashes.
+
+### Changed
+- Github Readme file: Now shows update instructions
+- Update page: Shows update instructions
+
 ## [0.15] - 2022-06-19
 Fixed timeline, custom e-mail messages working and minor fixes
 

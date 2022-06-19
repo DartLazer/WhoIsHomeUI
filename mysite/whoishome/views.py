@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpRequest, JsonRes
 from django.shortcuts import render, redirect
 from django.conf import settings as django_settings
 from django.urls import reverse
-from django.utils import timezone
+from .models import Host
 from .scanner_functions import *
 from .backgroundtasks import schedule_scan, scan
 from background_task.models import Task
@@ -22,6 +22,15 @@ logger = logging.getLogger('log_to_file')
 
 def index(request):
     return HttpResponseRedirect('whoishome')
+
+
+def clear_new_hosts(request):
+    hosts = Host.objects.filter()
+    for host in hosts:
+        host.new = False
+        host.save()
+
+    return HttpResponseRedirect('/whoishome')
 
 
 def settings(request):
