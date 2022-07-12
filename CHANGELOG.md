@@ -2,6 +2,19 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+## [0.17] - 2022-07-12
+Minor features added, README improved and sample screenshots to view the app before installing
+
+### Added
+- On the page network Timeline titles are now clickable and redirect to device page
+
+### Changed
+- Renamed page 'Timeline' to 'Network Timeline'
+- Added instructions to README on how to start app on device boot
+
+### Update Instructions
+- No Special instructions
+
 ## [0.16] - 2022-06-19
 Button to clear all hosts and docker-restart enabled
 
