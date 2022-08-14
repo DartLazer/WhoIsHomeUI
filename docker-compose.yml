@@ -21,7 +21,7 @@ services:
   migration:
     build: .
     image: whoishome
-    command: python manage.py migrate --noinput
+    command: python manage.py migrate --noinput && python3 manage.py loaddata static_data.json
     environment:
       - DJANGO_TZ=${WHOIH_TZ}
       - DJANGO_DBPATH=/dbstore/db_whoih.sqlite3
