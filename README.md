@@ -29,7 +29,7 @@ docker-compose run app cp db.sqlite3 /dbstore/db_whoih.sqlite3
 - First install Docker and Docker Compose on your Raspberry Pi (or other similar device, hereafter referenced to as raspberry pi) following the link upto and including step 6:
   https://dev.to/elalemanyo/how-to-install-docker-and-docker-compose-on-raspberry-pi-1mo
 - Git clone this repo to your raspberry pi: `git clone https://github.com/babanomania/WhoIsHomeUI`
-- Copy the .env.sample file to .env and change the TimeZone and port number if needed
+- You can update the .env to change the TimeZone and port number if needed
 - In the cloned folder execute the following command: `docker-compose up -d`
 - The container should now be up and running on your your_raspberrypi_ip_address:8000
 - In your webbrowser go to `your_rasppberrypi_ip_address:8000/`
