@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import os
 from pathlib import Path
 from django.core.management import utils
 
@@ -148,7 +148,7 @@ LOGGING = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Europe/Amsterdam'
+TIME_ZONE = os.environ.get('DJANGO_TZ', 'Europe/Amsterdam')
 
 USE_I18N = True
 
