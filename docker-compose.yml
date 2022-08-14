@@ -18,6 +18,7 @@ services:
       # - ./mysite:/mysite
     depends_on:
       - migration
+      
   migration:
     network_mode: "host"
     build: .
