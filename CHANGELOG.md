@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+## [0.18] - 2022-07-14
+Minor featue added, fixed a bug related to TimeZone
+
+### Added
+- Listen port can be changed from 8000 to others by exporting an environment variable
+- Application TimeZone can be changed from Europe/Amsterdam to other by exporting an environment variable
+
+### Update Instructions
+- No Special instructions
+
 ## [0.17] - 2022-07-12
 Minor features added, README improved and sample screenshots to view the app before installing
 
