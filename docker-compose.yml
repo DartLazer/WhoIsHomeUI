@@ -1,10 +1,32 @@
 version: "3.8"
    
 services:
-  web:
+  app:
     network_mode: "host"
     build: .
-    command: python mysite/manage.py runserver 0.0.0.0:8000
+    image: whoishome
+    command: python /mysite/manage.py runserver 0.0.0.0:${WHOIH_PORT}
+    environment:
+      - DJANGO_DEBUG=True
+      - DJANGO_TZ=${WHOIH_TZ}
+      - DJANGO_DBPATH=/dbstore/db_whoih.sqlite3
     restart: always
     volumes:
-      - .:/mysite
+      - dbstore:/dbstore
+      # - ./mysite:/mysite
+    depends_on:
+      - migration
+
+  migration:
+    build: .
+    image: whoishome
+    command: bash -c "python manage.py migrate --noinput && python3 manage.py loaddata static_data.json"
+    environment:
+      - DJANGO_TZ=${WHOIH_TZ}
+      - DJANGO_DBPATH=/dbstore/db_whoih.sqlite3
+    volumes:
+      - dbstore:/dbstore 
+      # - ./mysite:/mysite
+
+volumes:
+  dbstore:

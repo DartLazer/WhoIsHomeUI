@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 from django.core.management import utils
 
@@ -22,11 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = utils.get_random_secret_key()
 
-CURRENT_VERSION = 0.17
-#TODO UPDATE VERSION NUMBER!
+CURRENT_VERSION = 0.18
+# TODO UPDATE VERSION NUMBER!
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', True)
 
 ALLOWED_HOSTS = ['*']
 
@@ -80,7 +81,8 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.environ.get('DJANGO_DBPATH', BASE_DIR / 'db.sqlite3'),
     }
 }
 
@@ -148,7 +150,7 @@ LOGGING = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Europe/Amsterdam'
+TIME_ZONE = os.environ.get('DJANGO_TZ', 'Europe/Amsterdam')
 
 USE_I18N = True
 
