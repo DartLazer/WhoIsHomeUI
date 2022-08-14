@@ -22,6 +22,18 @@ Unless otherwise stated in the changelog section ### Update Instructions
 https://dev.to/elalemanyo/how-to-install-docker-and-docker-compose-on-raspberry-pi-1mo
   - Git clone this repo to your raspberry pi: `git clone https://github.com/DartLazer/WhoIsHomeUI`
   - In the cloned folder execute the following command: `docker-compose up -d`
+  - To start the application using a different timezone for eg London, use the below steps instead
+  ```bash
+  export WHOIS_TZ=Europe/London
+  docker-compose up -d
+  ```
+  - To start the application on a different port other than the default 8000 use the below steps
+  ```bash
+  export WHOIH_PORT=9009
+  export WHOIS_TZ=Europe/London
+  docker-compose up -d
+  ```
+
   - The container should now be up and running on your your_raspberrypi_ip_address:8000
   - In your webbrowser go to `your_rasppberrypi_ip_address:8000/`
   - Go to the settings page and go to the Scanner Settings section:
