@@ -15,13 +15,12 @@ services:
       - dbstore:/dbstore
       # - ./mysite:/mysite
     depends_on:
-      migration:
-        condition: service_completed_successfully
+      - migration
 
   migration:
     build: .
     image: whoishome
-    command: python manage.py migrate --noinput && python3 manage.py loaddata static_data.json
+    command: bash -c "python manage.py migrate --noinput && python3 manage.py loaddata static_data.json"
     environment:
       - DJANGO_TZ=${WHOIH_TZ}
       - DJANGO_DBPATH=/dbstore/db_whoih.sqlite3

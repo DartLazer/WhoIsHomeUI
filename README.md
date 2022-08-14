@@ -17,13 +17,12 @@ Unless otherwise stated in the changelog section ### Update Instructions
 - Then the following command `docker-compose up -d --build` (if this does not work try adding sudo in front)
 - That should be it!
 
-n.b - if you're upgrading from v0.17 to v0.18, all the historical data will be lost. you can follow the below commands to export data from previous db to new db path
+n.b - If you're upgrading from v0.17 to v0.18 or above your previous database will have to manually be reloaded because of the new database saving structure. You can follow the below commands
+to export data from previous db to new db path:
 
-> docker-compose down <br/>
-> docker-compose -it app bash <br/>
-> \# copy /mysite/db.sqllite3 /dbstore/db_whoih.sqlite3 <br/>
-> \# exit <br/>
-> docker-compose up -d
+```bash
+docker-compose run app cp db.sqlite3 /dbstore/db_whoih.sqlite3
+```
 
 \***\*Installation Instructions\*\***
 
