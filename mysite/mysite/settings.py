@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = utils.get_random_secret_key()
 
-CURRENT_VERSION = 0.18
+CURRENT_VERSION = 0.19
 #TODO UPDATE VERSION NUMBER!
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -148,7 +148,7 @@ LOGGING = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = os.environ.get('DJANGO_TZ', 'Europe/Amsterdam')
+#TIME_ZONE = os.environ.get('DJANGO_TZ', 'Europe/Amsterdam')
 
 USE_I18N = True
 
