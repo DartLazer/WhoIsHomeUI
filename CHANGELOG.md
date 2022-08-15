@@ -2,7 +2,13 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
-## [0.18] - 2022-07-14
+## [0.19] - 2022-08-15
+### Added
+- Added .env file to repo to fix bug
+
+### Changed
+- Updated readme for new instructioms
+## [0.18] - 2022-08-14
 Minor featue added, fixed a bug related to TimeZone
 
 ### Added
