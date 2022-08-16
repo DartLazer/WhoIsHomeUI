@@ -148,7 +148,7 @@ LOGGING = {
 
 LANGUAGE_CODE = 'en-us'
 
-#TIME_ZONE = os.environ.get('DJANGO_TZ', 'Europe/Amsterdam')
+TIME_ZONE = os.environ.get('DJANGO_TZ', 'Europe/Amsterdam')
 
 USE_I18N = True
 
