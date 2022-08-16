@@ -185,7 +185,7 @@ def format_time_delta_object(time_delta: datetime.timedelta):
     if time_delta.days >= 1:
         time_delta = strfdelta(time_delta, '{days} days {hours}:{minutes}:{seconds}')
     elif time_delta.seconds > 3600:
-        time_delta = strfdelta(time_delta, '{hours} hour and {minutes} minutes.')
+        time_delta = strfdelta(time_delta, '{hours} hours and {minutes} minutes.')
     else:
         time_delta = strfdelta(time_delta, '{minutes} minutes.')
 
