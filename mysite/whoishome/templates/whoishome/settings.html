@@ -4,18 +4,21 @@
 
 {% block content %}
 
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div class="toast bg-success text-white" role="alert" aria-live="assertive" id="scannerToast" aria-atomic="true">
+        <div class="toast-header bg-success text-white">
+            <strong class="me-auto">Saved</strong>
+            <small class="text-white"><i class="bi bi-clock"></i> Now</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Settings saved
+        </div>
+    </div>
+</div>
+
 {% if messages %}
 
-<script type="text/javascript">
-    window.onload = function() {
-        var toastLiveExample = document.getElementById('liveToast');
-        var toast = new bootstrap.Toast(toastLiveExample);
-        toast.body = "what";
-        toast.show();
-        };
-
-
-</script>
 {% for message in messages %}
 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
     <div aria-atomic="true" aria-live="assertive" class="toast bg-success text-white" id="liveToast" role="alert">
@@ -185,7 +188,7 @@
 
     function scannerSwitch() {
         const startStopInput = document.getElementById('startstop');
-         var toastLiveExample = document.getElementById('liveToast');
+         var toastLiveExample = document.getElementById('scannerToast');
          var toast = new bootstrap.Toast(toastLiveExample);
          var scannerButton = document.getElementById('scannerButton');
         if (startStopInput.checked) {
