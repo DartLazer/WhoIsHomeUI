@@ -41,11 +41,10 @@
 <!-- Rounded switch -->
 <hr />
 <div class="btn-group btn-group-toggle" data-toggle="buttons">
-    <label class="btn btn-{% if scanner_running %}success{% else %}danger{% endif %} active" id="scannerButton">Scanner
-        Status
-        <input %} %} checked endif id="startstop" if onclick="scannerSwitch()" scanner_running type="checkbox" {% {%>
-    </label>
-</div>
+    <label class="btn btn-{% if scanner_running %}success{% else %}danger{% endif %} active" id="scannerButton">Scanner Status
+      <input type="checkbox" id="startstop" {% if scanner_running %} checked {% endif %} onclick="scannerSwitch()">
+       </label>
+  </div>
 
 <br/>
 <br/>
