@@ -19,7 +19,7 @@
         <li class="event" data-date="{{log.time|date:' d M G:i'}}">
             {% if log.logdata.time_away %}
             <a href='{% url "view_host" host_id=log.host.id %}' class="text-decoration-none link-secondary"><h3>{{ log.host}} came back home.</h3></a>
-            <p>Afer being away for {{ log.logdata.time_away }}.</p>
+            <p>After being away for {{ log.logdata.time_away }}.</p>
             {% else %}
             <a href='{% url "view_host" host_id=log.host.id %}' class="text-decoration-none link-secondary"><h3>{{log.host}} Checked in.</h3></a>
             <p>It's {{log.host}}'s first time!</p>
