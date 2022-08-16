@@ -116,7 +116,8 @@ def settings(request):
     return render(request, 'whoishome/settings.html',
                   {'email': email_settings, 'scanner_settings_form': scanner_settings_form, 'email_settings_form': email_settings_form,
                    'discord_form': discord_form, 'saved_flag': saved_flag,
-                   "logfile": logfile, 'update_available': update_check(), 'scanner_running': scanner_running})
+                   "logfile": logfile, 'update_available': update_check(), 'scanner_running': scanner_running,
+                   "timezone": django_settings.TIME_ZONE})
 
 
 def view_host(request, host_id):

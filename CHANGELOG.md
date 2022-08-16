@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+## [0.21] - 2022-08-16
+Bugfixes introduced by Discord Notification Upgrade
+
+### Added
+- Current timezone to settings page
+
 
 ## [0.20] - 2022-08-16
 Discord notifications added

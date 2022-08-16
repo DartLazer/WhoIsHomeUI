@@ -39,7 +39,7 @@
 
 <h3>Settings</h3>
 <!-- Rounded switch -->
-
+<hr />
 <div class="btn-group btn-group-toggle" data-toggle="buttons">
     <label class="btn btn-{% if scanner_running %}success{% else %}danger{% endif %} active" id="scannerButton">Scanner
         Status
@@ -150,8 +150,10 @@
         </div>
     </div>
 </div>
-
-
+<hr />
+<p>Current time-zone setting: {{timezone}} <i class="bi bi-info-circle" rel="tooltip" title="Edit the file .env in the base directory to change" id="blah" style="font-size: 0.8rem;"></i></p>
+<br />
+<hr />
 <div class="modal" id="collapseDiscordSettings">
     <div class="modal-body">
         In the discord message the following templating tags are available:
@@ -185,6 +187,11 @@
 <br/>
 {% endfor %}
 <script>
+
+$(document).ready(function(){
+    $("[rel=tooltip]").tooltip({ placement: 'right'});
+});
+
 
     function scannerSwitch() {
         const startStopInput = document.getElementById('startstop');
