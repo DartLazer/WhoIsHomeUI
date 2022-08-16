@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Host, Target, ScannerConfig, EmailConfig, LogData
+from .models import Host, Target, ScannerConfig, EmailConfig, LogData, DiscordNotificationsConfig
 
 
 # Register your models here.
@@ -25,4 +25,5 @@ admin.site.register(Host, HostAdmin)
 admin.site.register(Target, TargetAdmin)
 admin.site.register(ScannerConfig, ScannerConfigAdmin)
 admin.site.register(EmailConfig)
+admin.site.register(DiscordNotificationsConfig)
 admin.site.register(LogData, LogDataAdmin)

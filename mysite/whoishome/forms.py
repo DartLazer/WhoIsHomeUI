@@ -1,5 +1,5 @@
 from django import forms
-from .models import Host, device_types_form_list, ScannerConfig, EmailConfig
+from .models import Host, device_types_form_list, ScannerConfig, EmailConfig, DiscordNotificationsConfig
 
 
 class HostForm(forms.Form):
@@ -30,11 +30,15 @@ class ScannerSettingsForm(forms.Form):
         self.request = kwargs.pop("request")
         super(ScannerSettingsForm, self).__init__(*args, **kwargs)
         scanner_config = ScannerConfig.objects.get(pk=1)
-        self.fields['not_home_treshold'] = forms.IntegerField(label="Not home treshold", initial=scanner_config.not_home_treshold, required=False)
-        self.fields['internet_interface'] = forms.CharField(label="Internet Interface", initial=scanner_config.internet_interface, required=False)
+        self.fields['not_home_treshold'] = forms.IntegerField(label="Not home treshold",
+                                                              initial=scanner_config.not_home_treshold, required=False)
+        self.fields['internet_interface'] = forms.CharField(label="Internet Interface",
+                                                            initial=scanner_config.internet_interface, required=False)
         self.fields['ip_subnet'] = forms.CharField(label="IP Subnet", initial=scanner_config.ip_subnet, required=False)
-        self.fields['ip_range_start'] = forms.CharField(label="IP Range start", initial=scanner_config.ip_range_start, required=False)
-        self.fields['ip_range_end'] = forms.CharField(label="IP Range end", initial=scanner_config.ip_range_end, required=False)
+        self.fields['ip_range_start'] = forms.CharField(label="IP Range start", initial=scanner_config.ip_range_start,
+                                                        required=False)
+        self.fields['ip_range_end'] = forms.CharField(label="IP Range end", initial=scanner_config.ip_range_end,
+                                                      required=False)
 
 
 class EmailSettingsForm(forms.Form):
@@ -42,13 +46,32 @@ class EmailSettingsForm(forms.Form):
         self.request = kwargs.pop("request")
         super(EmailSettingsForm, self).__init__(*args, **kwargs)
         email_config = EmailConfig.objects.get(pk=1)
-        self.fields['email_switch'] = forms.BooleanField(label="Emails enabled", initial=email_config.email_switch, required=False)
-        self.fields['sender_address'] = forms.CharField(max_length=100, initial=email_config.sender_address, required=False)
+        self.fields['email_switch'] = forms.BooleanField(label="Emails enabled", initial=email_config.email_switch,
+                                                         required=False)
+        self.fields['sender_address'] = forms.CharField(max_length=100, initial=email_config.sender_address,
+                                                        required=False)
         self.fields['your_password'] = forms.CharField(widget=forms.PasswordInput, required=False)
         self.fields['to_address'] = forms.CharField(initial=email_config.to_address, required=False)
         self.fields['smtp_domain'] = forms.CharField(initial=email_config.smtp_domain, required=False)
         self.fields['smtp_port'] = forms.CharField(initial=email_config.smtp_port, required=False)
-        self.fields['departure_mail_subject'] = forms.CharField(initial=email_config.departure_mail_subject, required=False)
-        self.fields['departure_mail_body']= forms.CharField(initial=email_config.departure_mail_body, required=False, widget=forms.Textarea)
+        self.fields['departure_mail_subject'] = forms.CharField(initial=email_config.departure_mail_subject,
+                                                                required=False)
+        self.fields['departure_mail_body'] = forms.CharField(initial=email_config.departure_mail_body, required=False,
+                                                             widget=forms.Textarea)
         self.fields['arrival_mail_suject'] = forms.CharField(initial=email_config.arrival_mail_suject, required=False)
-        self.fields['arrival_mail_body'] = forms.CharField(initial=email_config.arrival_mail_body, required=False, widget=forms.Textarea)
+        self.fields['arrival_mail_body'] = forms.CharField(initial=email_config.arrival_mail_body, required=False,
+                                                           widget=forms.Textarea)
+
+
+class DiscordNotificationsForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super(DiscordNotificationsForm, self).__init__(*args, **kwargs)
+        discord_config = DiscordNotificationsConfig.objects.get(pk=1)
+        self.fields['enabled_switch'] = forms.BooleanField(label="Discord Notifications Enabled",
+                                                           initial=discord_config.enabled_switch, required=False)
+        self.fields['webhook_url'] = forms.CharField(initial=discord_config.webhook_url, required=False)
+        self.fields['departure_message'] = forms.CharField(initial=discord_config.departure_message, required=False,
+                                                           widget=forms.Textarea)
+        self.fields['arrival_message'] = forms.CharField(initial=discord_config.arrival_message, required=False,
+                                                         widget=forms.Textarea)

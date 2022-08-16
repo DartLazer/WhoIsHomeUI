@@ -4,20 +4,8 @@
 
 {% block content %}
 
+{% if messages %}
 
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-    <div class="toast bg-success text-white" role="alert" aria-live="assertive" id="liveToast" aria-atomic="true">
-        <div class="toast-header bg-success text-white">
-            <strong class="me-auto">Saved</strong>
-            <small class="text-white"><i class="bi bi-clock"></i> Now</small>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-            Settings saved
-        </div>
-    </div>
-</div>
-{% if saved_flag %}
 <script type="text/javascript">
     window.onload = function() {
         var toastLiveExample = document.getElementById('liveToast');
@@ -25,53 +13,145 @@
         toast.body = "what";
         toast.show();
         };
+
+
 </script>
+{% for message in messages %}
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div aria-atomic="true" aria-live="assertive" class="toast bg-success text-white" id="liveToast" role="alert">
+        <div class="toast-header bg-success text-white">
+            <strong class="me-auto">{% if message.extra_tags %} {{message.extra_tags}} {% endif %}</strong>
+            <small class="text-white"><i class="bi bi-clock"></i> Now</small>
+            <button aria-label="Close" class="btn-close" data-bs-dismiss="toast" type="button"></button>
+        </div>
+        <div class="toast-body">
+            {{ message | safe }}
+        </div>
+    </div>
+</div>
+{% endfor %}
 
 {% endif %}
+
 
 <h3>Settings</h3>
 <!-- Rounded switch -->
 
 <div class="btn-group btn-group-toggle" data-toggle="buttons">
-  <label class="btn btn-{% if scanner_running %}success{% else %}danger{% endif %} active" id="scannerButton">Scanner Status
-    <input type="checkbox" id="startstop" {% if scanner_running %} checked {% endif %} onclick="scannerSwitch()">
-     </label>
+    <label class="btn btn-{% if scanner_running %}success{% else %}danger{% endif %} active" id="scannerButton">Scanner
+        Status
+        <input %} %} checked endif id="startstop" if onclick="scannerSwitch()" scanner_running type="checkbox" {% {%>
+    </label>
 </div>
 
 <br/>
 <br/>
 <p>
-    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseScannerSettings"
-            aria-expanded="false" aria-controls="collapseExample">
+    <button aria-controls="collapseExample" aria-expanded="false" class="btn btn-primary" data-bs-target="#scannerModal"
+            data-bs-toggle="modal" type="button">
         Scanner Settings
     </button>
 </p>
-<div class="collapse" id="collapseScannerSettings">
 
-    <div class="modal-body">
-
-        <form action="{% url 'settings' %}" method="post">
-
-            {% csrf_token %}
-            {{ scanner_settings_form | crispy }}
-            <div class="modal-footer">
-                <br/>
-                <button type="submit" class="btn btn-primary" name="update_scanner_settings">Save Settings</button>
+<div class="modal" id="scannerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Email Settings</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
             </div>
-        </form>
-    </div>
+            <div class="modal-body">
+                <form action="{% url 'settings' %}" method="post">
 
+                    {% csrf_token %}
+                    {{ scanner_settings_form | crispy }}
+                    <br/>
+                    <button class="btn btn-primary" name="update_scanner_settings" type="submit">Save Settings</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <p>
-    <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEmailSettings"
-            aria-expanded="false" aria-controls="collapseExample">
-        E-Mail Settings
+    <button aria-controls="collapseExample" aria-expanded="false" class="btn btn-primary" data-bs-target="#emailModal"
+            data-bs-toggle="modal" type="button">
+        Email Settings
     </button>
 </p>
-<div class="collapse" id="collapseEmailSettings">
+
+<div class="modal" id="emailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Email Settings</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                In the email subjects and bodys use can use the following tags to load data into the emails:
+                <ul>
+                    <li>{target} for the name of the target/host</li>
+                    <li>{arrival_time} time the host arrived</li>
+                    <li>{departure_time} time the host left</li>
+                    <li>{time_home}</li>
+                    <li>{time_away}</li>
+                </ul>
+
+                <form action="{% url 'settings' %}" method="post">
+
+                    {% csrf_token %}
+                    {{ email_settings_form | crispy }}
+                    <br/>
+                    <button class="btn btn-primary" name="update_email_settings" type="submit">Save Settings</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p>
+    <button aria-controls="collapseExample" aria-expanded="false" class="btn btn-primary" data-bs-target="#discordModal"
+            data-bs-toggle="modal" type="button">
+        Discord Settings
+    </button>
+</p>
+
+<div class="modal" id="discordModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Discord Settings</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body">
+                In the discord message the following templating tags are available:
+                <ul>
+                    <li>{target} for the name of the target/host</li>
+                    <li>{arrival_time} time the host arrived</li>
+                    <li>{departure_time} time the host left</li>
+                    <li>{time_home}</li>
+                    <li>{time_away}</li>
+                </ul>
+
+                <form action="{% url 'settings' %}" method="post">
+
+                    {% csrf_token %}
+                    {{ discord_form | crispy }}
+                <br/>
+                    <button class="btn btn-primary" name="update_email_settings" type="submit">Save Settings</button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="collapseDiscordSettings">
     <div class="modal-body">
-        In the email subjects and bodys use can use the following tags to load data into the emails:
+        In the discord message the following templating tags are available:
         <ul>
             <li>{target} for the name of the target/host</li>
             <li>{arrival_time} time the host arrived</li>
@@ -83,14 +163,16 @@
         <form action="{% url 'settings' %}" method="post">
 
             {% csrf_token %}
-            {{ email_settings_form | crispy }}
+            {{ discord_form | crispy }}
             <div class="modal-footer">
                 <br/>
-                <button type="submit" class="btn btn-primary" name="update_email_settings">Save Settings</button>
+                <button class="btn btn-primary" name="update_discord_settings" type="submit">Save Settings</button>
             </div>
         </form>
     </div>
 </div>
+
+
 <br/>
 <br/>
 <h4>Console Log</h4>
@@ -117,6 +199,8 @@
         }
         $.get(view,)
     };
+
+
 
 
 </script>

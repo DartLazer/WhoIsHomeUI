@@ -33,6 +33,7 @@ https://dev.to/elalemanyo/how-to-install-docker-and-docker-compose-on-raspberry-
   - IP range start (first IP to scan within earlier specified range)
   - IP range end (last IP to scan within earlier specified range).
   - Press SAVE. Let the page reload and now enable the scanner
+  - **Now supports Discord Notifications as well**. Setup at the settings page!
   - If you want email notifications set up email settings as well.
   - In the email body and subject you can access the following variables by putting them in curly brackets {}
   - target (gives target name), arrival_time, departure_time , time_away, time_home.

@@ -90,6 +90,12 @@ class ScannerConfig(models.Model):
     ip_range_end = models.CharField(max_length=100)
 
 
+class DiscordNotificationsConfig(models.Model):
+    enabled_switch = models.BooleanField(default=False)
+    webhook_url = models.CharField(max_length=256)
+    arrival_message = models.CharField(max_length=500)
+    departure_message = models.CharField(max_length=500)
+
 class EmailConfig(models.Model):
     email_switch = models.BooleanField(default=False)
     sender_address = models.CharField(max_length=100)

@@ -3,3 +3,5 @@ psycopg2-binary>=2.8
 django-background-tasks>=1.2.5
 django-crispy-forms==1.11.2
 requests~=2.26.0
+discord==1.7.3
+discord.py==1.7.3

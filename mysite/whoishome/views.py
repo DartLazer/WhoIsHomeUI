@@ -4,12 +4,13 @@ import requests
 from django.http import HttpResponse, HttpResponseRedirect, HttpRequest, JsonResponse
 from django.shortcuts import render, redirect
 from django.conf import settings as django_settings
+from django.contrib import messages
 from django.urls import reverse
-from .models import Host
+from .models import Host, DiscordNotificationsConfig
 from .scanner_functions import *
 from .backgroundtasks import schedule_scan, scan
 from background_task.models import Task
-from .forms import HostForm, ChangeHostNameForm, ScannerSettingsForm, EmailSettingsForm
+from .forms import HostForm, ChangeHostNameForm, ScannerSettingsForm, EmailSettingsForm, DiscordNotificationsForm
 from urllib.parse import urlencode
 import logging
 
@@ -35,6 +36,10 @@ def clear_new_hosts(request):
 
 def settings(request):
     email_settings = EmailConfig.objects.get(pk=1)
+    try:
+        discord_config = DiscordNotificationsConfig.objects.get(pk=1)
+    except ObjectDoesNotExist:
+        DiscordNotificationsConfig.objects.create(enabled_switch=True, )
 
     context = {'email': email_settings}
     background_tasks = Task.objects.all()
@@ -47,10 +52,8 @@ def settings(request):
     if 'update_scanner_settings' in request.POST:
         scanner_settings_form = ScannerSettingsForm(request.POST, request=request)
         if scanner_settings_form.is_valid():
-            base_url = reverse('settings')
             if scanner_settings_form.has_changed():
                 scanner_config = ScannerConfig.objects.get(pk=1)
-                saved_indicator = 1  # forms has changed, toggling saved flag
                 if 'email' in scanner_settings_form.changed_data:
                     user = request.user
                     setattr(user, 'email', scanner_settings_form.cleaned_data['email'])
@@ -58,19 +61,20 @@ def settings(request):
                     scanner_settings_form.changed_data.remove('email')
                 for changed_data in scanner_settings_form.changed_data:
                     setattr(scanner_config, changed_data, scanner_settings_form.cleaned_data[changed_data])
+
+                    messages.add_message(request, messages.INFO,
+                                         'Scanner settings saved!',
+                                         extra_tags='Saved!')
+
                 scanner_config.save()
-            query_string = urlencode({'saved': saved_indicator})  # for saved modal
-            url = '{}?{}'.format(base_url, query_string)
             logger.warning('Scanner settings updated.')
-            return redirect(url)
+            return redirect('settings')
 
     elif 'update_email_settings' in request.POST:
         email_settings_form = EmailSettingsForm(request.POST, request=request)
         if email_settings_form.is_valid():
-            base_url = reverse('settings')
             if email_settings_form.has_changed():
                 email_config = EmailConfig.objects.get(pk=1)
-                saved_indicator = 1  # forms has changed, toggling saved flag
                 if 'email' in email_settings_form.changed_data:
                     user = request.user
                     setattr(user, 'email', email_settings_form.cleaned_data['email'])
@@ -78,11 +82,27 @@ def settings(request):
                     email_settings_form.changed_data.remove('email')
                 for changed_data in email_settings_form.changed_data:
                     setattr(email_config, changed_data, email_settings_form.cleaned_data[changed_data])
+
+                    messages.add_message(request, messages.INFO,
+                                         'Email settings saved!',
+                                         extra_tags='Saved!')
+
                 email_config.save()
-            query_string = urlencode({'saved': saved_indicator})  # for saved modal
-            url = '{}?{}'.format(base_url, query_string)
             logger.warning('Email settings updated.')
-            return redirect(url)
+            return redirect('settings')
+
+    elif 'update_discord_settings' in request.POST:
+        discord_form = DiscordNotificationsForm(request.POST, request=request)
+        if discord_form.is_valid():
+            if discord_form.has_changed():
+                for changed_data in discord_form.changed_data:
+                    setattr(discord_config, changed_data, discord_form.cleaned_data[changed_data])
+                discord_config.save()
+                messages.add_message(request, messages.INFO,
+                                     'Discord settings saved!',
+                                     extra_tags='Saved!')
+            logger.warning('Discord settings updated.')
+        return redirect('settings')
 
     with open('logfile.log') as file:
         logfile = file.readlines()
@@ -91,10 +111,11 @@ def settings(request):
 
     scanner_settings_form = ScannerSettingsForm(request=request)
     email_settings_form = EmailSettingsForm(request=request)
+    discord_form = DiscordNotificationsForm(request=request)
 
     return render(request, 'whoishome/settings.html',
                   {'email': email_settings, 'scanner_settings_form': scanner_settings_form, 'email_settings_form': email_settings_form,
-                   'saved_flag': saved_flag,
+                   'discord_form': discord_form, 'saved_flag': saved_flag,
                    "logfile": logfile, 'update_available': update_check(), 'scanner_running': scanner_running})
 
 
@@ -126,7 +147,6 @@ def view_host(request, host_id):
                     host.save()
                     form_saved = True
                     host_name_form = ChangeHostNameForm(request=request, host=host)
-
         logdata_query = None
         if LogData.objects.filter(host=host).exists():
             logdata_query = LogData.objects.filter(host=host).order_by('-id')[:10]

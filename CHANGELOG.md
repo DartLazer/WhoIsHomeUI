@@ -2,12 +2,31 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+
+## [0.20] - 2022-08-16
+Discord notifications added
+
+### Update Instructions
+- run `docker-compose up --build` to build the new dependencies in requirements.txt
+
+### Added
+- New models: DiscordNotificationsConfig and the relating 2 migrations
+- New form on the settings page which allows setting up the discord notifications
+- Docker-Compose.yml now automatically runs migrate as well to migrate new changes to the DB.
+
+### Changed
+- Switched from collapse settings to modals (feedback welcome)
+- Updated readme to add a line including the discord notifications intro
+- One line in settings.py for a future update which will separate the db file
+- Logic in scanner_functions.py to allow sending discord notifications
+- Added discord related requirements to requirements.txt
+
 ## [0.19] - 2022-08-15
 ### Added
 - Added .env file to repo to fix bug
 
 ### Changed
-- Updated readme for new instructioms
+- Updated readme for new instructions
 ## [0.18] - 2022-08-14
 Minor featue added, fixed a bug related to TimeZone
 

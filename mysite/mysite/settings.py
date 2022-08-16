@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = utils.get_random_secret_key()
 
-CURRENT_VERSION = 0.19
+CURRENT_VERSION = 0.20
 #TODO UPDATE VERSION NUMBER!
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.environ.get('DJANGO_DBPATH', BASE_DIR / 'db.sqlite3'),
     }
 }
 
