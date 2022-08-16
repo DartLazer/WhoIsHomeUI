@@ -16,6 +16,16 @@ Unless otherwise stated in the changelog section ### Update Instructions
  - Then the following command `docker-compose up -d --build` (if this does not work try adding sudo in front)
  - That should be it!
 
+****For migrating from v0.23 to v0.24 use the below steps****
+```bash
+cd /path/to/WhoIsHomeUI/
+docker-compose up
+<Ctrl-C>
+docker container create --name dummy -v whoishomeui_dbstore:/mnt/test hello-world
+docker cp mysite/db.sqlite3 dummy:/mnt/test/db.sqlite3
+docker rm dummy
+```
+
 
 ****Installation Instructions****
   - First install Docker and Docker Compose on your Raspberry Pi (or other similar device, hereafter referenced to as raspberry pi) following the link upto and including step 6:

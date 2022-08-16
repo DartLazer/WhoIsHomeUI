@@ -2,6 +2,22 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+
+## [0.24] - 2022-08-17
+Changed the location of db.sqlite3 
+
+### Update Instructions
+- use the below steps to migrate the db.sqlite3 file to new location
+
+```bash
+cd /path/to/WhoIsHomeUI/
+docker-compose up
+<Ctrl-C>
+docker container create --name dummy -v whoishomeui_dbstore:/mnt/test hello-world
+docker cp mysite/db.sqlite3 dummy:/mnt/test/db.sqlite3
+docker rm dummy
+```
+
 ## [0.23] - 2022-08-16
 Scanner start/stop switch fixed. Bugged due to editor formatting django template code
 
