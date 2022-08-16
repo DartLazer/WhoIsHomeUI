@@ -11,7 +11,7 @@ def create_config(apps, schema_editor):
                                                   "{target} arrived home at {arrival_time} "
                                                   "after being away for {time_away}",
                                                   departure_message=
-                                                  "{target} left home after at {depature_time} after "
+                                                  "{target} left home after at {departure_time} after "
                                                   "being home for {time_home}")
 
 

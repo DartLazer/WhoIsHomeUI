@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+## [0.22] - 2022-08-16
+Small bugfixes regarding depature notification not sending and wrongly calculated times.
+Proper formatting for time away and time home added.
+
 ## [0.21] - 2022-08-16
 Bugfixes introduced by Discord Notification Upgrade
 

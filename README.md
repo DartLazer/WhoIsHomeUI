@@ -1,6 +1,6 @@
 # WhoIsHomeUI
 
-WhoIsHomeUI is a webapp that scans your network and allows you to track hosts, give email updates, see new MAC addresses who connect to your network and possibly more in the future!
+WhoIsHomeUI is a webapp that scans your network and allows you to track hosts, give email and discord updates, see new MAC addresses who connect to your network and possibly more in the future!
 
 The webapp runs on Django and the network scanning is done by the linux tool arp-scan. (for the cli email alert version check: https://github.com/DartLazer/WhoIsHome)
 This project started as a way for me to learn Python and Django a while back. After a few friends liked my tool I decided to put it on here for everyone to use. If you have any comments, tips on my coding, or feature requests. Please open an issue and I will see to it.

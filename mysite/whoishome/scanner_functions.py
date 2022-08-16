@@ -1,3 +1,4 @@
+import datetime
 import os
 from django.utils import timezone
 from django.core.exceptions import ObjectDoesNotExist
@@ -100,22 +101,25 @@ def is_home_check():  # checks and if necessary alters the 'is_home' state of th
 
 
 def discord_notify(host: Host, discord_config: DiscordNotificationsConfig, event_type: str):
-
     webhook = Webhook.from_url(discord_config.webhook_url, adapter=RequestsWebhookAdapter())
     target = getattr(host, 'name')
     arrival_time = getattr(host, 'arrival_time').strftime("%H:%M:%S on %d-%b-%Y ")
     departure_time = getattr(host, 'departure_time').strftime("last seen at: %H:%M:%S on %d-%b-%Y ")
-    time_home = getattr(host, 'arrival_time') - getattr(host, 'departure_time')
-    time_away = getattr(host, 'departure_time') - getattr(host, 'arrival_time')
+
+    time_home = getattr(host, 'departure_time') - getattr(host, 'arrival_time')
+    time_home = format_time_delta_object(time_home)
+
+    time_away = getattr(host, 'arrival_time') - getattr(host, 'departure_time')
+    time_away = format_time_delta_object(time_away)
 
     if event_type == 'arrival':  # if target is home formats the string according to the arrival email. Else
         body = getattr(discord_config, 'arrival_message').format(target=target, arrival_time=arrival_time,
-                                                          departure_time=departure_time, time_away=time_away,
-                                                          time_home=time_home)
+                                                                 departure_time=departure_time, time_away=time_away,
+                                                                 time_home=time_home)
     else:
         body = getattr(discord_config, 'departure_message').format(target=target, departure_time=departure_time,
-                                                            arrival_time=arrival_time, time_away=time_away,
-                                                            time_home=time_home)
+                                                                   arrival_time=arrival_time, time_away=time_away,
+                                                                   time_home=time_home)
 
     webhook.send(body)
 
@@ -126,8 +130,13 @@ def email_sender(host, email_type):  # sends arrival/departure emails
     target = getattr(host, 'name')
     arrival_time = getattr(host, 'arrival_time').strftime("%H:%M:%S on %d-%b-%Y ")
     departure_time = getattr(host, 'departure_time').strftime("last seen at: %H:%M:%S on %d-%b-%Y ")
-    time_home = getattr(host, 'arrival_time') - getattr(host, 'departure_time')
-    time_away = getattr(host, 'departure_time') - getattr(host, 'arrival_time')
+
+    time_home = getattr(host, 'departure_time') - getattr(host, 'arrival_time')
+    time_home = format_time_delta_object(time_home)
+
+    time_away = getattr(host, 'arrival_time') - getattr(host, 'departure_time')
+    time_away = format_time_delta_object(time_away)
+
     sender_address = getattr(email, 'sender_address')
     receiver_address = getattr(email, 'to_address')
     account_password = getattr(email, 'your_password')
@@ -163,3 +172,21 @@ def email_sender(host, email_type):  # sends arrival/departure emails
         logger.error(f'Unknown email error. Printing out:\n {e}')
 
     smtp_server.close()
+
+
+def strfdelta(tdelta: datetime.timedelta, fmt: str):
+    d = {"days": tdelta.days}
+    d["hours"], rem = divmod(tdelta.seconds, 3600)
+    d["minutes"], d["seconds"] = divmod(rem, 60)
+    return fmt.format(**d)
+
+
+def format_time_delta_object(time_delta: datetime.timedelta):
+    if time_delta.days >= 1:
+        time_delta = strfdelta(time_delta, '{days} days {hours}:{minutes}:{seconds}')
+    elif time_delta.seconds > 3600:
+        time_delta = strfdelta(time_delta, '{hours} hour and {minutes} minutes.')
+    else:
+        time_delta = strfdelta(time_delta, '{minutes} minutes.')
+
+    return time_delta
