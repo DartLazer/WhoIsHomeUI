@@ -4,20 +4,19 @@ from django.utils.timezone import localtime
 from django.utils import timezone
 
 
-def generate_timeline_data(host: Host, chart_range: str):
-
+def generate_timeline_data(host: Host, chart_range: str = '7'):
     if not LogData.objects.filter(host=host).exists():
         print(f'No logdata found for {host}')
 
-    if chart_range is None:
-        days_back_date = timezone.now() - timedelta(days=7)
-    else:
-        chart_range = int(chart_range)
-        if chart_range == 0:
-            chart_range = 9999
-        days_back_date = timezone.now() - timedelta(days=chart_range)
+    chart_range = int(chart_range)
+
+    if chart_range == 0:
+        chart_range = 9999
+
+    days_back_date = timezone.now() - timedelta(days=chart_range)
 
     log_data = LogData.objects.filter(host=host, check_in__gte=days_back_date)
+
     timeline = []
     for log in log_data:
         if log.check_out:
