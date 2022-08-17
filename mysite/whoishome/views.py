@@ -166,7 +166,7 @@ def view_host(request, host_id):
                 host_name_form = ChangeHostNameForm(request=request, host=host)
     logdata_query = None
     if LogData.objects.filter(host=host).exists():
-        logdata_query = LogData.objects.filter(host=host).order_by('-id')[:20]
+        logdata_query = LogData.objects.filter(host=host).order_by('-id')[:50]
         # contains_logdata = True
 
     return render(request, 'whoishome/view_host.html', {'host': host, 'host_form': host_form,
