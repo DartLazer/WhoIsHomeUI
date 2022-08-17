@@ -1,0 +1,31 @@
+[
+    {
+      "model": "whoishome.scannerconfig",
+      "pk": 1,
+      "fields": {
+        "not_home_treshold": 21,
+        "internet_interface": "eth0",
+        "arp_string": "arp-scan --interface=",
+        "ip_subnet": "192.168.2.",
+        "ip_range_start": "1",
+        "ip_range_end": "198"
+      }
+    },
+    {
+      "model": "whoishome.emailconfig",
+      "pk": 1,
+      "fields": {
+        "email_switch": false,
+        "sender_address": "secret@secret.com",
+        "your_password": "secret",
+        "to_address": "secret@gmail.com",
+        "smtp_domain": "smtp.gmail.com",
+        "smtp_port": "465",
+        "departure_mail_subject": "test",
+        "departure_mail_body": "test",
+        "arrival_mail_suject": "test",
+        "arrival_mail_body": "test"
+      }
+    },
+  ]
+  

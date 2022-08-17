@@ -4,7 +4,7 @@ services:
   web:
     network_mode: "host"
     build: .
-    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:${WHOIH_PORT:-8000}"
+    command: bash -c "python manage.py migrate --noinput && python3 mysite/manage.py loaddata database_preload.json && python manage.py runserver 0.0.0.0:${WHOIH_PORT:-8000}"
     environment:
       - DJANGO_TZ=${WHOIH_TZ}
       - DJANGO_DBPATH=/dbstore/db.sqlite3
