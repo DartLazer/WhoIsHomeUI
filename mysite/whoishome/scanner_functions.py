@@ -1,12 +1,12 @@
 import datetime
 import os
 from django.utils import timezone
-from django.core.exceptions import ObjectDoesNotExist
+from django.utils.timezone import localtime
 from .models import Host, ScannerConfig, EmailConfig, Target, LogData, DiscordNotificationsConfig
+from django.conf import settings as django_settings
 import smtplib
 import logging
 from discord import Webhook, RequestsWebhookAdapter
-import requests
 
 logger = logging.getLogger('log_to_file')
 
@@ -101,10 +101,11 @@ def is_home_check():  # checks and if necessary alters the 'is_home' state of th
 
 
 def discord_notify(host: Host, discord_config: DiscordNotificationsConfig, event_type: str):
+    print('discord notify')
     webhook = Webhook.from_url(discord_config.webhook_url, adapter=RequestsWebhookAdapter())
     target = getattr(host, 'name')
-    arrival_time = getattr(host, 'arrival_time').strftime("%H:%M:%S on %d-%b-%Y ")
-    departure_time = getattr(host, 'departure_time').strftime("last seen at: %H:%M:%S on %d-%b-%Y ")
+    arrival_time = localtime(getattr(host, 'arrival_time')).strftime("%H:%M:%S on %d-%b-%Y ")
+    departure_time = localtime(getattr(host, 'departure_time')).strftime("last seen at: %H:%M:%S on %d-%b-%Y ")
 
     time_home = getattr(host, 'departure_time') - getattr(host, 'arrival_time')
     time_home = format_time_delta_object(time_home)
@@ -128,8 +129,8 @@ def email_sender(host, email_type):  # sends arrival/departure emails
     print('Sending email')
     email = EmailConfig.objects.get(pk=1)
     target = getattr(host, 'name')
-    arrival_time = getattr(host, 'arrival_time').strftime("%H:%M:%S on %d-%b-%Y ")
-    departure_time = getattr(host, 'departure_time').strftime("last seen at: %H:%M:%S on %d-%b-%Y ")
+    arrival_time = localtime(getattr(host, 'arrival_time')).strftime("%H:%M:%S on %d-%b-%Y ")
+    departure_time = localtime(getattr(host, 'departure_time')).strftime("last seen at: %H:%M:%S on %d-%b-%Y ")
 
     time_home = getattr(host, 'departure_time') - getattr(host, 'arrival_time')
     time_home = format_time_delta_object(time_home)
