@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ObjectDoesNotExist
 from .models import Host, device_types_form_list, ScannerConfig, EmailConfig, DiscordNotificationsConfig
 
 
