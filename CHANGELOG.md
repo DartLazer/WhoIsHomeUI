@@ -2,6 +2,19 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+
+## [0.24] - 2022-08-17
+Timeline graph added and discord notifications in local time
+### Update Instructions
+- `git pull` & `docker-compose up -d` should be enough
+
+### Added
+- Timeline graph to the view_host page and ability to select time range
+
+### Changed
+- Discord & email notifications in localtime
+
+
 ## [0.23] - 2022-08-16
 Scanner start/stop switch fixed. Bugged due to editor formatting django template code
 
