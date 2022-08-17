@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
+## [0.25] - 2022-08-17
+Added notifications for newly detected devices
+
+### Update Instructions
+- `git pull` & `docker-compose up -d` should be enough
+
 ## [0.24] - 2022-08-17
 Timeline graph added and discord notifications in local time
 ### Update Instructions

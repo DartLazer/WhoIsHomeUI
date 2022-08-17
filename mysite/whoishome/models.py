@@ -92,12 +92,19 @@ class ScannerConfig(models.Model):
 
 class DiscordNotificationsConfig(models.Model):
     enabled_switch = models.BooleanField(default=False)
+    new_connection_notification_switch = models.BooleanField(default=False)
     webhook_url = models.CharField(max_length=256)
     arrival_message = models.CharField(max_length=500)
     departure_message = models.CharField(max_length=500)
+    new_connection_message = models.CharField(max_length=500, default='At time {arrival_time} a new device connected '
+                                                                      'to the network\n'
+                                                                      'MAC: {mac}\n'
+                                                                      'IP: {ip}\n'
+                                                                      'Name: {name}')
 
 class EmailConfig(models.Model):
     email_switch = models.BooleanField(default=False)
+    new_connection_notification_switch = models.BooleanField(default=False)
     sender_address = models.CharField(max_length=100)
     your_password = models.CharField(max_length=100)
     to_address = models.CharField(max_length=100)
@@ -107,6 +114,13 @@ class EmailConfig(models.Model):
     departure_mail_body = models.CharField(max_length=500)
     arrival_mail_suject = models.CharField(max_length=100)
     arrival_mail_body = models.CharField(max_length=500)
+    new_connection_mail_subject = models.CharField(max_length=500, default='New device detected.')
+    new_connection_mail_body = models.CharField(max_length=500,
+                                              default='At time {arrival_time} a device connected to the '
+                                                      'network\n'
+                                                      'MAC: {host.mac}\n'
+                                                      'IP: {host.ip}\n'
+                                                      'Name: {host.name}')
 
     def enable_emailer(self):
         self.email_switch = True
