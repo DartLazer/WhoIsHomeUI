@@ -1,12 +1,11 @@
 import datetime
 import os
 from django.utils import timezone
-from django.core.exceptions import ObjectDoesNotExist
-from .models import Host, ScannerConfig, EmailConfig, Target, LogData, DiscordNotificationsConfig
+from django.utils.timezone import localtime
+from .models import Host, ScannerConfig, EmailConfig, LogData, DiscordNotificationsConfig
 import smtplib
 import logging
 from discord import Webhook, RequestsWebhookAdapter
-import requests
 
 logger = logging.getLogger('log_to_file')
 
@@ -38,18 +37,20 @@ def scan_processor(scanned_dictionary):
     time_found = timezone.now()
     for mac in scanned_dictionary.keys():
         scanned_ip = scanned_dictionary[mac].get('IP')
-        scanned_host_object = Host.objects.get_or_create(mac=mac,
-                                                         defaults={'arrival_time': time_found, 'last_seen': time_found,
-                                                                   'first_seen': time_found,
-                                                                   'ip': scanned_ip,
-                                                                   'name': scanned_dictionary[mac].get('Device-Name')})
-        if scanned_host_object[1] is False:
-            scanned_host_object[0].last_seen = time_found
-            scanned_host_object[0].scans_missed_counter = 0
-            scanned_host_object[0].ip = scanned_ip
+        host, host_created = Host.objects.get_or_create(mac=mac,
+                                                        defaults={'arrival_time': time_found, 'last_seen': time_found,
+                                                                  'first_seen': time_found,
+                                                                  'ip': scanned_ip,
+                                                                  'name': scanned_dictionary[mac].get('Device-Name')})
+        if host_created:
+            LogData.objects.create(host=host)
+            notify(host, 'new')
+
         else:
-            LogData.objects.create(host=scanned_host_object[0])
-        scanned_host_object[0].save()
+            host.last_seen = time_found
+            host.scans_missed_counter = 0
+            host.ip = scanned_ip
+            host.save()
 
     for host in Host.objects.all():
         if host.mac.casefold() not in scanned_dictionary.keys():
@@ -59,12 +60,11 @@ def scan_processor(scanned_dictionary):
 
 
 def is_home_check():  # checks and if necessary alters the 'is_home' state of the target
-    email = EmailConfig.objects.get(pk=1)
-    discord = DiscordNotificationsConfig.objects.get(pk=1)
     settings = ScannerConfig.objects.get(pk=1)
     not_home_threshold = getattr(settings, 'not_home_treshold')
     for host in Host.objects.all():
-        if host.scans_missed_counter == 0 and host.is_home is False:  # if the target was away and now checks in again: target got home and send email
+        if host.scans_missed_counter == 0 and host.is_home is False:  # if the target was away and now checks in
+                                                                        # again: target got home and send email
             host.arrival_time = host.last_seen
             host.is_home = True
             host.save()
@@ -72,15 +72,14 @@ def is_home_check():  # checks and if necessary alters the 'is_home' state of th
             LogData.objects.create(host=host, previous_check_out=previous_check_out_time, ip=host.ip)
 
             if host.target:  # Checks if the host is a target (and thus notify)
-                if getattr(discord, 'enabled_switch'):
-                    discord_notify(host, discord, 'arrival')
-
-                if getattr(email, 'email_switch'):
-                    email_sender(host, 'arrival')
+                notify(host, 'arrival')
 
             host.save()
-        elif host.scans_missed_counter > not_home_threshold and host.is_home is True:  # not home threshold is # scans target can miss to prevent
-            # unnecessary emails. However the actual departure time(last scan) time is saved and sent in email. So only the email is delayed
+        elif host.scans_missed_counter > not_home_threshold and host.is_home is True:  # not home threshold is
+            # scans target can miss to prevent unnecessary emails.
+            # However the actual departure time(last scan) time is saved and sent in email.
+            # So only the email is delayed
+
             host.is_home = False
             host.departure_time = host.last_seen
             host.save()
@@ -91,20 +90,18 @@ def is_home_check():  # checks and if necessary alters the 'is_home' state of th
             host_log_data.save()
 
             if host.target:  # Checks if the host is a target (and thus notify)
-                if getattr(discord, 'enabled_switch'):
-                    discord_notify(host, discord, 'departure')
-
-                if getattr(email, 'email_switch'):
-                    email_sender(host, 'departure')
+                notify(host, 'departure')
 
     return None
 
 
-def discord_notify(host: Host, discord_config: DiscordNotificationsConfig, event_type: str):
+def discord_notify(host: Host, discord_config: DiscordNotificationsConfig, notification_type: str):
+    print('discord notify')
+    print(host)
     webhook = Webhook.from_url(discord_config.webhook_url, adapter=RequestsWebhookAdapter())
     target = getattr(host, 'name')
-    arrival_time = getattr(host, 'arrival_time').strftime("%H:%M:%S on %d-%b-%Y ")
-    departure_time = getattr(host, 'departure_time').strftime("last seen at: %H:%M:%S on %d-%b-%Y ")
+    arrival_time = localtime(getattr(host, 'arrival_time')).strftime("%H:%M:%S on %d-%b-%Y ")
+    departure_time = localtime(getattr(host, 'departure_time')).strftime("last seen at: %H:%M:%S on %d-%b-%Y ")
 
     time_home = getattr(host, 'departure_time') - getattr(host, 'arrival_time')
     time_home = format_time_delta_object(time_home)
@@ -112,24 +109,33 @@ def discord_notify(host: Host, discord_config: DiscordNotificationsConfig, event
     time_away = getattr(host, 'arrival_time') - getattr(host, 'departure_time')
     time_away = format_time_delta_object(time_away)
 
-    if event_type == 'arrival':  # if target is home formats the string according to the arrival email. Else
+    if notification_type == 'arrival':  # if target is home formats the string according to the arrival email. Else
         body = getattr(discord_config, 'arrival_message').format(target=target, arrival_time=arrival_time,
                                                                  departure_time=departure_time, time_away=time_away,
                                                                  time_home=time_home)
-    else:
+    elif notification_type == 'departure':
         body = getattr(discord_config, 'departure_message').format(target=target, departure_time=departure_time,
                                                                    arrival_time=arrival_time, time_away=time_away,
                                                                    time_home=time_home)
+    elif notification_type == 'new':
+        body = getattr(discord_config, 'new_connection_message').format(target=target, departure_time=departure_time,
+                                                                        arrival_time=arrival_time, time_away=time_away,
+                                                                        time_home=time_home, mac=host.mac, ip=host.ip,
+                                                                        name=host.name)
+    else:
+        logger.error('Invalid notification type')
+        return
 
     webhook.send(body)
 
 
-def email_sender(host, email_type):  # sends arrival/departure emails
+def email_sender(host, notification_type):  # sends arrival/departure emails
     print('Sending email')
+
     email = EmailConfig.objects.get(pk=1)
     target = getattr(host, 'name')
-    arrival_time = getattr(host, 'arrival_time').strftime("%H:%M:%S on %d-%b-%Y ")
-    departure_time = getattr(host, 'departure_time').strftime("last seen at: %H:%M:%S on %d-%b-%Y ")
+    arrival_time = localtime(getattr(host, 'arrival_time')).strftime("%H:%M:%S on %d-%b-%Y ")
+    departure_time = localtime(getattr(host, 'departure_time')).strftime("last seen at: %H:%M:%S on %d-%b-%Y ")
 
     time_home = getattr(host, 'departure_time') - getattr(host, 'arrival_time')
     time_home = format_time_delta_object(time_home)
@@ -143,20 +149,33 @@ def email_sender(host, email_type):  # sends arrival/departure emails
     smtp_domain = getattr(email, 'smtp_domain')
     smtp_port = getattr(email, 'smtp_port')
 
-    if email_type == 'arrival':  # if target is home formats the string according to the arrival email. Else departure email
+    if notification_type == 'arrival':  # if target is home formats the string according to the arrival email.
+        # Else departure email
+
         subject = getattr(email, 'arrival_mail_suject').format(target=target, arrival_time=arrival_time,
                                                                depature_time=departure_time, time_away=time_away,
                                                                time_home=time_home)
         body = getattr(email, 'arrival_mail_body').format(target=target, arrival_time=arrival_time,
                                                           departure_time=departure_time, time_away=time_away,
                                                           time_home=time_home)
-    else:
+    elif notification_type == 'departure':
         subject = getattr(email, 'departure_mail_subject').format(target=target, departure_time=departure_time,
                                                                   time_away=time_away,
                                                                   time_home=time_home)
         body = getattr(email, 'departure_mail_body').format(target=target, departure_time=departure_time,
                                                             arrival_time=arrival_time, time_away=time_away,
                                                             time_home=time_home)
+    elif notification_type == 'new':
+        subject = getattr(email, 'new_connection_mail_subject').format(target=target, departure_time=departure_time,
+                                                                       arrival_time=arrival_time, time_away=time_away,
+                                                                       time_home=time_home, mac=host.mac, ip=host.ip,
+                                                                       name=host.name)
+        body = getattr(email, 'new_connection_mail_body').format(target=target, departure_time=departure_time,
+                                                                 arrival_time=arrival_time, time_away=time_away,
+                                                                 time_home=time_home, mac=host.mac, ip=host.ip,
+                                                                 name=host.name)
+    else:
+        logger.error('Invalid notification type')
 
     smtp_server = smtplib.SMTP_SSL(smtp_domain, int(smtp_port))
     try:
@@ -172,6 +191,17 @@ def email_sender(host, email_type):  # sends arrival/departure emails
         logger.error(f'Unknown email error. Printing out:\n {e}')
 
     smtp_server.close()
+
+
+def notify(host: Host, notification_type: str):
+    email = EmailConfig.objects.get(pk=1)
+    discord = DiscordNotificationsConfig.objects.get(pk=1)
+    print('NOTIFY')
+    if getattr(discord, 'enabled_switch'):
+        discord_notify(host, discord, notification_type)
+
+    if getattr(email, 'email_switch'):
+        email_sender(host, notification_type)
 
 
 def strfdelta(tdelta: datetime.timedelta, fmt: str):

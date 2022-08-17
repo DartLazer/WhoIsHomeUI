@@ -48,12 +48,20 @@ class EmailSettingsForm(forms.Form):
         email_config = EmailConfig.objects.get(pk=1)
         self.fields['email_switch'] = forms.BooleanField(label="Emails enabled", initial=email_config.email_switch,
                                                          required=False)
+        self.fields['new_connection_notification_switch'] = forms.BooleanField(label="New device detected notifications"
+                                                        " enabled", initial=email_config.new_connection_notification_switch,
+                                                         required=False)
+
         self.fields['sender_address'] = forms.CharField(max_length=100, initial=email_config.sender_address,
                                                         required=False)
         self.fields['your_password'] = forms.CharField(widget=forms.PasswordInput, required=False)
         self.fields['to_address'] = forms.CharField(initial=email_config.to_address, required=False)
         self.fields['smtp_domain'] = forms.CharField(initial=email_config.smtp_domain, required=False)
         self.fields['smtp_port'] = forms.CharField(initial=email_config.smtp_port, required=False)
+        self.fields['new_connection_mail_subject'] = forms.CharField(initial=email_config.new_connection_mail_subject,
+                                                                required=False)
+        self.fields['new_connection_mail_body'] = forms.CharField(initial=email_config.new_connection_mail_body,
+                                                                  required=False, widget=forms.Textarea)
         self.fields['departure_mail_subject'] = forms.CharField(initial=email_config.departure_mail_subject,
                                                                 required=False)
         self.fields['departure_mail_body'] = forms.CharField(initial=email_config.departure_mail_body, required=False,
@@ -70,8 +78,12 @@ class DiscordNotificationsForm(forms.Form):
         discord_config = DiscordNotificationsConfig.objects.get(pk=1)
         self.fields['enabled_switch'] = forms.BooleanField(label="Discord Notifications Enabled",
                                                            initial=discord_config.enabled_switch, required=False)
+        self.fields['new_connection_notification_switch'] = forms.BooleanField(label="New device detected notifications",
+                                                           initial=discord_config.new_connection_notification_switch, required=False)
         self.fields['webhook_url'] = forms.CharField(initial=discord_config.webhook_url, required=False)
         self.fields['departure_message'] = forms.CharField(initial=discord_config.departure_message, required=False,
                                                            widget=forms.Textarea)
         self.fields['arrival_message'] = forms.CharField(initial=discord_config.arrival_message, required=False,
                                                          widget=forms.Textarea)
+        self.fields['new_connection_message'] = forms.CharField(initial=discord_config.new_connection_message,
+                                                                required=False, widget=forms.Textarea)

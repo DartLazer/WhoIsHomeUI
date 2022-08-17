@@ -1,12 +1,14 @@
 import time
 
 import requests
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect, HttpRequest, JsonResponse
 from django.shortcuts import render, redirect
 from django.conf import settings as django_settings
 from django.contrib import messages
 from django.urls import reverse
 from .models import Host, DiscordNotificationsConfig
+from .timeline_functions import generate_timeline_data
 from .scanner_functions import *
 from .backgroundtasks import schedule_scan, scan
 from background_task.models import Task
@@ -122,42 +124,56 @@ def settings(request):
 
 def view_host(request, host_id):
     form_saved = False
-    if Host.objects.filter(id=host_id).exists():
-        host = Host.objects.get(id=host_id)
-        if host.new is True:
-            host.new = False
-            host.save()
-        host_form = HostForm(request=request, host=host)
-        host_name_form = ChangeHostNameForm(request=request, host=host)
 
-        if 'device_type' in request.POST:
-            form = HostForm(request.POST, request=request, host=host)
-            if form.is_valid():
-                if form.has_changed():
-                    for changed_field in form.changed_data:
-                        setattr(host, changed_field, form.cleaned_data[changed_field])
-                    host.save()
-                    form_saved = True
-                    host_form = HostForm(request=request, host=host)
-        elif 'ChangeHostNameForm' in request.POST:
-            form = ChangeHostNameForm(request.POST, request=request, host=host)
-            if form.is_valid():
-                if form.has_changed():
-                    for changed_field in form.changed_data:
-                        setattr(host, changed_field, form.cleaned_data[changed_field])
-                    host.save()
-                    form_saved = True
-                    host_name_form = ChangeHostNameForm(request=request, host=host)
-        logdata_query = None
-        if LogData.objects.filter(host=host).exists():
-            logdata_query = LogData.objects.filter(host=host).order_by('-id')[:10]
-            # contains_logdata = True
+    if not Host.objects.filter(id=host_id).exists():
+        logger.error(f'host: \'{host_id}\' not found')
+        return HttpResponseRedirect('/whoishome/')
 
-        return render(request, 'whoishome/view_host.html', {'host': host, 'host_form': host_form, 'host_name_form': host_name_form, 'form_saved': form_saved,
-                                                            'logdata_query': logdata_query, 'update_available': update_check()})
+    host = Host.objects.get(id=host_id)
 
-    logger.error(f'host: \'{host_id}\' not found')
-    return HttpResponseRedirect('/whoishome/')
+    if host.new is True:
+        host.new = False
+        host.save()
+
+    if 'chart_time_range' in request.POST:
+        chart_range = request.POST['chart_time_range']
+        timeline_dict = generate_timeline_data(host, chart_range)
+    else:
+        timeline_dict = generate_timeline_data(host, '7')
+
+
+
+    host_form = HostForm(request=request, host=host)
+    host_name_form = ChangeHostNameForm(request=request, host=host)
+
+    if 'device_type' in request.POST:
+        form = HostForm(request.POST, request=request, host=host)
+        if form.is_valid():
+            if form.has_changed():
+                for changed_field in form.changed_data:
+                    setattr(host, changed_field, form.cleaned_data[changed_field])
+                host.save()
+                form_saved = True
+                host_form = HostForm(request=request, host=host)
+    elif 'ChangeHostNameForm' in request.POST:
+        form = ChangeHostNameForm(request.POST, request=request, host=host)
+        if form.is_valid():
+            if form.has_changed():
+                for changed_field in form.changed_data:
+                    setattr(host, changed_field, form.cleaned_data[changed_field])
+                host.save()
+                form_saved = True
+                host_name_form = ChangeHostNameForm(request=request, host=host)
+    logdata_query = None
+    if LogData.objects.filter(host=host).exists():
+        logdata_query = LogData.objects.filter(host=host).order_by('-id')[:50]
+        # contains_logdata = True
+
+    return render(request, 'whoishome/view_host.html', {'host': host, 'host_form': host_form,
+                                                        'host_name_form': host_name_form, 'form_saved': form_saved,
+                                                        'logdata_query': logdata_query,
+                                                        'update_available': update_check(), 'timeline': timeline_dict})
+
 
 
 def getresults(request):
@@ -198,7 +214,6 @@ def network_timeline(request):
     sort_log = {}
     x = 0
     for log in log_data_query:
-        print(log.host.name)
         if log.check_out:
             log_dict[x] = {"time": log.check_out, 'arrival': False, 'host': log.host, 'logdata': log}
             sort_log[x] = log.check_out
@@ -226,7 +241,6 @@ def update_page(request):
     if r.status_code == 200:
         changelog = r.text
         changelog = changelog.split('\n')
-        print(changelog)
     else:
         changelog = 'Unable to retrieve changelog.'
 
