@@ -134,12 +134,14 @@ def view_host(request, host_id):
     if host.new is True:
         host.new = False
         host.save()
+
     if 'chart_time_range' in request.POST:
         chart_range = request.POST['chart_time_range']
+        timeline_dict = generate_timeline_data(host, chart_range)
     else:
-        chart_range = None
+        timeline_dict = generate_timeline_data(host, '7')
 
-    timeline_dict = generate_timeline_data(host, chart_range)
+
 
     host_form = HostForm(request=request, host=host)
     host_name_form = ChangeHostNameForm(request=request, host=host)
@@ -164,7 +166,7 @@ def view_host(request, host_id):
                 host_name_form = ChangeHostNameForm(request=request, host=host)
     logdata_query = None
     if LogData.objects.filter(host=host).exists():
-        logdata_query = LogData.objects.filter(host=host).order_by('-id')[:10]
+        logdata_query = LogData.objects.filter(host=host).order_by('-id')[:20]
         # contains_logdata = True
 
     return render(request, 'whoishome/view_host.html', {'host': host, 'host_form': host_form,
