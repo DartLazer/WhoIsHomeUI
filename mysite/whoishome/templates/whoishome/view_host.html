@@ -4,6 +4,10 @@
 {% load tz %}
 {% block content %}
 
+<script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.js"></script>
+<script src="{% static 'timeline.js' %}"></script>
+
 {% if form_saved %}
 
 <!-- Toast that shows the host form has been saved -->
@@ -109,6 +113,28 @@
     </table>
 </form>
 
+
+<div id="container" style="width: 100%; min-height: 200px;">
+    <canvas id="canvas"></canvas>
+</div>
+<br />
+<div class="">
+    <form action="/view_host/%3F9" method="post">
+        <input type="hidden" name="csrfmiddlewaretoken" value="sp0k5KODcO5QIAS4E47JGME0wJgtwdOZQuIKoGsq8C75ojrTglXIAr6RYJVublMO">
+        Set time range: <select name="chart_time_range" style="max-width: 12em" onchange="form.submit()" class="select form-control" id="chart_time_range">
+            <option value="7">Last week</option>
+
+            <option value="14">Last 2 weeks</option>
+
+            <option value="30">Last month</option>
+
+            <option value="0">All time</option>
+
+        </select>
+    </form>  
+</div>
+
+<br />
 {% if logdata_query %}
                 <div class="container">
                         <ul class="timeline">
@@ -134,5 +160,44 @@
                         </ul>
                 </div>
 {% endif %}
+
+
+{{ timeline.timeline |json_script:"timeline" }}
+{{ timeline.label |json_script:"label" }}
+
+<script>
+    
+    var timeline = JSON.parse(document.getElementById('timeline').textContent);
+    var label = JSON.parse(document.getElementById('label').textContent);
+
+    var ctx = document.getElementById("canvas").getContext("2d");
+    var chart = new Chart(ctx, {
+    type: "timeline",
+    options: {
+        maintainAspectRatio: false,
+        elements: {
+        colorFunction: function (text, data, dataset, index) {
+            return '#212529';
+        },
+        showText: false,
+        textPadding: 4,
+        },
+        scales: {
+            yAxes: [{
+                display: false,
+                barThickness: 50,
+            }]
+        },
+    },
+    data: {
+        labels: [label],
+        datasets: [
+            {
+                data: timeline,
+            },
+            ],
+        },
+    });
+    </script>
 
 {% endblock content %}
