@@ -120,7 +120,7 @@
 <br />
 <div class="">
     <form action="/view_host/%3F9" method="post">
-        <input type="hidden" name="csrfmiddlewaretoken" value="sp0k5KODcO5QIAS4E47JGME0wJgtwdOZQuIKoGsq8C75ojrTglXIAr6RYJVublMO">
+        {% csrf_token %}
         Set time range: <select name="chart_time_range" style="max-width: 12em" onchange="form.submit()" class="select form-control" id="chart_time_range">
             <option value="7">Last week</option>
 
