@@ -39,6 +39,8 @@ def clear_new_hosts(request):
 def settings(request):
     email_settings, created_bool = EmailConfig.objects.get_or_create(pk=1)
 
+    discord_config = DiscordNotificationsConfig.objects.get(pk=1)
+
     background_tasks = Task.objects.all()
 
     scanner_running = False
