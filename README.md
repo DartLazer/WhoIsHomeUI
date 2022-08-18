@@ -20,14 +20,15 @@ Unless otherwise stated in the changelog section ### Update Instructions
 - Migration of the database file will lead to having to manually restore the database.
 - Open a terminal in the root folder of your WhoIsHomeUI installation.
 - Backup the current db just to be sure `cp mysite/db.sqlite3 db_backup.sqlite3`
-- Run: `docker-compose down && git pull && docker-compose up -d --build`
-- When the build is finished shut down the container using `docker-compose down`
-- Run: (this will create the docker volume required, put your old database in it, and remove the dummy container)
+- Run: `docker-compose down && git pull && docker-compose build`
+- Run:
 ```bash
 docker container create --name dummy -v whoishomeui_dbstore:/mnt/test hello-world
 docker cp mysite/db.sqlite3 dummy:/mnt/test/db.sqlite3
 docker rm dummy
 ```
+(this will create the docker volume required, put your old database in it, and remove the dummy container)
+- Run: `docker-compose up -d`
 - Upgrade to version 0.3 is now complete.
 
 
