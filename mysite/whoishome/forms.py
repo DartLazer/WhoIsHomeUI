@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ObjectDoesNotExist
 from .models import Host, device_types_form_list, ScannerConfig, EmailConfig, DiscordNotificationsConfig
 
 
@@ -29,7 +30,20 @@ class ScannerSettingsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         super(ScannerSettingsForm, self).__init__(*args, **kwargs)
-        scanner_config = ScannerConfig.objects.get(pk=1)
+        
+        try:
+            scanner_config = ScannerConfig.objects.get(pk=1)
+        except ObjectDoesNotExist:
+            ScannerConfig.objects.create(
+                not_home_treshold= 21,
+                internet_interface= "eth0",
+                arp_string= "arp-scan --interface=",
+                ip_subnet= "192.168.2.",
+                ip_range_start= "1",
+                ip_range_end= "198"
+            )
+            scanner_config = ScannerConfig.objects.get(pk=1)
+            
         self.fields['not_home_treshold'] = forms.IntegerField(label="Not home treshold",
                                                               initial=scanner_config.not_home_treshold, required=False)
         self.fields['internet_interface'] = forms.CharField(label="Internet Interface",
@@ -45,7 +59,24 @@ class EmailSettingsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         super(EmailSettingsForm, self).__init__(*args, **kwargs)
-        email_config = EmailConfig.objects.get(pk=1)
+        
+        try:
+            email_config = EmailConfig.objects.get(pk=1)
+        except ObjectDoesNotExist:
+            EmailConfig.objects.create(
+                email_switch=False, 
+                sender_address= "secret@secret.com",
+                your_password= "secret",
+                to_address= "secret@gmail.com",
+                smtp_domain= "smtp.gmail.com",
+                smtp_port= "465",
+                departure_mail_subject="test",
+                departure_mail_body= "test",
+                arrival_mail_suject= "test",
+                arrival_mail_body= "test"
+            )
+            email_config = EmailConfig.objects.get(pk=1)
+            
         self.fields['email_switch'] = forms.BooleanField(label="Emails enabled", initial=email_config.email_switch,
                                                          required=False)
         self.fields['new_connection_notification_switch'] = forms.BooleanField(label="New device detected notifications"

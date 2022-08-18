@@ -37,7 +37,23 @@ def clear_new_hosts(request):
 
 
 def settings(request):
-    email_settings = EmailConfig.objects.get(pk=1)
+    try:
+        email_settings = EmailConfig.objects.get(pk=1)
+    except ObjectDoesNotExist:
+        EmailConfig.objects.create(
+            email_switch=False, 
+            sender_address= "secret@secret.com",
+            your_password= "secret",
+            to_address= "secret@gmail.com",
+            smtp_domain= "smtp.gmail.com",
+            smtp_port= "465",
+            departure_mail_subject="test",
+            departure_mail_body= "test",
+            arrival_mail_suject= "test",
+            arrival_mail_body= "test"
+        )
+        email_settings = EmailConfig.objects.get(pk=1)
+
     try:
         discord_config = DiscordNotificationsConfig.objects.get(pk=1)
     except ObjectDoesNotExist:
@@ -55,7 +71,19 @@ def settings(request):
         scanner_settings_form = ScannerSettingsForm(request.POST, request=request)
         if scanner_settings_form.is_valid():
             if scanner_settings_form.has_changed():
-                scanner_config = ScannerConfig.objects.get(pk=1)
+                try:
+                    scanner_config = ScannerConfig.objects.get(pk=1)
+                except ObjectDoesNotExist:
+                    ScannerConfig.objects.create(
+                        not_home_treshold= 21,
+                        internet_interface= "eth0",
+                        arp_string= "arp-scan --interface=",
+                        ip_subnet= "192.168.2.",
+                        ip_range_start= "1",
+                        ip_range_end= "198"
+                    )
+                    scanner_config = ScannerConfig.objects.get(pk=1)
+
                 if 'email' in scanner_settings_form.changed_data:
                     user = request.user
                     setattr(user, 'email', scanner_settings_form.cleaned_data['email'])
