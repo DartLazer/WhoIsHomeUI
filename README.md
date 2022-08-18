@@ -67,4 +67,10 @@ To enable WhoIsHomeUI to run on system boot we'll add a command to crontab to ex
 - `@reboot docker-compose -f directory_from_first_step/docker-compose.yml up -d`
 - That's it!
 
+****Backing up the database after the 0.3 upgrade****
+- Get the container name using `docker ps`
+- run the following command 
+```bash 
+docker cp <container_name>:/dbstore/db.sqlite3 /local_pc_path/db_backup.sqlite3
+```
 
