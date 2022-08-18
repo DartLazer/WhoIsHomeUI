@@ -27,7 +27,7 @@ docker container create --name dummy -v whoishomeui_dbstore:/mnt/test hello-worl
 docker cp mysite/db.sqlite3 dummy:/mnt/test/db.sqlite3
 docker rm dummy
 ```
-- (this will create the docker volume required, put your old database in it, and remove the dummy container)
+(this will create the docker volume required, put your old database in it, and remove the dummy container)
 - Run: `docker-compose up -d`
 - Upgrade to version 0.3 is now complete.
 
