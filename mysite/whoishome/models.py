@@ -82,12 +82,12 @@ class LogData(models.Model):
 
 
 class ScannerConfig(models.Model):
-    not_home_treshold = models.IntegerField()
-    internet_interface = models.CharField(max_length=15)
-    arp_string = models.CharField(max_length=100)
-    ip_subnet = models.CharField(max_length=100)
-    ip_range_start = models.CharField(max_length=100)
-    ip_range_end = models.CharField(max_length=100)
+    not_home_treshold = models.IntegerField(default= 21)
+    internet_interface = models.CharField(max_length=15, default='eth0')
+    arp_string = models.CharField(max_length=100, default='arp-scan --interface=')
+    ip_subnet = models.CharField(max_length=100, default='192.168.2.')
+    ip_range_start = models.CharField(max_length=100, default='1')
+    ip_range_end = models.CharField(max_length=100, default='198')
 
 
 class DiscordNotificationsConfig(models.Model):
@@ -105,15 +105,15 @@ class DiscordNotificationsConfig(models.Model):
 class EmailConfig(models.Model):
     email_switch = models.BooleanField(default=False)
     new_connection_notification_switch = models.BooleanField(default=False)
-    sender_address = models.CharField(max_length=100)
-    your_password = models.CharField(max_length=100)
-    to_address = models.CharField(max_length=100)
-    smtp_domain = models.CharField(max_length=100)
-    smtp_port = models.CharField(max_length=100)
-    departure_mail_subject = models.CharField(max_length=100)
-    departure_mail_body = models.CharField(max_length=500)
-    arrival_mail_suject = models.CharField(max_length=100)
-    arrival_mail_body = models.CharField(max_length=500)
+    sender_address = models.CharField(max_length=100, default='test@test.com')
+    your_password = models.CharField(max_length=100, default='secretpassword')
+    to_address = models.CharField(max_length=100, default='to@test.com')
+    smtp_domain = models.CharField(max_length=100, default='smtp@test.com')
+    smtp_port = models.CharField(max_length=100, default='465')
+    departure_mail_subject = models.CharField(max_length=100, default='{target} has left home.')
+    departure_mail_body = models.CharField(max_length=500, default='{target} has left home at time {departure_time}.')
+    arrival_mail_suject = models.CharField(max_length=100, default='{target} has arrived home.')
+    arrival_mail_body = models.CharField(max_length=500, default='{target} has arrived home at time {arrival_time}')
     new_connection_mail_subject = models.CharField(max_length=500, default='New device detected.')
     new_connection_mail_body = models.CharField(max_length=500,
                                               default='At time {arrival_time} a device connected to the '
