@@ -4,9 +4,13 @@ services:
   web:
     network_mode: "host"
     build: .
-    command: bash -c "python mysite/manage.py migrate && python mysite/manage.py runserver 0.0.0.0:${WHOIH_PORT:-8000}"
+    command: bash -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:${WHOIH_PORT:-8000}"
     environment:
       - DJANGO_TZ=${WHOIH_TZ}
+      - DJANGO_DBPATH=/dbstore/db.sqlite3
     restart: always
     volumes:
-      - .:/mysite
+      - dbstore:/dbstore
+
+volumes:
+  dbstore:

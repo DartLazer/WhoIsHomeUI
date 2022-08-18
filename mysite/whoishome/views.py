@@ -37,16 +37,10 @@ def clear_new_hosts(request):
 
 
 def settings(request):
-    email_settings = EmailConfig.objects.get(pk=1)
-    try:
-        discord_config = DiscordNotificationsConfig.objects.get(pk=1)
-    except ObjectDoesNotExist:
-        DiscordNotificationsConfig.objects.create(enabled_switch=True, )
+    email_settings, created_bool = EmailConfig.objects.get_or_create(pk=1)
 
-    context = {'email': email_settings}
     background_tasks = Task.objects.all()
-    saved_indicator = 0
-    saved_flag = request.GET.get('saved')
+
     scanner_running = False
     for background_task in background_tasks:
         scanner_running = True
@@ -55,7 +49,8 @@ def settings(request):
         scanner_settings_form = ScannerSettingsForm(request.POST, request=request)
         if scanner_settings_form.is_valid():
             if scanner_settings_form.has_changed():
-                scanner_config = ScannerConfig.objects.get(pk=1)
+                scanner_config, created_bool = ScannerConfig.objects.get_or_create(pk=1)
+
                 if 'email' in scanner_settings_form.changed_data:
                     user = request.user
                     setattr(user, 'email', scanner_settings_form.cleaned_data['email'])
@@ -117,7 +112,7 @@ def settings(request):
 
     return render(request, 'whoishome/settings.html',
                   {'email': email_settings, 'scanner_settings_form': scanner_settings_form, 'email_settings_form': email_settings_form,
-                   'discord_form': discord_form, 'saved_flag': saved_flag,
+                   'discord_form': discord_form,
                    "logfile": logfile, 'update_available': update_check(), 'scanner_running': scanner_running,
                    "timezone": django_settings.TIME_ZONE})
 

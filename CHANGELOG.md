@@ -3,6 +3,28 @@ All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
+## [0.3] - 2022-08-18
+Version 0.3 marks the migration of the database into a separate docker volume in preparation of launching to Docker-Hub
+This update requires some extra instructions
+
+### IMPORTANT Update Instructions
+- Migration of the database file will lead to having to manually restore the database.
+- Open a terminal in the root folder of your WhoIsHomeUI installation.
+- Run: `docker-compose down && git pull && docker-compose up -d --build`
+- When the build is finished shut down the container using `docker-compose down`
+- Run: (this will create the docker volume required, put your old database in it, and remove the dummy container)
+```bash
+docker container create --name dummy -v whoishomeui_dbstore:/mnt/test hello-world
+docker cp mysite/db.sqlite3 dummy:/mnt/test/db.sqlite3
+docker rm dummy
+```
+- Upgrade to version 0.3 is now complete.
+
+### Changed
+- Migrated the database to a seperate docker-volume to ensure database wont be accidentally wiped in a future update and prepare for docker-hub.
+- Fixed a bug where no internet connection might crash the script upon update check
+- Changed the docker python version to slim-buster to reduce space required.
+
 ## [0.25] - 2022-08-17
 Added notifications for newly detected devices
 
@@ -19,7 +41,6 @@ Timeline graph added and discord notifications in local time
 
 ### Changed
 - Discord & email notifications in localtime
-
 
 ## [0.23] - 2022-08-16
 Scanner start/stop switch fixed. Bugged due to editor formatting django template code

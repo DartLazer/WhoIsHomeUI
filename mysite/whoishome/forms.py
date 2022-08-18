@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ObjectDoesNotExist
 from .models import Host, device_types_form_list, ScannerConfig, EmailConfig, DiscordNotificationsConfig
 
 
@@ -29,7 +30,9 @@ class ScannerSettingsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         super(ScannerSettingsForm, self).__init__(*args, **kwargs)
-        scanner_config = ScannerConfig.objects.get(pk=1)
+        
+        scanner_config, created_bool = ScannerConfig.objects.get_or_create(pk=1)
+            
         self.fields['not_home_treshold'] = forms.IntegerField(label="Not home treshold",
                                                               initial=scanner_config.not_home_treshold, required=False)
         self.fields['internet_interface'] = forms.CharField(label="Internet Interface",
@@ -45,7 +48,10 @@ class EmailSettingsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         super(EmailSettingsForm, self).__init__(*args, **kwargs)
-        email_config = EmailConfig.objects.get(pk=1)
+        
+
+        email_config, created_bool = EmailConfig.objects.get_or_create(pk=1)
+            
         self.fields['email_switch'] = forms.BooleanField(label="Emails enabled", initial=email_config.email_switch,
                                                          required=False)
         self.fields['new_connection_notification_switch'] = forms.BooleanField(label="New device detected notifications"

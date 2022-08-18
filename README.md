@@ -16,6 +16,19 @@ Unless otherwise stated in the changelog section ### Update Instructions
  - Then the following command `docker-compose up -d --build` (if this does not work try adding sudo in front)
  - That should be it!
 
+****For migrating from v0.23 to v0.3 use the below steps****
+- Migration of the database file will lead to having to manually restore the database.
+- Open a terminal in the root folder of your WhoIsHomeUI installation.
+- Run: `docker-compose down && git pull && docker-compose up -d --build`
+- When the build is finished shut down the container using `docker-compose down`
+- Run: (this will create the docker volume required, put your old database in it, and remove the dummy container)
+```bash
+docker container create --name dummy -v whoishomeui_dbstore:/mnt/test hello-world
+docker cp mysite/db.sqlite3 dummy:/mnt/test/db.sqlite3
+docker rm dummy
+```
+- Upgrade to version 0.3 is now complete.
+
 
 ****Installation Instructions****
   - First install Docker and Docker Compose on your Raspberry Pi (or other similar device, hereafter referenced to as raspberry pi) following the link upto and including step 6:

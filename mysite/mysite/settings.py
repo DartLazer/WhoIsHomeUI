@@ -22,8 +22,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = utils.get_random_secret_key()
 
-CURRENT_VERSION = 0.25
-# TODO UPDATE VERSION NUMBER!
+CURRENT_VERSION = 0.3
+#TODO UPDATE VERSION NUMBER!
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
