@@ -5,4 +5,4 @@ WORKDIR /mysite
 COPY mysite /mysite/
 COPY requirements.txt /mysite/
 RUN  pip install -r requirements.txt
-RUN apt update && apt install -y net-tools arp-scan procps
+RUN apt update && apt install -y net-tools arp-scan procps libpq-dev
