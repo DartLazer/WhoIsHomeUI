@@ -10,6 +10,7 @@ This update requires some extra instructions
 ### IMPORTANT Update Instructions
 - Migration of the database file will lead to having to manually restore the database.
 - Open a terminal in the root folder of your WhoIsHomeUI installation.
+- Backup the current db just to be sure `cp mysite/db.sqlite3 db_backup.sqlite3`
 - Run: `docker-compose down && git pull && docker-compose up -d --build`
 - When the build is finished shut down the container using `docker-compose down`
 - Run: (this will create the docker volume required, put your old database in it, and remove the dummy container)
