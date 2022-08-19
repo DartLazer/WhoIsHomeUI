@@ -1,6 +1,7 @@
 ARG WHOIH_PORT
-FROM alpine:latest
+FROM python:3-slim-buster
 ARG WHOIH_PORT
-RUN apk --no-cache add curl
-RUN echo "* * * * * curl http://localhost:${WHOIH_PORT}/scan/" | crontab -
-CMD ["crond","-f"]
+RUN apt update
+RUN apt install -y cron curl
+RUN echo "* * * * * curl -s http://0.0.0.0:${WHOIH_PORT}/scan/" | crontab -
+CMD ["cron","-f"]
