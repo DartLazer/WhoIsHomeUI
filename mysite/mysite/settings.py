@@ -34,7 +34,6 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'crispy_forms',
-    'background_task',
     'whoishome',
     'django.contrib.admin',
     'django.contrib.auth',

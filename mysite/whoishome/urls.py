@@ -14,7 +14,7 @@ urlpatterns = [
     path('enable_emailer/', views.enable_emailer, name='enable_emailer'),
     path('disable_emailer/', views.disable_emailer, name='disable_emailer'),
     path('view_host/?<host_id>', views.view_host, name='view_host'),
-    path('scannow/', views.scan_now, name='scan_now'),
+    path('scan/', views.scan_now, name='scan'),
     path('network_timeline/', views.network_timeline, name="network_timeline"),
     path('update/', views.update_page, name="update")
 ]

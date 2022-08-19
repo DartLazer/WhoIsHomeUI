@@ -82,6 +82,7 @@ class LogData(models.Model):
 
 
 class ScannerConfig(models.Model):
+    scanner_enabled = models.BooleanField(default=False)
     not_home_treshold = models.IntegerField(default= 21)
     internet_interface = models.CharField(max_length=15, default='eth0')
     arp_string = models.CharField(max_length=100, default='arp-scan --interface=')

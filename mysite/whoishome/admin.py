@@ -18,7 +18,7 @@ class LogDataAdmin(admin.ModelAdmin):
 
 
 class ScannerConfigAdmin(admin.ModelAdmin):
-    fields =['not_home_treshold', 'internet_interface', 'ip_subnet', 'ip_range_start', 'ip_range_end']
+    fields =['scanner_enabled', 'not_home_treshold', 'internet_interface', 'ip_subnet', 'ip_range_start', 'ip_range_end']
 
 
 admin.site.register(Host, HostAdmin)

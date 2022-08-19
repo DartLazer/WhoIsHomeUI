@@ -32,7 +32,7 @@ class ScannerSettingsForm(forms.Form):
         super(ScannerSettingsForm, self).__init__(*args, **kwargs)
         
         scanner_config, created_bool = ScannerConfig.objects.get_or_create(pk=1)
-            
+        self.fields['scanner_enabled'] = forms.BooleanField(label='Scanner enabled', initial=scanner_config.scanner_enabled, required=False)
         self.fields['not_home_treshold'] = forms.IntegerField(label="Not home treshold",
                                                               initial=scanner_config.not_home_treshold, required=False)
         self.fields['internet_interface'] = forms.CharField(label="Internet Interface",

@@ -11,6 +11,15 @@ services:
     restart: always
     volumes:
       - dbstore:/dbstore
+  scan_scheduler:
+    network_mode: "host"
+    build:
+      context: .
+      dockerfile: ./cron/Dockerfile
+      args:
+        - WHOIH_PORT=${WHOIH_PORT}
+
 
 volumes:
   dbstore:
+  web_data:

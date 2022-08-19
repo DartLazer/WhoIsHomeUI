@@ -10,10 +10,7 @@ from django.urls import reverse
 from .models import Host, DiscordNotificationsConfig
 from .timeline_functions import generate_timeline_data
 from .scanner_functions import *
-from .backgroundtasks import schedule_scan, scan
-from background_task.models import Task
 from .forms import HostForm, ChangeHostNameForm, ScannerSettingsForm, EmailSettingsForm, DiscordNotificationsForm
-from urllib.parse import urlencode
 import logging
 
 last_time_checked = False
@@ -41,17 +38,17 @@ def settings(request):
 
     discord_config = DiscordNotificationsConfig.objects.get(pk=1)
 
-    background_tasks = Task.objects.all()
+    scanner_config, created_bool = ScannerConfig.objects.get_or_create(pk=1)
 
-    scanner_running = False
-    for background_task in background_tasks:
-        scanner_running = True
+
+    scanner_running = True if scanner_config.scanner_enabled else False
+
 
     if 'update_scanner_settings' in request.POST:
         scanner_settings_form = ScannerSettingsForm(request.POST, request=request)
         if scanner_settings_form.is_valid():
             if scanner_settings_form.has_changed():
-                scanner_config, created_bool = ScannerConfig.objects.get_or_create(pk=1)
+
 
                 if 'email' in scanner_settings_form.changed_data:
                     user = request.user
@@ -261,26 +258,29 @@ def disable_emailer(request):
 
 
 def start_scanner(request):
-    schedule_scan(repeat=60)
-    logger.warning("Scanner started. Scanning in 1 minute.")
+    scanner_config, created_bool = ScannerConfig.objects.get_or_create(pk=1)
+    scanner_config.scanner_enabled = True
+    scanner_config.save()
+    logger.warning("Scanner started. Scanning every minute.")
     return HttpResponseRedirect('/')
 
 
 def stop_scanner(request):
-    background_tasks = Task.objects.filter(task_name='whoishome.backgroundtasks.background_network_scan')
-    for background_task in background_tasks:
-        background_task.delete()
-
-    background_tasks = Task.objects.filter(task_name='whoishome.backgroundtasks.schedule_scan')
-    for background_task in background_tasks:
-        background_task.delete()
-    logger.warning("Scanner stopped.")
+    scanner_config, created_bool = ScannerConfig.objects.get_or_create(pk=1)
+    scanner_config.scanner_enabled = False
+    scanner_config.save()
+    logger.warning("Scanner Stopped.")
     return HttpResponseRedirect('/')
 
 
 def scan_now(request):
-    scan()
-    return HttpResponseRedirect('/whoishome/')
+    scanner_config, created_bool = ScannerConfig.objects.get_or_create(pk=1)
+    if scanner_config.scanner_enabled:
+        print('Scanning')
+        online_hosts = scan_network()
+        scan_processor(online_hosts)
+        is_home_check()
+    return HttpResponseRedirect('')
 
 
 def update_check():

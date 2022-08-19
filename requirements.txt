@@ -1,5 +1,4 @@
 Django>=3.0,<4.0
-django-background-tasks>=1.2.5
 django-crispy-forms==1.11.2
 requests~=2.26.0
 discord==1.7.3
