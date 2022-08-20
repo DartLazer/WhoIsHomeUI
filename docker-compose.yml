@@ -4,22 +4,19 @@ services:
   web:
     network_mode: "host"
     build: .
-    command: bash -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:${WHOIH_PORT:-8000}"
+    command: sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:${WHOIH_PORT:-8000}"
     environment:
       - DJANGO_TZ=${WHOIH_TZ}
       - DJANGO_DBPATH=/dbstore/db.sqlite3
     restart: always
     volumes:
       - dbstore:/dbstore
-  scan_scheduler:
-    network_mode: "host"
-    build:
-      context: .
-      dockerfile: ./cron/Dockerfile
-      args:
-        - WHOIH_PORT=${WHOIH_PORT}
 
+  scanner:
+    network_mode: "host"
+    image: curlimages/curl
+    command: sh -c "sleep 60s && curl -s http://0.0.0.0:${WHOIH_PORT}/scan/"
+    restart: always
 
 volumes:
   dbstore:
-  web_data:
