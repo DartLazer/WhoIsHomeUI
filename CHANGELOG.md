@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+## [0.32] - 2022-08-21
+Added a logo
+
 ## [0.31] - 2022-08-18
 Bugfix for scanner scheduling.
 Removed django background-tasks and set up a seperate docker-container running a cronjob connecting to /scan/ on 
