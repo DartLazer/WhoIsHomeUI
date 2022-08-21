@@ -5,7 +5,16 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+    <link rel="shortcut icon" type="image/png" href="{% static '/icons/favicon/favicon.ico' %}"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static '/icons/favicon/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static '/icons/favicon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static '/icons/favicon/favicon-16x16.png' %}">
+    <link rel="manifest" href="{% static 'manifest.json' %}">
+    <link rel="mask-icon" href="{% static '/icons/favicon/safari-pinned-tab.svg' %}" color="#5bbad5">
+    <meta name="apple-mobile-web-app-title" content="WhoIsHomeUI">
+    <meta name="application-name" content="WhoIsHomeUI">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
     <!-- Bootstrap CSS -->
     <link href="{% static 'bootstrap/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'timeline.css' %}" rel="stylesheet">
@@ -20,7 +29,10 @@
 <body>
 <nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'index' %}">WhoIsHome</a>
+        <a class="navbar-brand" href="{% url 'index' %}">
+            <img src="/static/icons/manifest/black-vector.svg" alt="" width="24" height="24" class="d-inline-block align-text-bottom">
+           WhoIsHome
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">

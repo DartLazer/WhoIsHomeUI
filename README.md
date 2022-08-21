@@ -1,3 +1,5 @@
+![logo](/mysite/whoishome/static/icons/manifest/icons-192.png)
+
 # WhoIsHomeUI
 
 WhoIsHomeUI is a webapp that scans your network and allows you to track hosts, give email and discord updates, see new MAC addresses who connect to your network and possibly more in the future!
