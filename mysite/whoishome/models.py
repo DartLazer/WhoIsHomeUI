@@ -2,10 +2,12 @@ from django.db import models
 from django.utils import timezone
 
 device_types = ['unknown', 'pc', 'phone', 'server', 'laptop', 'tv', "speaker", "Smart Home Device", "tablet"]
-device_types_form_list = [("unknown", "unknown"), ("pc", "pc"), ("phone", "phone"), ("server", "server"), ("laptop", "laptop"), ("tv", "tv"),
+device_types_form_list = [("unknown", "unknown"), ("pc", "pc"), ("phone", "phone"), ("server", "server"),
+                          ("laptop", "laptop"), ("tv", "tv"),
                           ("speaker", "speaker"),
                           ("Smart Home Device", "Smart Home Device"), ("tablet", "tablet")]
-device_types_icons = {"unknown": "question-circle", "pc": "pc-display-horizontal", "phone": "phone", "server": "server", "laptop": "laptop", "tv": "tv",
+device_types_icons = {"unknown": "question-circle", "pc": "pc-display-horizontal", "phone": "phone", "server": "server",
+                      "laptop": "laptop", "tv": "tv",
                       "speaker": "speaker",
                       "Smart Home Device": "house", "tablet": "tablet"}
 
@@ -83,12 +85,16 @@ class LogData(models.Model):
 
 class ScannerConfig(models.Model):
     scanner_enabled = models.BooleanField(default=False)
-    not_home_treshold = models.IntegerField(default= 21)
+    not_home_treshold = models.IntegerField(default=21)
     internet_interface = models.CharField(max_length=15, default='eth0')
     arp_string = models.CharField(max_length=100, default='arp-scan --interface=')
     ip_subnet = models.CharField(max_length=100, default='192.168.2.')
     ip_range_start = models.CharField(max_length=100, default='1')
     ip_range_end = models.CharField(max_length=100, default='198')
+
+
+class HomePageSettingsConfig(models.Model):
+    show_all_devices = models.BooleanField(default=False)
 
 
 class DiscordNotificationsConfig(models.Model):
@@ -102,6 +108,7 @@ class DiscordNotificationsConfig(models.Model):
                                                                       'MAC: {mac}\n'
                                                                       'IP: {ip}\n'
                                                                       'Name: {name}')
+
 
 class EmailConfig(models.Model):
     email_switch = models.BooleanField(default=False)
@@ -117,11 +124,11 @@ class EmailConfig(models.Model):
     arrival_mail_body = models.CharField(max_length=500, default='{target} has arrived home at time {arrival_time}')
     new_connection_mail_subject = models.CharField(max_length=500, default='New device detected.')
     new_connection_mail_body = models.CharField(max_length=500,
-                                              default='At time {arrival_time} a device connected to the '
-                                                      'network\n'
-                                                      'MAC: {host.mac}\n'
-                                                      'IP: {host.ip}\n'
-                                                      'Name: {host.name}')
+                                                default='At time {arrival_time} a device connected to the '
+                                                        'network\n'
+                                                        'MAC: {host.mac}\n'
+                                                        'IP: {host.ip}\n'
+                                                        'Name: {host.name}')
 
     def enable_emailer(self):
         self.email_switch = True

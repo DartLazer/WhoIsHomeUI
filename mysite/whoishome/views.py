@@ -7,10 +7,11 @@ from django.shortcuts import render, redirect
 from django.conf import settings as django_settings
 from django.contrib import messages
 from django.urls import reverse
-from .models import Host, DiscordNotificationsConfig
+from .models import Host, DiscordNotificationsConfig, HomePageSettingsConfig
 from .timeline_functions import generate_timeline_data
 from .scanner_functions import *
-from .forms import HostForm, ChangeHostNameForm, ScannerSettingsForm, EmailSettingsForm, DiscordNotificationsForm
+from .forms import HostForm, ChangeHostNameForm, ScannerSettingsForm, EmailSettingsForm, DiscordNotificationsForm, \
+    HomePageSettingsForm
 import logging
 
 last_time_checked = False
@@ -40,15 +41,12 @@ def settings(request):
 
     scanner_config, created_bool = ScannerConfig.objects.get_or_create(pk=1)
 
-
     scanner_running = True if scanner_config.scanner_enabled else False
-
 
     if 'update_scanner_settings' in request.POST:
         scanner_settings_form = ScannerSettingsForm(request.POST, request=request)
         if scanner_settings_form.is_valid():
             if scanner_settings_form.has_changed():
-
 
                 if 'email' in scanner_settings_form.changed_data:
                     user = request.user
@@ -110,7 +108,8 @@ def settings(request):
     discord_form = DiscordNotificationsForm(request=request)
 
     return render(request, 'whoishome/settings.html',
-                  {'email': email_settings, 'scanner_settings_form': scanner_settings_form, 'email_settings_form': email_settings_form,
+                  {'email': email_settings, 'scanner_settings_form': scanner_settings_form,
+                   'email_settings_form': email_settings_form,
                    'discord_form': discord_form,
                    "logfile": logfile, 'update_available': update_check(), 'scanner_running': scanner_running,
                    "timezone": django_settings.TIME_ZONE})
@@ -134,8 +133,6 @@ def view_host(request, host_id):
         timeline_dict = generate_timeline_data(host, chart_range)
     else:
         timeline_dict = generate_timeline_data(host, '7')
-
-
 
     host_form = HostForm(request=request, host=host)
     host_name_form = ChangeHostNameForm(request=request, host=host)
@@ -169,33 +166,44 @@ def view_host(request, host_id):
                                                         'update_available': update_check(), 'timeline': timeline_dict})
 
 
-
 def getresults(request):
+    home_page_settings_form = HomePageSettingsForm(request=request)
+
     if request.POST:
         if request.POST.get('host_id'):  # is host_id is in the request the host will be marked seen.
             host_id = int(request.POST.get('host_id'))
             host = Host.objects.get(pk=host_id)
             host.mark_seen()
+        elif 'home_page_settings' in request.POST:
+            form = HomePageSettingsForm(request.POST, request=request)
+            if form.is_valid():
+                home_page_settings = HomePageSettingsConfig.objects.get(pk=1)
+                for changed_field in form.changed_data:
+                    setattr(home_page_settings, changed_field, form.cleaned_data[changed_field])
+                home_page_settings.save()
+                home_page_settings_form = HomePageSettingsForm(request=request)
 
     context = {'targets': [], 'home_hosts_list': [], 'new_hosts': [], 'scanner_running': False,
-               'update_available': update_check()}  # dictionary to be send to the html page
-    try:
-        for host in Host.objects.all():
-            try:
-                if host.is_home and not host.target:
-                    context['home_hosts_list'].append(host)  # adds host to home_host to be added to front page
-                if host.target is True:
-                    context['targets'].append(host)  # adds host to be sent to page.
-            except ObjectDoesNotExist:  # target has not been scanned yet.
-                if host.is_home:
-                    context['home_hosts_list'].append(host)
+               'update_available': update_check(),
+               'home_page_settings_form': home_page_settings_form, 'all_devices': False}  # dictionary to be send to the html page
 
-        for host in Host.objects.all():
-            if host.new:
-                context['new_hosts'].append(host)
+    home_page_settings = HomePageSettingsConfig.objects.get(pk=1)
 
-    except:
-        pass
+    for host in Host.objects.all():
+        if home_page_settings.show_all_devices:
+            context['home_hosts_list'].append(host)
+            context['all_devices'] = True
+        else:
+            if host.is_home and not host.target:
+                context['home_hosts_list'].append(host)  # adds host to home_host to be added to front page
+
+        if host.target is True:
+            context['targets'].append(host)  # adds host to be sent to page.
+
+
+    for host in Host.objects.all():
+        if host.new:
+            context['new_hosts'].append(host)
 
     return render(request, 'whoishome/index.html', context)
 
@@ -238,7 +246,8 @@ def update_page(request):
     else:
         changelog = 'Unable to retrieve changelog.'
 
-    context = {'current_version': django_settings.CURRENT_VERSION, 'github_version': github_version, 'update_available': update_check(), 'changelog': changelog}
+    context = {'current_version': django_settings.CURRENT_VERSION, 'github_version': github_version,
+               'update_available': update_check(), 'changelog': changelog}
 
     return render(request, 'whoishome/update.html', context)
 

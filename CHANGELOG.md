@@ -2,6 +2,34 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+## [0.33] - 2022-08-21
+Added the option to show all devices ever connected to the network.
+
+### Added
+- Added new model: HomePageSettingsConfig and related forms for future homepage options
+- Added button that displays all devices on homepage
+
+- ### Added
+- Some code clean-up here and there
+
+### IMPORTANT Update Instructions when upgrading from a version < 0.3
+Version 0.3 marks the migration of the database into a separate docker volume in preparation of launching to Docker-Hub
+This update requires some extra instructions
+
+- Migration of the database file will lead to having to manually restore the database.
+- Open a terminal in the root folder of your WhoIsHomeUI installation.
+- Backup the current db just to be sure `cp mysite/db.sqlite3 db_backup.sqlite3`
+- Run: `docker-compose down && git pull && docker-compose up -d --build`
+- When the build is finished shut down the container using `docker-compose down`
+- Run: (this will create the docker volume required, put your old database in it, and remove the dummy container)
+```bash
+docker container create --name dummy -v whoishomeui_dbstore:/mnt/test hello-world
+docker cp mysite/db.sqlite3 dummy:/mnt/test/db.sqlite3
+docker rm dummy
+```
+- Upgrade to version 0.3+ is now complete.
+
+
 ## [0.32] - 2022-08-21
 Added a logo
 

@@ -1,6 +1,7 @@
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Host, device_types_form_list, ScannerConfig, EmailConfig, DiscordNotificationsConfig
+from .models import Host, device_types_form_list, ScannerConfig, EmailConfig, DiscordNotificationsConfig, \
+    HomePageSettingsConfig
 
 
 class HostForm(forms.Form):
@@ -18,6 +19,18 @@ class HostForm(forms.Form):
         device_types_list.pop(0)
 
 
+class HomePageSettingsForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super(HomePageSettingsForm, self).__init__(*args, **kwargs)
+
+        home_page_config, created_bool = HomePageSettingsConfig.objects.get_or_create(pk=1)
+
+        self.fields['show_all_devices'] = forms.BooleanField(label='Show all devices',
+                                                             initial=home_page_config.show_all_devices, required=False)
+        self.fields['show_all_devices'].widget.attrs.update(style='max-width: 12em', onchange='form.submit()')
+
+
 class ChangeHostNameForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
@@ -30,9 +43,10 @@ class ScannerSettingsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         super(ScannerSettingsForm, self).__init__(*args, **kwargs)
-        
+
         scanner_config, created_bool = ScannerConfig.objects.get_or_create(pk=1)
-        self.fields['scanner_enabled'] = forms.BooleanField(label='Scanner enabled', initial=scanner_config.scanner_enabled, required=False)
+        self.fields['scanner_enabled'] = forms.BooleanField(label='Scanner enabled',
+                                                            initial=scanner_config.scanner_enabled, required=False)
         self.fields['not_home_treshold'] = forms.IntegerField(label="Not home treshold",
                                                               initial=scanner_config.not_home_treshold, required=False)
         self.fields['internet_interface'] = forms.CharField(label="Internet Interface",
@@ -48,15 +62,15 @@ class EmailSettingsForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         super(EmailSettingsForm, self).__init__(*args, **kwargs)
-        
 
         email_config, created_bool = EmailConfig.objects.get_or_create(pk=1)
-            
+
         self.fields['email_switch'] = forms.BooleanField(label="Emails enabled", initial=email_config.email_switch,
                                                          required=False)
         self.fields['new_connection_notification_switch'] = forms.BooleanField(label="New device detected notifications"
-                                                        " enabled", initial=email_config.new_connection_notification_switch,
-                                                         required=False)
+                                                                                     " enabled",
+                                                                               initial=email_config.new_connection_notification_switch,
+                                                                               required=False)
 
         self.fields['sender_address'] = forms.CharField(max_length=100, initial=email_config.sender_address,
                                                         required=False)
@@ -65,7 +79,7 @@ class EmailSettingsForm(forms.Form):
         self.fields['smtp_domain'] = forms.CharField(initial=email_config.smtp_domain, required=False)
         self.fields['smtp_port'] = forms.CharField(initial=email_config.smtp_port, required=False)
         self.fields['new_connection_mail_subject'] = forms.CharField(initial=email_config.new_connection_mail_subject,
-                                                                required=False)
+                                                                     required=False)
         self.fields['new_connection_mail_body'] = forms.CharField(initial=email_config.new_connection_mail_body,
                                                                   required=False, widget=forms.Textarea)
         self.fields['departure_mail_subject'] = forms.CharField(initial=email_config.departure_mail_subject,
@@ -84,8 +98,9 @@ class DiscordNotificationsForm(forms.Form):
         discord_config = DiscordNotificationsConfig.objects.get(pk=1)
         self.fields['enabled_switch'] = forms.BooleanField(label="Discord Notifications Enabled",
                                                            initial=discord_config.enabled_switch, required=False)
-        self.fields['new_connection_notification_switch'] = forms.BooleanField(label="New device detected notifications",
-                                                           initial=discord_config.new_connection_notification_switch, required=False)
+        self.fields['new_connection_notification_switch'] = forms.BooleanField(
+            label="New device detected notifications",
+            initial=discord_config.new_connection_notification_switch, required=False)
         self.fields['webhook_url'] = forms.CharField(initial=discord_config.webhook_url, required=False)
         self.fields['departure_message'] = forms.CharField(initial=discord_config.departure_message, required=False,
                                                            widget=forms.Textarea)
