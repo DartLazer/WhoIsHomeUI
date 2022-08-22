@@ -136,15 +136,7 @@ https://www.geeksforgeeks.org/how-to-install-git-on-raspberry-pi/
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 ### Update
-=======
-### Update Instructions
->>>>>>> 40775b4 (Update README.md)
-=======
-### Update
->>>>>>> ef02350 (Update README.md)
 Unless otherwise stated in the changelog section **Update Instructions**
  - In the folder containing whoishomeui: `git pull`
  - Then the following command `docker-compose up -d --build` (if this does not work try adding sudo in front)
@@ -156,20 +148,10 @@ Unless otherwise stated in the changelog section **Update Instructions**
 - Migration of the database file will lead to having to manually restore the database.
 - Open a terminal in the root folder of your WhoIsHomeUI installation.
 - Backup the current db just to be sure `cp mysite/db.sqlite3 db_backup.sqlite3`
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 0121834 (Update README.md)
 - Run: 
 ```sh
 docker-compose down && git pull && docker-compose build
 ```
-<<<<<<< HEAD
-=======
-- Run: `docker-compose down && git pull && docker-compose build`
->>>>>>> 40775b4 (Update README.md)
-=======
->>>>>>> 0121834 (Update README.md)
 - Run:
 ```bash
 docker container create --name dummy -v whoishomeui_dbstore:/mnt/test hello-world
@@ -177,20 +159,10 @@ docker cp mysite/db.sqlite3 dummy:/mnt/test/db.sqlite3
 docker rm dummy
 ```
 (this will create the docker volume required, put your old database in it, and remove the dummy container)
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 0121834 (Update README.md)
 - Run: 
 ```sh
 docker-compose up -d
 ```
-<<<<<<< HEAD
-=======
-- Run: `docker-compose up -d`
->>>>>>> 40775b4 (Update README.md)
-=======
->>>>>>> 0121834 (Update README.md)
 - Upgrade to version 0.3 is now complete.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -202,49 +174,22 @@ docker-compose up -d
 docker cp <container_name>:/dbstore/db.sqlite3 /local_pc_path/db_backup.sqlite3
 ```
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-=======
->>>>>>> 40775b4 (Update README.md)
-=======
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
->>>>>>> 0121834 (Update README.md)
 ### Enabling on system boot
 
 To enable WhoIsHomeUI to run on system boot we'll add a command to crontab to execute the docker-compose up -d command at system boot.
 
 - Note the installation of your WhoIsHomeUI installation (use `pwd` command in the installation directory)
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 0121834 (Update README.md)
 - On your raspberry pi enter the following command (If it asks you which editor to use just use your preffered one)
 ```sh
 sudo crontab -e
 ``` 
-<<<<<<< HEAD
 - Hold the down arrow key until you reach the end of the comments block and enter the following code
 ```sh
 @reboot docker-compose -f directory_from_first_step/docker-compose.yml up -d
 ```
 That's it!
-=======
-- On your raspberry pi enter the following command `sudo crontab -e`
-- (If it asks you which editor to use just use your preffered one)
-- Hold the down arrow key until you reach the end of the comments block and enter the following code
-- `@reboot docker-compose -f directory_from_first_step/docker-compose.yml up -d`
-- That's it!
->>>>>>> 40775b4 (Update README.md)
-=======
-- Hold the down arrow key until you reach the end of the comments block and enter the following code
-```sh
-@reboot docker-compose -f directory_from_first_step/docker-compose.yml up -d
-```
-That's it!
->>>>>>> 0121834 (Update README.md)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
