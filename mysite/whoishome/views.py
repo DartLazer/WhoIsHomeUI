@@ -1,5 +1,4 @@
 import time
-
 import requests
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseRedirect, HttpRequest, JsonResponse
@@ -132,7 +131,8 @@ def view_host(request, host_id):
         chart_range = request.POST['chart_time_range']
         timeline_dict = generate_timeline_data(host, chart_range)
     else:
-        timeline_dict = generate_timeline_data(host, '7')
+        chart_range = 3
+        timeline_dict = generate_timeline_data(host, '3')
 
     host_form = HostForm(request=request, host=host)
     host_name_form = ChangeHostNameForm(request=request, host=host)
@@ -146,6 +146,7 @@ def view_host(request, host_id):
                 host.save()
                 form_saved = True
                 host_form = HostForm(request=request, host=host)
+
     elif 'ChangeHostNameForm' in request.POST:
         form = ChangeHostNameForm(request.POST, request=request, host=host)
         if form.is_valid():
@@ -155,15 +156,18 @@ def view_host(request, host_id):
                 host.save()
                 form_saved = True
                 host_name_form = ChangeHostNameForm(request=request, host=host)
+
     logdata_query = None
     if LogData.objects.filter(host=host).exists():
         logdata_query = LogData.objects.filter(host=host).order_by('-id')[:50]
         # contains_logdata = True
 
+
     return render(request, 'whoishome/view_host.html', {'host': host, 'host_form': host_form,
                                                         'host_name_form': host_name_form, 'form_saved': form_saved,
                                                         'logdata_query': logdata_query,
-                                                        'update_available': update_check(), 'timeline': timeline_dict})
+                                                        'update_available': update_check(), 'timeline': timeline_dict,
+                                                        'timeline_chart_range:': chart_range})
 
 
 def getresults(request):
@@ -185,7 +189,8 @@ def getresults(request):
 
     context = {'targets': [], 'home_hosts_list': [], 'new_hosts': [], 'scanner_running': False,
                'update_available': update_check(),
-               'home_page_settings_form': home_page_settings_form, 'all_devices': False}  # dictionary to be send to the html page
+               'home_page_settings_form': home_page_settings_form,
+               'all_devices': False}  # dictionary to be send to the html page
 
     home_page_settings = HomePageSettingsConfig.objects.get(pk=1)
 
@@ -199,7 +204,6 @@ def getresults(request):
 
         if host.target is True:
             context['targets'].append(host)  # adds host to be sent to page.
-
 
     for host in Host.objects.all():
         if host.new:

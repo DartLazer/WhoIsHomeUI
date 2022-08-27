@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+## [0.33] - 2022-08-27
+Timeline can now also be set to 24 hours and 3 days.
+Changed colors of settings page buttons
+
 ## [0.33] - 2022-08-21
 Added the option to show all devices ever connected to the network.
 

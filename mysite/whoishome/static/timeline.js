@@ -45,7 +45,7 @@
         },
         ticks: {
             autoSkip: true,
-            maxTicksLimit: 7,
+            maxTicksLimit: 5,
         }
     };
 
