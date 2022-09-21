@@ -119,7 +119,7 @@ def settings(request):
                 user.set_password(lock_app_form.cleaned_data['password'])
                 user.save()
             else:
-                User.objects.create(username='login_user', password=lock_app_form.cleaned_data['password'])
+                User.objects.create_user(username='login_user', password=lock_app_form.cleaned_data['password'])
             logger.warning('Password updated')
             messages.add_message(request, messages.INFO,
                                  'Password settings changed',
