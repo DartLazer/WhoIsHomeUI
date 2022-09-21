@@ -5,12 +5,15 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpRequest, JsonRes
 from django.shortcuts import render, redirect
 from django.conf import settings as django_settings
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import user_passes_test
 from django.urls import reverse
-from .models import Host, DiscordNotificationsConfig, HomePageSettingsConfig
+from .models import Host, DiscordNotificationsConfig, HomePageSettingsConfig, AppSettings
 from .timeline_functions import generate_timeline_data
 from .scanner_functions import *
 from .forms import HostForm, ChangeHostNameForm, ScannerSettingsForm, EmailSettingsForm, DiscordNotificationsForm, \
-    HomePageSettingsForm
+    HomePageSettingsForm, LockAppForm, EnterPasswordForm
 import logging
 
 last_time_checked = False
@@ -20,10 +23,16 @@ github_version = False
 logger = logging.getLogger('log_to_file')
 
 
+def user_logged_in_if_locked(user: User):
+    app_settings, created_bool = AppSettings.objects.get_or_create(pk=1)
+    return not app_settings.login_required or user.is_authenticated
+
+
 def index(request):
     return HttpResponseRedirect('whoishome')
 
 
+@user_passes_test(user_logged_in_if_locked, login_url='/login/')
 def clear_new_hosts(request):
     hosts = Host.objects.filter()
     for host in hosts:
@@ -33,12 +42,14 @@ def clear_new_hosts(request):
     return HttpResponseRedirect('/whoishome')
 
 
+@user_passes_test(user_logged_in_if_locked, login_url='/login/')
 def settings(request):
     email_settings, created_bool = EmailConfig.objects.get_or_create(pk=1)
 
     discord_config = DiscordNotificationsConfig.objects.get(pk=1)
 
     scanner_config, created_bool = ScannerConfig.objects.get_or_create(pk=1)
+    app_settings, created_bool = AppSettings.objects.get_or_create(pk=1)
 
     scanner_running = True if scanner_config.scanner_enabled else False
 
@@ -97,6 +108,23 @@ def settings(request):
             logger.warning('Discord settings updated.')
         return redirect('settings')
 
+    elif 'lock_app_form' in request.POST:
+        lock_app_form = LockAppForm(request.POST, request=request)
+        if lock_app_form.is_valid():
+            if lock_app_form.has_changed():
+                app_settings.login_required = lock_app_form.cleaned_data['login_required']
+                app_settings.save()
+            if User.objects.filter(username='login_user').exists():
+                user = User.objects.get(username='login_user')
+                user.set_password(lock_app_form.cleaned_data['password'])
+                user.save()
+            else:
+                User.objects.create(username='login_user', password=lock_app_form.cleaned_data['password'])
+            logger.warning('Password updated')
+            messages.add_message(request, messages.INFO,
+                                 'Password settings changed',
+                                 extra_tags='Saved!')
+
     with open('logfile.log') as file:
         logfile = file.readlines()
         if len(logfile) > 30:
@@ -105,15 +133,18 @@ def settings(request):
     scanner_settings_form = ScannerSettingsForm(request=request)
     email_settings_form = EmailSettingsForm(request=request)
     discord_form = DiscordNotificationsForm(request=request)
+    lock_app_form = LockAppForm(request=request)
 
     return render(request, 'whoishome/settings.html',
                   {'email': email_settings, 'scanner_settings_form': scanner_settings_form,
                    'email_settings_form': email_settings_form,
                    'discord_form': discord_form,
+                   'lock_app_form': lock_app_form,
                    "logfile": logfile, 'update_available': update_check(), 'scanner_running': scanner_running,
                    "timezone": django_settings.TIME_ZONE})
 
 
+@user_passes_test(user_logged_in_if_locked, login_url='/login/')
 def view_host(request, host_id):
     form_saved = False
 
@@ -162,7 +193,6 @@ def view_host(request, host_id):
         logdata_query = LogData.objects.filter(host=host).order_by('-id')[:50]
         # contains_logdata = True
 
-
     return render(request, 'whoishome/view_host.html', {'host': host, 'host_form': host_form,
                                                         'host_name_form': host_name_form, 'form_saved': form_saved,
                                                         'logdata_query': logdata_query,
@@ -170,6 +200,7 @@ def view_host(request, host_id):
                                                         'timeline_chart_range:': chart_range})
 
 
+@user_passes_test(user_logged_in_if_locked, login_url='/login/')
 def getresults(request):
     home_page_settings_form = HomePageSettingsForm(request=request)
 
@@ -212,6 +243,7 @@ def getresults(request):
     return render(request, 'whoishome/index.html', context)
 
 
+@user_passes_test(user_logged_in_if_locked, login_url='/login/')
 def network_timeline(request):
     log_data_query = LogData.objects.filter().order_by('-time_saved')
     if len(log_data_query) > 50:
@@ -241,6 +273,7 @@ def network_timeline(request):
     return render(request, 'whoishome/network_timeline.html', context)
 
 
+@user_passes_test(user_logged_in_if_locked, login_url='/login/')
 def update_page(request):
     changelog_url = 'https://raw.githubusercontent.com/DartLazer/WhoIsHomeUI/main/CHANGELOG.md'
     r = requests.get(changelog_url)
@@ -255,21 +288,21 @@ def update_page(request):
 
     return render(request, 'whoishome/update.html', context)
 
-
+@user_passes_test(user_logged_in_if_locked, login_url='/login/')
 def enable_emailer(request):
     email_settings = EmailConfig.objects.get(pk=1)
     email_settings.enable_emailer()
     logger.warning("Emailer Enabled.")
     return HttpResponseRedirect('/whoishome/settings')
 
-
+@user_passes_test(user_logged_in_if_locked, login_url='/login/')
 def disable_emailer(request):
     email_settings = EmailConfig.objects.get(pk=1)
     email_settings.disable_emailer()
     logger.warning("Emailer Disabled.")
     return HttpResponseRedirect('/whoishome/settings')
 
-
+@user_passes_test(user_logged_in_if_locked, login_url='/login/')
 def start_scanner(request):
     scanner_config, created_bool = ScannerConfig.objects.get_or_create(pk=1)
     scanner_config.scanner_enabled = True
@@ -277,7 +310,7 @@ def start_scanner(request):
     logger.warning("Scanner started. Scanning every minute.")
     return HttpResponseRedirect('/')
 
-
+@user_passes_test(user_logged_in_if_locked, login_url='/login/')
 def stop_scanner(request):
     scanner_config, created_bool = ScannerConfig.objects.get_or_create(pk=1)
     scanner_config.scanner_enabled = False
@@ -294,6 +327,26 @@ def scan_now(request):
         scan_processor(online_hosts)
         is_home_check()
     return HttpResponseRedirect('')
+
+
+def log_in(request):
+    if request.POST:
+        password_form = EnterPasswordForm(request.POST)
+        if password_form.is_valid():
+            password = password_form.cleaned_data['password']
+            user = authenticate(username='login_user', password=password)
+            if user is not None:
+                login(request, user)
+                return redirect(getresults)
+            else:
+                messages.add_message(request, messages.INFO,
+                                     'Invalid password!',
+                                     extra_tags='Saved!')
+                logger.warning('Invalid password entered!')
+                return redirect(log_in)
+
+    password_form = EnterPasswordForm()
+    return render(request, 'whoishome/enter_password.html', {'login_form': password_form})
 
 
 def update_check():

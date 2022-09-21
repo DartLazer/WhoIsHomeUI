@@ -2,7 +2,10 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
-## [0.33] - 2022-08-27
+## [0.35] - 2022-09-21
+Password support added. App can now be locked by password on the settings page.
+
+## [0.34] - 2022-08-27
 Timeline can now also be set to 24 hours and 3 days.
 Changed colors of settings page buttons
 

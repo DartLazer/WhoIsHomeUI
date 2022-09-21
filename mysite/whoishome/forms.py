@@ -1,7 +1,8 @@
 from django import forms
-from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordResetForm
 from .models import Host, device_types_form_list, ScannerConfig, EmailConfig, DiscordNotificationsConfig, \
-    HomePageSettingsConfig
+    HomePageSettingsConfig, AppSettings
 
 
 class HostForm(forms.Form):
@@ -108,3 +109,17 @@ class DiscordNotificationsForm(forms.Form):
                                                          widget=forms.Textarea)
         self.fields['new_connection_message'] = forms.CharField(initial=discord_config.new_connection_message,
                                                                 required=False, widget=forms.Textarea)
+
+
+class LockAppForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super(LockAppForm, self).__init__(*args, **kwargs)
+        app_config = AppSettings.objects.get(pk=1)
+        self.fields['login_required'] = forms.BooleanField(label="Lock WhoIsHome with a password",
+                                                           initial=app_config.login_required, required=False)
+        self.fields['password'] = forms.CharField(label='Password', required=True, widget=forms.PasswordInput)
+
+
+class EnterPasswordForm(forms.Form):
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)

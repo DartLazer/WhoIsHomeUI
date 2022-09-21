@@ -10,6 +10,7 @@ urlpatterns = [
     # path('now/', views.getresults, name='now'),
     # path('index', views.index, name='index'),
     path('start_scanner/', views.start_scanner, name='start_scanner'),
+    path('login/', views.log_in, name='login'),
     path('stop_scanner/', views.stop_scanner, name='stop_scanner'),
     path('enable_emailer/', views.enable_emailer, name='enable_emailer'),
     path('disable_emailer/', views.disable_emailer, name='disable_emailer'),

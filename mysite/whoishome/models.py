@@ -83,6 +83,10 @@ class LogData(models.Model):
         return None
 
 
+class AppSettings(models.Model):
+    login_required = models.BooleanField(default=False)
+
+
 class ScannerConfig(models.Model):
     scanner_enabled = models.BooleanField(default=False)
     not_home_treshold = models.IntegerField(default=21)
