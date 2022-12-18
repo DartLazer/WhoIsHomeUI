@@ -10,6 +10,7 @@ COPY mysite /app
 
 # Here is the production image
 FROM python:3-slim-buster as app
+ENV PYTHONUNBUFFERED=1
 COPY --from=builder /root/.local /root/.local
 COPY --from=builder /app /app
 RUN apt update \

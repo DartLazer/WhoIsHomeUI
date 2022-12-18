@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+## [0.36] - 2022-12-18
+Change to DockerFile to prevent being stuck on `Watching for file changes with StatReloader`
+
 ## [0.35] - 2022-09-21
 Password support added. App can now be locked by password on the settings page.
 
