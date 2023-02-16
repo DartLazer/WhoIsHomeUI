@@ -215,8 +215,10 @@ def notify(host: Host, notification_type: str):
     discord = DiscordNotificationsConfig.objects.get(pk=1)
     app_settings = AppSettings.objects.get(pk=1)
     if app_settings.curfew_enabled:
+        print('Checking for Curfew')
         current_time = datetime.datetime.now()
-        if app_settings.curfew_start_time < current_time < app_settings.curfew_end_time:
+        print(current_time.time())
+        if app_settings.curfew_start_time < current_time.time() < app_settings.curfew_end_time:
             logger.info('CURFEW')
             if getattr(discord, 'enabled_switch'):
                 discord_notify(host, discord, 'curfew')
