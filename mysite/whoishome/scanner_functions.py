@@ -2,7 +2,7 @@ import datetime
 import os
 from django.utils import timezone
 from django.utils.timezone import localtime
-from .models import Host, ScannerConfig, EmailConfig, LogData, DiscordNotificationsConfig
+from .models import Host, ScannerConfig, EmailConfig, LogData, DiscordNotificationsConfig, AppSettings
 import smtplib
 import logging
 from discord import Webhook, RequestsWebhookAdapter
@@ -64,7 +64,7 @@ def is_home_check():  # checks and if necessary alters the 'is_home' state of th
     not_home_threshold = getattr(settings, 'not_home_treshold')
     for host in Host.objects.all():
         if host.scans_missed_counter == 0 and host.is_home is False:  # if the target was away and now checks in
-                                                                        # again: target got home and send email
+            # again: target got home and send email
             host.arrival_time = host.last_seen
             host.is_home = True
             host.save()
@@ -72,6 +72,8 @@ def is_home_check():  # checks and if necessary alters the 'is_home' state of th
             LogData.objects.create(host=host, previous_check_out=previous_check_out_time, ip=host.ip)
 
             if host.target:  # Checks if the host is a target (and thus notify)
+                notify(host, 'arrival')
+            elif host.kid_curfew_mode:
                 notify(host, 'arrival')
 
             host.save()
@@ -122,6 +124,12 @@ def discord_notify(host: Host, discord_config: DiscordNotificationsConfig, notif
                                                                         arrival_time=arrival_time, time_away=time_away,
                                                                         time_home=time_home, mac=host.mac, ip=host.ip,
                                                                         name=host.name)
+    elif notification_type == 'curfew':
+        body = getattr(discord_config, 'curfew_message').format(target=target, departure_time=departure_time,
+                                                                arrival_time=arrival_time, time_away=time_away,
+                                                                time_home=time_home, mac=host.mac, ip=host.ip,
+                                                                name=host.name)
+
     else:
         logger.error('Invalid notification type')
         return
@@ -174,6 +182,15 @@ def email_sender(host, notification_type):  # sends arrival/departure emails
                                                                  arrival_time=arrival_time, time_away=time_away,
                                                                  time_home=time_home, mac=host.mac, ip=host.ip,
                                                                  name=host.name)
+    elif notification_type == 'curfew':
+        subject = getattr(email, 'curfew_subject').format(target=target, departure_time=departure_time,
+                                                          arrival_time=arrival_time, time_away=time_away,
+                                                          time_home=time_home, mac=host.mac, ip=host.ip,
+                                                          name=host.name)
+        body = getattr(email, 'curfew_message').format(target=target, departure_time=departure_time,
+                                                       arrival_time=arrival_time, time_away=time_away,
+                                                       time_home=time_home, mac=host.mac, ip=host.ip,
+                                                       name=host.name)
     else:
         logger.error('Invalid notification type')
 
@@ -196,6 +213,18 @@ def email_sender(host, notification_type):  # sends arrival/departure emails
 def notify(host: Host, notification_type: str):
     email = EmailConfig.objects.get(pk=1)
     discord = DiscordNotificationsConfig.objects.get(pk=1)
+    app_settings = AppSettings.objects.get(pk=1)
+    if app_settings.curfew_enabled:
+        current_time = datetime.datetime.now()
+        if app_settings.curfew_start_time < current_time < app_settings.curfew_end_time:
+            logger.info('CURFEW')
+            if getattr(discord, 'enabled_switch'):
+                discord_notify(host, discord, 'curfew')
+
+            if getattr(email, 'email_switch'):
+                email_sender(host, 'curfew')
+            return
+
     print('NOTIFY')
     if getattr(discord, 'enabled_switch'):
         discord_notify(host, discord, notification_type)

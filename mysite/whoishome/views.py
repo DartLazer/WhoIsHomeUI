@@ -13,7 +13,7 @@ from .models import Host, DiscordNotificationsConfig, HomePageSettingsConfig, Ap
 from .timeline_functions import generate_timeline_data
 from .scanner_functions import *
 from .forms import HostForm, ChangeHostNameForm, ScannerSettingsForm, EmailSettingsForm, DiscordNotificationsForm, \
-    HomePageSettingsForm, LockAppForm, EnterPasswordForm
+    HomePageSettingsForm, LockAppForm, EnterPasswordForm, CurfewTimesForm
 import logging
 
 last_time_checked = False
@@ -125,6 +125,18 @@ def settings(request):
                                  'Password settings changed',
                                  extra_tags='Saved!')
 
+    elif 'curfew_form' in request.POST:
+        curfew_form = CurfewTimesForm(request.POST, request=request)
+        if curfew_form.is_valid():
+            if curfew_form.has_changed():
+                for changed_data in curfew_form.changed_data:
+                    setattr(app_settings, changed_data, curfew_form.cleaned_data[changed_data])
+                app_settings.save()
+                messages.add_message(request, messages.INFO,
+                                     'Curfew settings saved!',
+                                     extra_tags='Saved!')
+                logger.warning('Curfew settings updated.')
+
     with open('logfile.log') as file:
         logfile = file.readlines()
         if len(logfile) > 30:
@@ -134,12 +146,14 @@ def settings(request):
     email_settings_form = EmailSettingsForm(request=request)
     discord_form = DiscordNotificationsForm(request=request)
     lock_app_form = LockAppForm(request=request)
-
+    curfew_form = CurfewTimesForm(request=request)
+    print(app_settings.curfew_enabled)
     return render(request, 'whoishome/settings.html',
                   {'email': email_settings, 'scanner_settings_form': scanner_settings_form,
                    'email_settings_form': email_settings_form,
                    'discord_form': discord_form,
                    'lock_app_form': lock_app_form,
+                   'curfew_form': curfew_form,
                    "logfile": logfile, 'update_available': update_check(), 'scanner_running': scanner_running,
                    "timezone": django_settings.TIME_ZONE})
 

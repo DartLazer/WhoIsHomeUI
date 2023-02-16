@@ -15,8 +15,10 @@ class HostForm(forms.Form):
         self.fields["device_type"] = forms.ChoiceField(
             choices=device_types_list, required=False, label=False)
         self.fields['device_type'].widget.attrs.update(style='max-width: 12em', onchange='form.submit()')
-        self.fields['target'] = forms.BooleanField(initial=self.host.target, required=False)
+        self.fields['target'] = forms.BooleanField(initial=self.host.target, required=False, label='')
         self.fields['target'].widget.attrs.update(style='max-width: 12em', onchange='form.submit()')
+        self.fields['kid_curfew_mode'] = forms.BooleanField(initial=self.host.kid_curfew_mode, required=False, label="")
+        self.fields['kid_curfew_mode'].widget.attrs.update(style='max-width: 12em', onchange='form.submit()')
         device_types_list.pop(0)
 
 
@@ -90,6 +92,9 @@ class EmailSettingsForm(forms.Form):
         self.fields['arrival_mail_suject'] = forms.CharField(initial=email_config.arrival_mail_suject, required=False)
         self.fields['arrival_mail_body'] = forms.CharField(initial=email_config.arrival_mail_body, required=False,
                                                            widget=forms.Textarea)
+        self.fields['curfew_subject'] = forms.CharField(initial=email_config.curfew_subject, required=False)
+        self.fields['curfew_message'] = forms.CharField(initial=email_config.curfew_message, required=False,
+                                                        widget=forms.Textarea)
 
 
 class DiscordNotificationsForm(forms.Form):
@@ -109,6 +114,8 @@ class DiscordNotificationsForm(forms.Form):
                                                          widget=forms.Textarea)
         self.fields['new_connection_message'] = forms.CharField(initial=discord_config.new_connection_message,
                                                                 required=False, widget=forms.Textarea)
+        self.fields['curfew_message'] = forms.CharField(initial=discord_config.curfew_message, required=False,
+                                                        widget=forms.Textarea)
 
 
 class LockAppForm(forms.Form):
@@ -119,6 +126,21 @@ class LockAppForm(forms.Form):
         self.fields['login_required'] = forms.BooleanField(label="Lock WhoIsHome with a password",
                                                            initial=app_config.login_required, required=False)
         self.fields['password'] = forms.CharField(label='Password', required=True, widget=forms.PasswordInput)
+
+
+class CurfewTimesForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop("request")
+        super(CurfewTimesForm, self).__init__(*args, **kwargs)
+        app_config = AppSettings.objects.get(pk=1)
+        self.fields['curfew_enabled'] = forms.BooleanField(label="Enable curfew notifications for selected devices.",
+                                                           initial=app_config.curfew_enabled, required=False)
+        self.fields['curfew_start_time'] = forms.TimeField(label="Beginning of Curfew time", required=True,
+                                                           widget=forms.TimeInput(attrs={'type': 'time'}),
+                                                           initial=app_config.curfew_start_time)
+        self.fields['curfew_end_time'] = forms.TimeField(label="End of Curfew time", required=True,
+                                                         widget=forms.TimeInput(attrs={'type': 'time'}),
+                                                         initial=app_config.curfew_end_time)
 
 
 class EnterPasswordForm(forms.Form):

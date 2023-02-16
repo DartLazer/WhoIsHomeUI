@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from datetime import time
 
 device_types = ['unknown', 'pc', 'phone', 'server', 'laptop', 'tv', "speaker", "Smart Home Device", "tablet"]
 device_types_form_list = [("unknown", "unknown"), ("pc", "pc"), ("phone", "phone"), ("server", "server"),
@@ -41,6 +42,7 @@ class Host(models.Model):
     new = models.BooleanField(default=True)
     target = models.BooleanField(default=False)
     device_type = models.CharField(max_length=50, default="unknown")
+    kid_curfew_mode = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -85,6 +87,9 @@ class LogData(models.Model):
 
 class AppSettings(models.Model):
     login_required = models.BooleanField(default=False)
+    curfew_enabled = models.BooleanField(default=False)
+    curfew_start_time = models.TimeField(blank=True, default=time(hour=22))
+    curfew_end_time = models.TimeField(blank=True, default=time(hour=8))
 
 
 class ScannerConfig(models.Model):
@@ -107,6 +112,8 @@ class DiscordNotificationsConfig(models.Model):
     webhook_url = models.CharField(max_length=256)
     arrival_message = models.CharField(max_length=500)
     departure_message = models.CharField(max_length=500)
+    curfew_message = models.CharField(max_length=500,
+                                      default='At time {arrival_time} device {target} connected during curfew time')
     new_connection_message = models.CharField(max_length=500, default='At time {arrival_time} a new device connected '
                                                                       'to the network\n'
                                                                       'MAC: {mac}\n'
@@ -126,6 +133,9 @@ class EmailConfig(models.Model):
     departure_mail_body = models.CharField(max_length=500, default='{target} has left home at time {departure_time}.')
     arrival_mail_suject = models.CharField(max_length=100, default='{target} has arrived home.')
     arrival_mail_body = models.CharField(max_length=500, default='{target} has arrived home at time {arrival_time}')
+    curfew_subject = models.CharField(max_length=500, default='{target} connected during curfew.')
+    curfew_message = models.CharField(max_length=500,
+                                      default='At time {arrival_time} device {target} connected during curfew time')
     new_connection_mail_subject = models.CharField(max_length=500, default='New device detected.')
     new_connection_mail_body = models.CharField(max_length=500,
                                                 default='At time {arrival_time} a device connected to the '
