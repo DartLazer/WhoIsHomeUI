@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+## [0.37] - 2023-02-16
+Added **Curfew Mode**.
+Curfew mode overrules the normal notification modes and **only** sends notifications for curfew enabled devices, durfing curfew times.
+You could enable curfew mode for i.e. devices for your kids, which shouldn't be online during curfew times.
+
+ ### Update Instructions
+- Run `git pull` and after updating `docker compose up --build -d`
+
 ## [0.36] - 2022-12-18
 Change to DockerFile to prevent being stuck on `Watching for file changes with StatReloader`
 
