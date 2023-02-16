@@ -214,6 +214,7 @@ def notify(host: Host, notification_type: str):
     email = EmailConfig.objects.get(pk=1)
     discord = DiscordNotificationsConfig.objects.get(pk=1)
     app_settings = AppSettings.objects.get(pk=1)
+    print(app_settings.curfew_enabled)
     if app_settings.curfew_enabled:
         print('Checking for Curfew')
         current_time = datetime.datetime.now()
