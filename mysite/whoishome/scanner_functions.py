@@ -216,17 +216,15 @@ def notify(host: Host, notification_type: str):
     app_settings = AppSettings.objects.get(pk=1)
     print(app_settings.curfew_enabled)
     if app_settings.curfew_enabled:
-        print('Checking for Curfew')
         current_time = datetime.datetime.now()
-        print(current_time.time())
-        if app_settings.curfew_start_time < current_time.time() < app_settings.curfew_end_time:
-            logger.info('CURFEW')
+        if app_settings.curfew_start_time < current_time.time() > app_settings.curfew_end_time:
+            logger.info(f'CURFEW Intruder: {host.name}')
             if getattr(discord, 'enabled_switch'):
                 discord_notify(host, discord, 'curfew')
 
             if getattr(email, 'email_switch'):
                 email_sender(host, 'curfew')
-            return
+        return
 
     print('NOTIFY')
     if getattr(discord, 'enabled_switch'):
