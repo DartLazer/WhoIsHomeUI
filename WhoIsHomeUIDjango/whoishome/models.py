@@ -87,6 +87,7 @@ class LogData(models.Model):
 
 class AppSettings(models.Model):
     login_required = models.BooleanField(default=False)
+    auto_delete_after_x_days = models.IntegerField(default=0)
     curfew_enabled = models.BooleanField(default=False)
     curfew_start_time = models.TimeField(blank=True, default=time(hour=22))
     curfew_end_time = models.TimeField(blank=True, default=time(hour=8))
@@ -110,6 +111,22 @@ class DiscordNotificationsConfig(models.Model):
     enabled_switch = models.BooleanField(default=False)
     new_connection_notification_switch = models.BooleanField(default=False)
     webhook_url = models.CharField(max_length=256)
+    arrival_message = models.CharField(max_length=500)
+    departure_message = models.CharField(max_length=500)
+    curfew_message = models.CharField(max_length=500,
+                                      default='At time {arrival_time} device {target} connected during curfew time')
+    new_connection_message = models.CharField(max_length=500, default='At time {arrival_time} a new device connected '
+                                                                      'to the network\n'
+                                                                      'MAC: {mac}\n'
+                                                                      'IP: {ip}\n'
+                                                                      'Name: {name}')
+
+
+class TelegramNotificationsConfig(models.Model):
+    enabled_switch = models.BooleanField(default=False)
+    new_device_detected_notifications = models.BooleanField(default=False)
+    bot_token = models.CharField(blank=True, max_length=256)
+    chat_id = models.CharField(blank=True, max_length=256)
     arrival_message = models.CharField(max_length=500)
     departure_message = models.CharField(max_length=500)
     curfew_message = models.CharField(max_length=500,

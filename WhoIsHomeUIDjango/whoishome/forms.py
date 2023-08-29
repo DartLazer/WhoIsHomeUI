@@ -1,8 +1,10 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordResetForm
+from django.forms import Textarea
+
 from .models import Host, device_types_form_list, ScannerConfig, EmailConfig, DiscordNotificationsConfig, \
-    HomePageSettingsConfig, AppSettings
+    HomePageSettingsConfig, AppSettings, TelegramNotificationsConfig
 
 
 class HostForm(forms.Form):
@@ -145,3 +147,42 @@ class CurfewTimesForm(forms.Form):
 
 class EnterPasswordForm(forms.Form):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
+
+
+class AutoDeleteAfterXDaysForm(forms.ModelForm):
+    class Meta:
+        model = AppSettings
+        fields = ['auto_delete_after_x_days']
+
+
+class TelegramNotificationsConfigForm(forms.ModelForm):
+    class Meta:
+        model = TelegramNotificationsConfig
+        fields = [
+            'enabled_switch',
+            'new_device_detected_notifications',
+            'bot_token',
+            'chat_id',
+            'arrival_message',
+            'departure_message',
+            'curfew_message',
+            'new_connection_message'
+        ]
+
+        widgets = {
+            'arrival_message': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'departure_message': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'curfew_message': Textarea(attrs={'rows': 4, 'cols': 40}),
+            'new_connection_message': Textarea(attrs={'rows': 4, 'cols': 40}),
+        }
+
+        labels = {
+            'enabled_switch': 'Enable Notifications',
+            'new_device_detected_notifications' : 'Allow notifications for new devices',
+            'bot_token': 'Bot Token',
+            'chat_id': 'Chat ID',
+            'arrival_message': 'Arrival Message',
+            'departure_message': 'Departure Message',
+            'curfew_message': 'Curfew Violation Message',
+            'new_connection_message': 'New Connection Message',
+        }
