@@ -1,5 +1,5 @@
-Django>=3.0,<4.0
-django-crispy-forms==1.11.2
-requests~=2.26.0
+Django~=4.2
+django-crispy-forms~=2.0
+requests~=2.31.0
 discord==1.7.3
 discord.py==1.7.3
