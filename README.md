@@ -171,7 +171,7 @@ docker-compose down && git pull && docker-compose build
 
 ```bash
 docker container create --name dummy -v whoishomeui_dbstore:/mnt/test hello-world
-docker cp mysite/db.sqlite3 dummy:/mnt/test/db.sqlite3
+docker cp WhoIsHomeUIDjango/db.sqlite3 dummy:/mnt/test/db.sqlite3
 docker rm dummy
 ```
 

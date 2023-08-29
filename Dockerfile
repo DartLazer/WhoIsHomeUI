@@ -6,7 +6,7 @@ RUN apt-get update \
 COPY requirements.txt /app/requirements.txt
 WORKDIR app
 RUN pip install --user -r requirements.txt
-COPY mysite /app
+COPY WhoIsHomeUIDjango /app
 
 # Here is the production image
 FROM python:3-slim-buster as app
