@@ -237,6 +237,8 @@ That's it!
 - Press SAVE. Let the page reload and now enable the scanner
 - **Now supports Discord Notifications as well**. Setup at the settings page! (<a href="https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks">Click here for
   instructions on how to setup the discord webhook</a>)
+- **Now Supports Telegram Notifications** ([How to get your telegram bot token and chat ID](https://advancedweb.hu/the-easiest-way-to-set-up-a-chat-with-your-telegram-bot/)
+)
 - If you want email notifications set up email settings as well.
 - In the email body and subject you can access the following variables by putting them in curly brackets {}
 - target (gives target name), arrival_time, departure_time , time_away, time_home.

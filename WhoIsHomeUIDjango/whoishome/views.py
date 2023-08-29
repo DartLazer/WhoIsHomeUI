@@ -1,19 +1,19 @@
-import time
+from datetime import timedelta
+
 import requests
-from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, HttpResponseRedirect, HttpRequest, JsonResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.conf import settings as django_settings
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import user_passes_test
-from django.urls import reverse
-from .models import Host, DiscordNotificationsConfig, HomePageSettingsConfig, AppSettings
+from .models import HomePageSettingsConfig
 from .timeline_functions import generate_timeline_data
 from .scanner_functions import *
 from .forms import HostForm, ChangeHostNameForm, ScannerSettingsForm, EmailSettingsForm, DiscordNotificationsForm, \
-    HomePageSettingsForm, LockAppForm, EnterPasswordForm, CurfewTimesForm
+    HomePageSettingsForm, LockAppForm, EnterPasswordForm, CurfewTimesForm, AutoDeleteAfterXDaysForm, \
+    TelegramNotificationsConfigForm
 import logging
 
 last_time_checked = False
@@ -47,7 +47,7 @@ def settings(request):
     email_settings, created_bool = EmailConfig.objects.get_or_create(pk=1)
 
     discord_config = DiscordNotificationsConfig.objects.get(pk=1)
-
+    telegram_config = TelegramNotificationsConfig.objects.get(pk=1)
     scanner_config, created_bool = ScannerConfig.objects.get_or_create(pk=1)
     app_settings, created_bool = AppSettings.objects.get_or_create(pk=1)
 
@@ -95,6 +95,7 @@ def settings(request):
             logger.warning('Email settings updated.')
             return redirect('settings')
 
+
     elif 'update_discord_settings' in request.POST:
         discord_form = DiscordNotificationsForm(request.POST, request=request)
         if discord_form.is_valid():
@@ -125,6 +126,25 @@ def settings(request):
                                  'Password settings changed',
                                  extra_tags='Saved!')
 
+    elif 'auto_delete_after_x_days_form' in request.POST:
+        form = AutoDeleteAfterXDaysForm(request.POST, instance=app_settings)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.INFO,
+                                 'Auto delete setting saved!',
+                                 extra_tags='Saved!')
+            logger.warning('Auto delete setting updated.')
+
+    elif 'update_telegram_config' in request.POST:
+        form = TelegramNotificationsConfigForm(request.POST, instance=telegram_config)
+        if form.is_valid():
+            form.save()
+            messages.add_message(request, messages.INFO,
+                                 'Auto delete setting saved!',
+                                 extra_tags='Saved!')
+            logger.warning('Auto delete setting updated.')
+
+
     elif 'curfew_form' in request.POST:
         curfew_form = CurfewTimesForm(request.POST, request=request)
         if curfew_form.is_valid():
@@ -147,6 +167,8 @@ def settings(request):
     discord_form = DiscordNotificationsForm(request=request)
     lock_app_form = LockAppForm(request=request)
     curfew_form = CurfewTimesForm(request=request)
+    telegram_config_form = TelegramNotificationsConfigForm(instance=telegram_config)
+    auto_delete_form = AutoDeleteAfterXDaysForm(instance=app_settings)
     print(app_settings.curfew_enabled)
     return render(request, 'whoishome/settings.html',
                   {'email': email_settings, 'scanner_settings_form': scanner_settings_form,
@@ -154,6 +176,8 @@ def settings(request):
                    'discord_form': discord_form,
                    'lock_app_form': lock_app_form,
                    'curfew_form': curfew_form,
+                   'auto_delete_form': auto_delete_form,
+                   'telegram_form': telegram_config_form,
                    "logfile": logfile, 'update_available': update_check(), 'scanner_running': scanner_running,
                    "timezone": django_settings.TIME_ZONE})
 
@@ -302,12 +326,14 @@ def update_page(request):
 
     return render(request, 'whoishome/update.html', context)
 
+
 @user_passes_test(user_logged_in_if_locked, login_url='/login/')
 def enable_emailer(request):
     email_settings = EmailConfig.objects.get(pk=1)
     email_settings.enable_emailer()
     logger.warning("Emailer Enabled.")
     return HttpResponseRedirect('/whoishome/settings')
+
 
 @user_passes_test(user_logged_in_if_locked, login_url='/login/')
 def disable_emailer(request):
@@ -316,6 +342,7 @@ def disable_emailer(request):
     logger.warning("Emailer Disabled.")
     return HttpResponseRedirect('/whoishome/settings')
 
+
 @user_passes_test(user_logged_in_if_locked, login_url='/login/')
 def start_scanner(request):
     scanner_config, created_bool = ScannerConfig.objects.get_or_create(pk=1)
@@ -323,6 +350,7 @@ def start_scanner(request):
     scanner_config.save()
     logger.warning("Scanner started. Scanning every minute.")
     return HttpResponseRedirect('/')
+
 
 @user_passes_test(user_logged_in_if_locked, login_url='/login/')
 def stop_scanner(request):
@@ -335,6 +363,18 @@ def stop_scanner(request):
 
 def scan_now(request):
     scanner_config, created_bool = ScannerConfig.objects.get_or_create(pk=1)
+
+    app_settings = AppSettings.objects.get(pk=1)
+    if app_settings.auto_delete_after_x_days > 0:
+        # Calculate the datetime for the cutoff
+        cutoff_date = timezone.now() - timedelta(days=app_settings.auto_delete_after_x_days)
+
+        # Query the database to get all LogData instances older than the cutoff_date
+        logs_to_delete = LogData.objects.filter(time_saved__lt=cutoff_date)
+
+        # Delete all of them
+        logs_to_delete.delete()
+
     if scanner_config.scanner_enabled:
         print('Scanning')
         online_hosts = scan_network()

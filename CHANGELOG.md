@@ -2,6 +2,25 @@
 All notable changes to this project will be documented in this file.
  
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
+
+## [0.40] - 2023-08-29
+
+### Added
+
+ - **Telegram Notifications**.
+Telegram notifications are now available on the settings page. Only requirements are Token ID and chat ID.
+[How to get your telegram bot token and chat ID](https://advancedweb.hu/the-easiest-way-to-set-up-a-chat-with-your-telegram-bot/)
+
+- **Auto Delete Logs Setting**
+On the settings page under app settings you can now set auto_delete_logs setting. Setting it to 0 means keeping forever
+- **Updated readme** to reflect telegram notifcations.
+
+### Updated
+- Updated requirements.txt to use Django 4.2, and update requests and django-crispy-forms
+
+ ### Update Instructions
+- Run `git pull` and after updating `docker compose up --build -d`
+- 
 ## [0.37] - 2023-02-16
 Added **Curfew Mode**.
 Curfew mode overrules the normal notification modes and **only** sends notifications for curfew enabled devices, durfing curfew times.
