@@ -58,7 +58,7 @@ def view_host(request, host_id):
         logdata_query = LogData.objects.filter(host=host).order_by('-id')[:50]
         # contains_logdata = True
 
-    return render(request, 'whoishome/view_host.html', {'host': host, 'host_form': host_form,
+    return render(request, 'pages/view_host.html', {'host': host, 'host_form': host_form,
                                                         'host_name_form': host_name_form, 'form_saved': form_saved,
                                                         'logdata_query': logdata_query,
                                                         'update_available': update_check(), 'timeline': timeline_dict,
