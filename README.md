@@ -133,7 +133,7 @@ These are the steps to setup the project on your system
 
 4. In the cloned folder execute the following command to start
     ```sh
-    docker-compose up -d
+    docker compose up --build -d
     ```
 5. The container should now be up and running on your
     ```sh
