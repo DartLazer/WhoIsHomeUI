@@ -1,6 +1,7 @@
 from datetime import timedelta
-
 import requests
+import logging
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.conf import settings as django_settings
@@ -9,12 +10,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import user_passes_test
 from .models import HomePageSettingsConfig
+
 from .timeline_functions import generate_timeline_data
 from .scanner_functions import *
 from .forms import HostForm, ChangeHostNameForm, ScannerSettingsForm, EmailSettingsForm, DiscordNotificationsForm, \
     HomePageSettingsForm, LockAppForm, EnterPasswordForm, CurfewTimesForm, AutoDeleteAfterXDaysForm, \
     TelegramNotificationsConfigForm
-import logging
+from .notification_functions import discord_test_message
 
 last_time_checked = False
 update_available = False
@@ -103,8 +105,11 @@ def settings(request):
                 for changed_data in discord_form.changed_data:
                     setattr(discord_config, changed_data, discord_form.cleaned_data[changed_data])
                 discord_config.save()
+            if discord_config.webhook_url:
+                discord_test_message(discord_config)
+
                 messages.add_message(request, messages.INFO,
-                                     'Discord settings saved!',
+                                     'Discord settings saved & test message sent!',
                                      extra_tags='Saved!')
             logger.warning('Discord settings updated.')
         return redirect('settings')
