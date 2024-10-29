@@ -48,7 +48,7 @@
             <!-- Settings Buttons, including Scanner Switch -->
             <div class="col-12 d-flex flex-wrap gap-2">
                 <!-- Scanner Status Switch -->
-                <label class="btn btn-{% if scanner_running %}success{% else %}danger{% endif %} mb-2"
+                <label class="btn btn-{% if scanner_running %}success{% else %}danger{% endif %}"
                        id="scannerButton">
                     Scanner Status
                     <input type="checkbox" id="startstop" {% if scanner_running %} checked {% endif %}
