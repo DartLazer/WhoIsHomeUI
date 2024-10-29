@@ -14,8 +14,8 @@ services:
 
   scanner:
     network_mode: "host"
-    image: curlimages/curl
-    command: sh -c "sleep 60s && curl -s http://0.0.0.0:${WHOIH_PORT}/scan/"
+    image: multiarch/curl
+    command: sh -c "sleep 60s && curl -s http://0.0.0.0:8089/scan/"
     restart: always
 
 volumes:
