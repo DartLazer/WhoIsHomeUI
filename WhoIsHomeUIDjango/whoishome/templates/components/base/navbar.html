@@ -1,18 +1,21 @@
+{% load static %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm rounded">
-    <div class="container-fluid">
+    <div class="container">
+        <!-- Logo on the left -->
         <a class="navbar-brand d-flex align-items-center" href="{% url 'index' %}">
-            <img src="/static/icons/manifest/navbar-vector.svg" alt="" width="30" height="30"
+            <img src="{% static 'icons/manifest/navbar-vector.svg' %}" alt="" width="30" height="30"
                  class="d-inline-block align-text-bottom me-2">
             <span style="font-weight: 600; color: #6c757d;">WhoIsHome</span>
         </a>
+        <!-- Toggler for mobile screens -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+        <!-- Navbar links starting from the left, next to the logo -->
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
+            <ul class="navbar-nav ms-lg-3 mb-2 mb-lg-0"> <!-- ms-lg-3 adds space between logo and links on larger screens -->
                 <li class="nav-item">
                     <a class="nav-link {% if request.path == '/index/' %}active text-primary{% endif %}"
                        href="{% url 'index' %}">
