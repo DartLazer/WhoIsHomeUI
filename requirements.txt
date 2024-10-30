@@ -1,4 +1,5 @@
 Django~=4.2
-django-crispy-forms~=1.13
+django-crispy-forms~=2.3
+crispy-bootstrap5~=2024.10
 requests~=2.32.0
 discord.py==2.4.0
