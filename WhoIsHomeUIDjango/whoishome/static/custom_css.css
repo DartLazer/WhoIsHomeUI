@@ -109,3 +109,13 @@ footer {
     padding: 1rem;
     text-align: center;
 }
+
+
+/* Icon Styling */
+.icon-primary {
+    color: var(--color-highlight); /* Uses the primary color #29c3a9 */
+}
+
+.icon-secondary {
+    color: var(--color-text-secondary); /* Uses the secondary color #6c757d */
+}
