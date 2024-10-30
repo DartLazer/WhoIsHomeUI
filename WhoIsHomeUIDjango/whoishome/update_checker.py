@@ -19,7 +19,7 @@ def update_check():
     now = timezone.now()
     global last_time_checked
     if last_time_checked is False or (now - last_time_checked).seconds >= 3600:
-        version_check_url = 'https://raw.githubusercontent.com/DartLazer/WhoIsHomeUI/main/mysite/latest_version.txt'
+        version_check_url = 'https://raw.githubusercontent.com/DartLazer/WhoIsHomeUI/main/WhoIsHomeUIDjango/latest_version.txt'
         try:
             r = requests.get(version_check_url)
             if r.status_code == 200:
