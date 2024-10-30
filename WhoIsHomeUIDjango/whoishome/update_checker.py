@@ -6,37 +6,42 @@ from django.utils import timezone
 
 from whoishome.scanner_functions import logger
 
-last_time_checked = False
-update_available = False
-github_version = False
+LAST_TIME_CHECKED = False
+UPDATE_AVAILABLE = False
+GITHUB_VERSION = False
 logger = logging.getLogger('log_to_file')
 
 
+def get_github_version():
+    return GITHUB_VERSION
+
+
 def update_check():
-    global update_available
-    if update_available:
+    global UPDATE_AVAILABLE
+    global GITHUB_VERSION
+    global LAST_TIME_CHECKED
+    if UPDATE_AVAILABLE:
         return True
     now = timezone.now()
-    global last_time_checked
-    if last_time_checked is False or (now - last_time_checked).seconds >= 3600:
+
+    if LAST_TIME_CHECKED is False or (now - LAST_TIME_CHECKED).seconds >= 3600:
         version_check_url = 'https://raw.githubusercontent.com/DartLazer/WhoIsHomeUI/main/WhoIsHomeUIDjango/latest_version.txt'
         try:
             r = requests.get(version_check_url)
             if r.status_code == 200:
-                last_time_checked = now
+                LAST_TIME_CHECKED = now
                 remote_version = float(r.text)
-                global github_version
-                github_version = remote_version
+                GITHUB_VERSION = remote_version
                 if remote_version > django_settings.CURRENT_VERSION:
-                    update_available = True
+                    UPDATE_AVAILABLE = True
                     return True
                 else:
-                    update_available = False
+                    UPDATE_AVAILABLE = False
                     return False
         except requests.exceptions.ConnectionError:
             logger.error('Unable to check for updates. Connection failed.')
             pass
 
     else:
-        update_available = False
+        UPDATE_AVAILABLE = False
         return False

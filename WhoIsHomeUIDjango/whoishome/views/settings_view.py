@@ -12,7 +12,7 @@ from whoishome.models import EmailConfig, DiscordNotificationsConfig, TelegramNo
     AppSettings
 from whoishome.notification_functions import discord_test_message
 from whoishome.authentication_utils import user_logged_in_if_locked
-from whoishome.update_checker import logger, update_check, github_version
+from whoishome.update_checker import logger, update_check, get_github_version
 
 
 @user_passes_test(user_logged_in_if_locked, login_url='/login/')
@@ -186,7 +186,9 @@ def update_page(request):
     else:
         changelog = 'Unable to retrieve changelog.'
 
-    context = {'current_version': django_settings.CURRENT_VERSION, 'github_version': github_version,
-               'update_available': update_check(), 'changelog': changelog}
+    context = {
+        'current_version': django_settings.CURRENT_VERSION, 'update_available': update_check(),
+        'github_version': get_github_version(), 'changelog': changelog
+    }
 
     return render(request, 'whoishome/update.html', context)
