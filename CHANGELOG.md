@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
-## [0.5] - 2024-10-30
+## [0.51] - 2024-10-30
 
 ### Major Fixes
 
@@ -18,6 +18,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 - **Updated Styling**: Redesigned elements for a modern look and enhanced user experience.
 - **ARM Compatibility**: Fixed `curl` library support for ARM architectures, restoring functionality on Raspberry Pi
   devices.
+
+### Minor fixes
+- Text overflow issues on the home page
+- Updated screenshots in the README
 
 ### Update Instructions
 
