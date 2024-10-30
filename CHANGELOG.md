@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
-## [0.51] - 2024-10-30
+## [0.52] - 2024-10-30
 
 ### Major Fixes
 
@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ### Minor fixes
 - Text overflow issues on the home page
 - Updated screenshots in the README
+- Remote version not showing on update page
 
 ### Update Instructions
 
