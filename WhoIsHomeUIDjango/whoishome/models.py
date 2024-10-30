@@ -20,13 +20,22 @@ def strfdelta(tdelta, fmt):
     return fmt.format(**d)
 
 
-def build_timedelta_string(time_delta_object):
+def build_timedelta_string(time_delta_object, mobile=False):
     if time_delta_object.days > 0:
-        return strfdelta(time_delta_object, "{days} days, {hours} hours, and {minutes} minutes.")
+        if mobile:
+            return strfdelta(time_delta_object, "{days}d, {hours}h, {minutes}m")
+        else:
+            return strfdelta(time_delta_object, "{days} days, {hours} hours, and {minutes} minutes.")
     elif time_delta_object.seconds > 3600:
-        return strfdelta(time_delta_object, "{hours} hours, and {minutes} minutes.")
+        if mobile:
+            return strfdelta(time_delta_object, "{hours}h, {minutes}m")
+        else:
+            return strfdelta(time_delta_object, "{hours} hours, and {minutes} minutes.")
     else:
-        return strfdelta(time_delta_object, "{minutes} minutes.")
+        if mobile:
+            return strfdelta(time_delta_object, "{minutes}m")
+        else:
+            return strfdelta(time_delta_object, "{minutes} minutes.")
 
 
 class Host(models.Model):
@@ -58,6 +67,15 @@ class Host(models.Model):
             return device_types_icons[self.device_type]
         except KeyError:
             return device_types_icons['unknown']
+
+    def format_last_seen_mobile(self):
+        # format 24 Oct. 15:20
+        return self.last_seen.strftime('%d %b. %H:%M')
+
+    def format_home_since_mobile(self):
+        # format 1 Day, 2 Hrs, 30 Mins
+        time_home = (timezone.now() - self.arrival_time)
+        return build_timedelta_string(time_home, mobile=True)
 
 
 class Target(models.Model):
