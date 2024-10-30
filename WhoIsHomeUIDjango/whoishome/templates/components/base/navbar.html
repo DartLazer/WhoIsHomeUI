@@ -1,0 +1,60 @@
+<style>
+    /* Highlight color for navbar links */
+    .navbar-nav .nav-link.active,
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link:focus {
+        color: #29c3a9 !important;
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm rounded">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'index' %}">
+            <img src="/static/icons/manifest/navbar-vector.svg" alt="" width="30" height="30"
+                 class="d-inline-block align-text-bottom me-2">
+            <span style="font-weight: 600; color: #6c757d;">WhoIsHome</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/index/' %}active text-primary{% endif %}"
+                       href="{% url 'index' %}">
+                        <i class="bi bi-house-door" style="font-size: 1.3rem;"></i>
+                        Home
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/network_timeline/' %}active text-primary{% endif %}"
+                       href="{% url 'network_timeline' %}">
+                        <i class="bi bi-journal-text" style="font-size: 1.3rem;"></i>
+                        Network Timeline
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/settings/' %}active text-primary{% endif %}"
+                       href="{% url 'settings' %}">
+                        <i class="bi bi-gear" style="font-size: 1.3rem;"></i>
+                        Settings
+                    </a>
+                </li>
+
+                {% if update_available %}
+                    <li class="nav-item">
+                        <a class="nav-link active text-danger" href="{% url 'update' %}">
+                            <i class="bi bi-exclamation-circle" style="font-size: 1.3rem;"></i>
+                            Update Available!
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
