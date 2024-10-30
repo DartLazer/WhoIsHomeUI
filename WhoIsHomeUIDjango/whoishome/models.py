@@ -45,6 +45,8 @@ class Host(models.Model):
     kid_curfew_mode = models.BooleanField(default=False)
 
     def __str__(self):
+        if 'unknown' in self.name.lower():
+            return f'(Unknown) {self.mac} - {self.ip}'
         return self.name
 
     def mark_seen(self):

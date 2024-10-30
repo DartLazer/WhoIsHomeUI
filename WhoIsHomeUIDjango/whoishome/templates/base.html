@@ -20,59 +20,14 @@
     <link href="{% static 'timeline.css' %}" rel="stylesheet">
     <!--- Bootstrap icons -->
     <link href="{% static 'bootstrap/bootstrap-icons-1.7.1/bootstrap-icons.css' %}" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{% static 'whoishome/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'custom_css.css' %}">
     <script src="{% static 'jquery-3.5.1.min.js' %}"></script>
 
     <title>WhoIsHome</title>
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg  navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'index' %}">
-            <img src="/static/icons/manifest/black-vector.svg" alt="" width="24" height="24" class="d-inline-block align-text-bottom">
-           WhoIsHome
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'index' %}">
-                        <i class="bi bi-house-door" style="font-size: 1.2rem;"></i>
-                        Home
-                    </a>
-                </li>
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url 'network_timeline' %}">
-                            <i class="bi bi-journal-text" style="font-size: 1.2rem;"></i>
-                            Network Timeline
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url 'settings' %}">
-                            <i class="bi bi-gear" style="font-size: 1.2rem;"></i>
-                            Settings
-                        </a>
-                    </li>
-                    {% if update_available %}
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{% url 'update' %}">
-                            <i class="bi bi-exclamation-circle" style="font-size: 1.2rem; color: red;"></i>
-                            Update Available!
-                        </a>
-                    </li>
-                    {% endif %}
-                </ul>
-        </div>
-    </div>
-</nav>
+{% include "components/base/navbar.html" %}
 <div class="container">
     <br/>
     {% block content %}

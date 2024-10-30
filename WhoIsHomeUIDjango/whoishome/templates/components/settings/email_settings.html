@@ -1,0 +1,34 @@
+{% load crispy_forms_tags %}
+
+
+
+    <div class="modal" id="emailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Email Settings</h5>
+                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                </div>
+                <div class="modal-body">
+                    In the email subjects and bodys use can use the following tags to load data into the emails:
+                    <ul>
+                        <li>{target} for the name of the target/host</li>
+                        <li>{arrival_time} time the host arrived</li>
+                        <li>{departure_time} time the host left</li>
+                        <li>{time_home}</li>
+                        <li>{time_away}</li>
+                    </ul>
+
+                    <form action="{% url 'settings' %}" method="post">
+
+                        {% csrf_token %}
+                        {{ email_settings_form | crispy }}
+                        <br/>
+                        <button class="btn btn-primary" name="update_email_settings" type="submit">Save Settings
+                        </button>
+                        <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>

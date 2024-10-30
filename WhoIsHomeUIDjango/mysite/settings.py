@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = utils.get_random_secret_key()
 
-CURRENT_VERSION = 0.40
+CURRENT_VERSION = 0.50
 #TODO UPDATE VERSION NUMBER!
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'crispy_forms',
+    'crispy_bootstrap5',
     'whoishome',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -160,4 +161,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'

@@ -14,8 +14,8 @@ services:
 
   scanner:
     network_mode: "host"
-    image: curlimages/curl
-    command: sh -c "sleep 60s && curl -s http://0.0.0.0:${WHOIH_PORT}/scan/"
+    image: byrnedo/alpine-curl
+    command: ["sleep", "60s", "&&", "curl", "-s", "http://0.0.0.0:${WHOIH_PORT}/scan/"]
     restart: always
 
 volumes:

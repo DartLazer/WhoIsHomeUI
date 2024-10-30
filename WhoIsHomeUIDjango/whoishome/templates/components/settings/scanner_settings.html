@@ -1,0 +1,23 @@
+{% load crispy_forms_tags %}
+
+<div class="modal" id="scannerModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Scanner Settings</h5>
+                    <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'settings' %}" method="post">
+
+                        {% csrf_token %}
+                        {{ scanner_settings_form | crispy }}
+                        <br/>
+                        <button class="btn btn-primary" name="update_scanner_settings" type="submit">Save Settings
+                        </button>
+                        <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>

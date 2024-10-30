@@ -4,7 +4,7 @@ from django.utils.timezone import localtime
 from .models import Host, EmailConfig, DiscordNotificationsConfig, TelegramNotificationsConfig
 import smtplib
 import logging
-from discord import Webhook, RequestsWebhookAdapter
+import discord
 
 logger = logging.getLogger('log_to_file')
 
@@ -50,9 +50,8 @@ def telegram_notify(host: Host, telegram_config: TelegramNotificationsConfig, no
 
 
 def discord_notify(host: Host, discord_config: DiscordNotificationsConfig, notification_type: str):
-    print('discord notify')
-    print(host)
-    webhook = Webhook.from_url(discord_config.webhook_url, adapter=RequestsWebhookAdapter())
+    print('Discord notify')
+    webhook = discord.SyncWebhook.from_url(discord_config.webhook_url)
     target = getattr(host, 'name')
     arrival_time = localtime(getattr(host, 'arrival_time')).strftime("%H:%M:%S on %d-%b-%Y ")
     departure_time = localtime(getattr(host, 'departure_time')).strftime("last seen at: %H:%M:%S on %d-%b-%Y ")
@@ -63,7 +62,7 @@ def discord_notify(host: Host, discord_config: DiscordNotificationsConfig, notif
     time_away = getattr(host, 'arrival_time') - getattr(host, 'departure_time')
     time_away = format_time_delta_object(time_away)
 
-    if notification_type == 'arrival':  # if target is home formats the string according to the arrival email. Else
+    if notification_type == 'arrival':
         body = getattr(discord_config, 'arrival_message').format(target=target, arrival_time=arrival_time,
                                                                  departure_time=departure_time, time_away=time_away,
                                                                  time_home=time_home)
@@ -81,12 +80,16 @@ def discord_notify(host: Host, discord_config: DiscordNotificationsConfig, notif
                                                                 arrival_time=arrival_time, time_away=time_away,
                                                                 time_home=time_home, mac=host.mac, ip=host.ip,
                                                                 name=host.name)
-
     else:
         logger.error('Invalid notification type')
         return
 
     webhook.send(body)
+
+
+def discord_test_message(discord_config):
+    webhook = discord.SyncWebhook.from_url(discord_config.webhook_url)  # Use SyncWebhook for synchronous calls
+    webhook.send("Test message from WhoIsHomeUI!")
 
 
 def email_sender(host, notification_type):  # sends arrival/departure emails
