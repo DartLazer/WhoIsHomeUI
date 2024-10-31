@@ -48,7 +48,7 @@ def getresults(request):
         if host.new:
             context['new_hosts'].append(host)
 
-    return render(request, 'whoishome/index.html', context)
+    return render(request, 'pages/index.html', context)
 
 
 @user_passes_test(user_logged_in_if_locked, login_url='/login/')
