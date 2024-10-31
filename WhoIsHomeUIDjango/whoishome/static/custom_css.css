@@ -10,6 +10,23 @@
     --color-background-accent: #b0c4de;
 }
 
+/* Update the standard bg-color like bg-primary */
+.bg-primary {
+    background-color: var(--color-highlight) !important;
+}
+
+.bg-secondary {
+    background-color: var(--color-text-secondary) !important;
+}
+
+.bg-light {
+    background-color: var(--color-background) !important;
+}
+
+.bg-dark {
+    background-color: var(--color-text-primary) !important;
+}
+
 /* Body and Background */
 body {
     background-color: var(--color-background);
@@ -119,3 +136,5 @@ footer {
 .icon-secondary {
     color: var(--color-text-secondary); /* Uses the secondary color #6c757d */
 }
+
+
