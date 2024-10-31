@@ -12,6 +12,10 @@
                      height="32">
             {% endwith %}
             <div class="d-flex gap-2 w-100 justify-content-between">
+                <div>
+                    <h6 class="mb-0"> {{ target.name }} </h6>
+                    <p class="mb-0 opacity-75">{% if target.is_home %} Home {% else %} Not home {% endif %}</p>
+                </div>
                 <<!-- On big displays show the time since the host arrived or was last seen -->
                 <div class="d-none d-lg-block">
                     <small class="opacity-50 text-nowrap">{% if host.is_home %} Arrived:
