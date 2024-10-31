@@ -1,26 +1,41 @@
-# Here is the build image
-FROM python:3.12-slim-bullseye as builder
-RUN apt-get update \
-    && apt-get install procps gcc -y \
-    && apt-get clean
-COPY requirements.txt /app/requirements.txt
-WORKDIR app
-RUN pip install --user -r requirements.txt
-COPY WhoIsHomeUIDjango /app
+# Build stage
+FROM python:3.12-slim-bullseye AS builder
 
-# Here is the production image
-FROM python:3.12-slim-bullseye as app
-ENV PYTHONUNBUFFERED=1
-COPY --from=builder /root/.local /root/.local
-COPY --from=builder /app /app
+# Install dependencies only once
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends gnupg2 net-tools arp-scan libcap2-bin wget \
+    && apt-get install -y --no-install-recommends procps gcc \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-RUN wget -O /usr/share/arp-scan/ieee-oui.txt https://standards-oui.ieee.org/oui/oui.txt
+# Copy requirements and install dependencies
+COPY requirements.txt /app/requirements.txt
+WORKDIR /app
+RUN pip install --no-cache-dir --user -r requirements.txt
 
+# Copy application code
+COPY WhoIsHomeUIDjango /app
 
+# Production stage
+FROM python:3.12-slim-bullseye AS app
 
-WORKDIR app
-ENV PATH=/root/.local/bin:$PATH
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PATH=/root/.local/bin:$PATH
+
+# Copy installed packages and application code from the builder stage
+COPY --from=builder /root/.local /root/.local
+COPY --from=builder /app /app
+
+# Install necessary packages including perl and arp-scan
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        gnupg2 net-tools arp-scan libcap2-bin perl libwww-perl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Update ieee-oui.txt using get-oui script
+RUN cd /usr/share/arp-scan \
+    && get-oui -v
+
+# Set working directory
+WORKDIR /app
