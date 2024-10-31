@@ -2,15 +2,22 @@ from django.db import models
 from django.utils import timezone
 from datetime import time
 
-device_types = ['unknown', 'pc', 'phone', 'server', 'laptop', 'tv', "speaker", "Smart Home Device", "tablet"]
-device_types_form_list = [("unknown", "unknown"), ("pc", "pc"), ("phone", "phone"), ("server", "server"),
-                          ("laptop", "laptop"), ("tv", "tv"),
-                          ("speaker", "speaker"),
-                          ("Smart Home Device", "Smart Home Device"), ("tablet", "tablet")]
-device_types_icons = {"unknown": "question-circle", "pc": "pc-display-horizontal", "phone": "phone", "server": "server",
-                      "laptop": "laptop", "tv": "tv",
-                      "speaker": "speaker",
-                      "Smart Home Device": "house", "tablet": "tablet"}
+device_types_form_list = [
+    ("Unknown", "Unknown"), ("PC", "PC"), ("Phone", "Phone"), ("Server", "Server"), ("Laptop", "Laptop"), ("Tv", "Tv"),
+    ("Speaker", "Speaker"), ("Smart Home Device", "Smart Home Device"), ("Tablet", "Tablet")
+]
+
+device_types_icons = {
+    "Unknown": "question-circle",
+    "PC": "pc-display-horizontal",
+    "Phone": "phone",
+    "Server": "server",
+    "Laptop": "laptop",
+    "Tv": "tv",
+    "Speaker": "speaker",
+    "Smart Home Device": "house",
+    "Tablet": "tablet"
+}
 
 
 def strfdelta(tdelta, fmt):
@@ -66,7 +73,7 @@ class Host(models.Model):
         try:
             return device_types_icons[self.device_type]
         except KeyError:
-            return device_types_icons['unknown']
+            return device_types_icons['Unknown']
 
     def format_last_seen_mobile(self):
         # format 24 Oct. 15:20

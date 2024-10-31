@@ -6,10 +6,16 @@ from .models import Host, device_types_form_list, ScannerConfig, EmailConfig, Di
 
 
 class HostForm(forms.Form):
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         self.host = kwargs.pop("host")
         device_types_list = device_types_form_list
+        device_types_list = sorted(device_types_list, key=lambda x: x[0])
+        for i, item in enumerate(device_types_list):
+             if item[0].lower() == self.host.device_type.lower():
+                device_types_list.pop(i)
+                break
         device_types_list.insert(0, (self.host.device_type, self.host.device_type))
         super(HostForm, self).__init__(*args, **kwargs)
         self.fields["device_type"] = forms.ChoiceField(
@@ -176,7 +182,7 @@ class TelegramNotificationsConfigForm(forms.ModelForm):
 
         labels = {
             'enabled_switch': 'Enable Notifications',
-            'new_device_detected_notifications' : 'Allow notifications for new devices',
+            'new_device_detected_notifications': 'Allow notifications for new devices',
             'bot_token': 'Bot Token',
             'chat_id': 'Chat ID',
             'arrival_message': 'Arrival Message',
