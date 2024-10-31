@@ -4,12 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
-## [0.51] - 2024-10-30
+## [0.52] - 2024-10-30
 
 ### Major Fixes
 
 - **Fixed critical, breaking issues in Docker configuration**: The application is now fully usable after resolving
   Docker-related problems that previously impacted functionality.
+- **Switched Docker base image**: Replaced the `python:3-buster` base image with `python:3.10-slim-buster` for improved
+  to allow latest version of arp-scan to be used. Which will majorly improve **device manufacturer detection**.
 
 ### Added
 
@@ -22,6 +24,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 ### Minor fixes
 - Text overflow issues on the home page
 - Updated screenshots in the README
+- Remote version not showing on update page
 
 ### Update Instructions
 

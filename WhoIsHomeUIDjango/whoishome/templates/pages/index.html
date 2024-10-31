@@ -12,14 +12,29 @@
                      height="32">
             {% endwith %}
             <div class="d-flex gap-2 w-100 justify-content-between">
-                <div>
-                    <h6 class="mb-0"> {{ target.name }} </h6>
-                    <p class="mb-0 opacity-75">{% if target.is_home %} Home {% else %} Not home {% endif %}</p>
+                <<!-- On big displays show the time since the host arrived or was last seen -->
+                <div class="d-none d-lg-block">
+                    <small class="opacity-50 text-nowrap">{% if host.is_home %} Arrived:
+                        {{ target.arrival_time|timesince }} ago.
+                    {% else %} Last seen {{ target.last_seen }} {% endif %}</small>
                 </div>
-                <small class="opacity-50 text-nowrap">{% if target.is_home %} Home since :
-                    {{ target.arrival_time|timesince }}.
-                {% else %} Away since : {{ target.departure_time|timesince }} {% endif %}</small>
-            </div>
+                <!-- On small displays show the time since the host arrived or was last seen -->
+                <div class="d-lg-none text-end">
+                    <small class="opacity-50 text-nowrap">
+                        {% if target.is_home %}
+                            Arrived
+                        {% else %}
+                            Last seen
+                        {% endif %}
+                    </small>
+                    <small class="opacity-50 text-nowrap">
+                        {% if target.is_home %}
+                            {{ target.format_home_since_mobile }} ago
+                        {% else %}
+                            {{ target.format_last_seen_mobile }}
+                        {% endif %}
+                    </small>
+                </div>
         </a>
     {% endfor %}
     </table>
@@ -53,6 +68,7 @@
                     <p class="mb-0 opacity-75"><strong>IP</strong>: {{ host.ip }} {% if all_devices %}
                         <strong>MAC</strong>: {{ host.mac }} {% endif %}</p>
                 </div>
+
                 <!-- On big displays show the time since the host arrived or was last seen -->
                 <div class="d-none d-lg-block">
                     <small class="opacity-50 text-nowrap">{% if host.is_home %} Arrived:
@@ -97,9 +113,29 @@
                             <span class="badge rounded-pill bg-secondary">Offline</span>{% endif %} </h6>
                         <p class="mb-0 opacity-75">{{ host.ip }}</p>
                     </div>
-                    <small class="opacity-50 text-nowrap">{% if host.is_home %} Arrived:
-                        {{ host.arrival_time|timesince }} ago.
-                    {% else %} Last seen {{ host.last_seen }} {% endif %}</small>
+                    <!-- On big displays show the time since the host arrived or was last seen -->
+                    <div class="d-none d-lg-block">
+                        <small class="opacity-50 text-nowrap">{% if host.is_home %} Arrived:
+                            {{ host.arrival_time|timesince }} ago.
+                        {% else %} Last seen {{ host.last_seen }} {% endif %}</small>
+                    </div>
+                    <!-- On small displays show the time since the host arrived or was last seen -->
+                    <div class="d-lg-none text-end">
+                        <small class="opacity-50 text-nowrap">
+                            {% if host.is_home %}
+                                Arrived
+                            {% else %}
+                                Last seen
+                            {% endif %}
+                        </small>
+                        <small class="opacity-50 text-nowrap">
+                            {% if host.is_home %}
+                                {{ host.format_home_since_mobile }} ago
+                            {% else %}
+                                {{ host.format_last_seen_mobile }}
+                            {% endif %}
+                        </small>
+                    </div>
                 </div>
             </a>
         {% endfor %}
