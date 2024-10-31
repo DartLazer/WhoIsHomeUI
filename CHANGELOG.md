@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 - **Fixed critical, breaking issues in Docker configuration**: The application is now fully usable after resolving
   Docker-related problems that previously impacted functionality.
+- **Switched Docker base image**: Replaced the `python:3-buster` base image with `python:3.10-slim-buster` for improved
+  to allow latest version of arp-scan to be used. Which will majorly improve **device manufacturer detection**.
 
 ### Added
 
