@@ -14,9 +14,11 @@ ENV PYTHONUNBUFFERED=1
 COPY --from=builder /root/.local /root/.local
 COPY --from=builder /app /app
 RUN apt update \
-    && apt install -y net-tools arp-scan libcap2-bin libc6-dev libasound2\
+    && apt install -y net-tools arp-scan libcap2-bin curl \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*
+# Download the latest vendor files for arp-scan so it can resolve MAC addresses to vendor names
+RUN curl -o /usr/share/arp-scan/ieee-oui.txt https://standards-oui.ieee.org/oui/oui.txt
 
 WORKDIR app
 ENV PATH=/root/.local/bin:$PATH
