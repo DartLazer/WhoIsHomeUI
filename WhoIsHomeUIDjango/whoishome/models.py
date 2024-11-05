@@ -78,14 +78,6 @@ class Host(models.Model):
         return build_timedelta_string(time_home, mobile=True)
 
 
-class Target(models.Model):
-    name = models.CharField(max_length=50)
-    mac = models.CharField(max_length=17)
-
-    def __str__(self):
-        return self.name
-
-
 class LogData(models.Model):
     host = models.ForeignKey(Host, on_delete=models.CASCADE)
     check_in = models.DateTimeField('Check-in Time', default=timezone.now)
