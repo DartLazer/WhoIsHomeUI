@@ -4,7 +4,34 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, Pass
 from django.forms import Textarea
 
 from .models import Host, device_types_form_list, ScannerConfig, EmailConfig, DiscordNotificationsConfig, \
-    HomePageSettingsConfig, AppSettings, TelegramNotificationsConfig
+    HomePageSettingsConfig, AppSettings, TelegramNotificationsConfig, DeviceType
+
+
+class HostForm(forms.ModelForm):
+    class Meta:
+        model = Host
+        fields = ('target', 'kid_curfew_mode', 'device_type')
+
+    target = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input', 'onchange': 'form.submit()'}), label='Target',
+        required=False)
+    kid_curfew_mode = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input', 'onchange': 'form.submit()'}, ),
+        label='Curfew Mode', required=False
+    )
+    device_type = forms.ModelChoiceField(
+        queryset=DeviceType.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control', 'onchange': 'form.submit()'}), label='Device Type'
+    )
+
+
+class ChangeHostNameForm(forms.ModelForm):
+    class Meta:
+        model = Host
+        fields = ('name',)
+
+    name = forms.CharField(widget=forms.TextInput({'class': 'form-control'}), label='Host Name')
+
 
 
 class HostForm(forms.Form):
@@ -178,7 +205,7 @@ class TelegramNotificationsConfigForm(forms.ModelForm):
 
         labels = {
             'enabled_switch': 'Enable Notifications',
-            'new_device_detected_notifications' : 'Allow notifications for new devices',
+            'new_device_detected_notifications': 'Allow notifications for new devices',
             'bot_token': 'Bot Token',
             'chat_id': 'Chat ID',
             'arrival_message': 'Arrival Message',
@@ -186,3 +213,18 @@ class TelegramNotificationsConfigForm(forms.ModelForm):
             'curfew_message': 'Curfew Violation Message',
             'new_connection_message': 'New Connection Message',
         }
+
+
+class AddDeviceTypeForm(forms.ModelForm):
+    class Meta:
+        model = DeviceType
+        fields = ('name', 'icon')
+
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label='Device type *')
+    icon = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label='Icon code *')
+
+    def clean_icon(self):
+        """
+        Lowercase the icon to work with bootstrap icons
+        """
+        return self.cleaned_data.get('icon').lower()

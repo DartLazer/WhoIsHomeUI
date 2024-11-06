@@ -6,35 +6,19 @@
 
     <div class="container my-4">
 
-        <!-- Toasts for notifications -->
+        <!-- Toasts for Scanner Switch -->
         <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="toast bg-success text-white" role="alert" aria-live="assertive" id="liveToast"
-                         aria-atomic="true">
-                        <div class="toast-header bg-success text-white">
-                            <strong class="me-auto">{{ message.extra_tags|default:"Notification" }}</strong>
-                            <small class="text-white"><i class="bi bi-clock"></i> Now</small>
-                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                        </div>
-                        <div class="toast-body">
-                            {{ message|safe }}
-                        </div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <div class="toast bg-success text-white" role="alert" aria-live="assertive" id="scannerToast"
-                     aria-atomic="true">
-                    <div class="toast-header bg-success text-white">
-                        <strong class="me-auto">Saved</strong>
-                        <small class="text-white"><i class="bi bi-clock"></i> Now</small>
-                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                    <div class="toast-body">
-                        Settings saved
-                    </div>
+            <div class="toast bg-success text-white" role="alert" aria-live="assertive" id="scannerToast"
+                 aria-atomic="true">
+                <div class="toast-header bg-success text-white">
+                    <strong class="me-auto">Saved</strong>
+                    <small class="text-white"><i class="bi bi-clock"></i> Now</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
-            {% endif %}
+                <div class="toast-body">
+                    Settings saved
+                </div>
+            </div>
         </div>
 
         <!-- Settings Section -->
@@ -69,6 +53,9 @@
                 <button class="btn btn-secondary mb-2" data-bs-toggle="modal" data-bs-target="#appSettingsModal">
                     App Settings
                 </button>
+                <a class="btn btn-secondary mb-2" href="{% url 'device_type_settings' %}">
+                    Device Types
+                </a>
             </div>
         </div>
 
@@ -102,9 +89,6 @@
 
     <!-- JavaScript -->
     <script>
-        $(document).ready(function () {
-            $("[rel=tooltip]").tooltip({placement: 'right'});
-        });
 
         function scannerSwitch() {
             const startStopInput = document.getElementById('startstop');

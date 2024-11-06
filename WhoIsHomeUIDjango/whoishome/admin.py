@@ -1,12 +1,18 @@
 from django.contrib import admin
-from .models import Host, ScannerConfig, EmailConfig, LogData, DiscordNotificationsConfig, HomePageSettingsConfig
+from .models import Host, ScannerConfig, EmailConfig, LogData, DiscordNotificationsConfig, HomePageSettingsConfig, \
+    DeviceType
 
 
 # Register your models here.
 
 class HostAdmin(admin.ModelAdmin):
     list_display = ('name', 'ip', 'is_home', 'last_seen')
-    fields = ['name', 'mac', 'last_seen', 'arrival_time', 'departure_time', 'scans_missed_counter', 'is_home', 'new', 'target', 'device_type']
+    fields = ['name', 'mac', 'last_seen', 'arrival_time', 'departure_time', 'scans_missed_counter', 'is_home', 'new',
+              'target', 'device_type']
+
+
+class DeviceTypeAdmin(admin.ModelAdmin):
+    list_display = ('name', 'icon')
 
 
 class TargetAdmin(admin.ModelAdmin):
@@ -18,10 +24,12 @@ class LogDataAdmin(admin.ModelAdmin):
 
 
 class ScannerConfigAdmin(admin.ModelAdmin):
-    fields =['scanner_enabled', 'not_home_treshold', 'internet_interface', 'ip_subnet', 'ip_range_start', 'ip_range_end']
+    fields = ['scanner_enabled', 'not_home_treshold', 'internet_interface', 'ip_subnet', 'ip_range_start',
+              'ip_range_end']
 
 
 admin.site.register(Host, HostAdmin)
+admin.site.register(DeviceType, DeviceTypeAdmin)
 admin.site.register(ScannerConfig, ScannerConfigAdmin)
 admin.site.register(EmailConfig)
 admin.site.register(HomePageSettingsConfig)

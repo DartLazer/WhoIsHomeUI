@@ -1,0 +1,28 @@
+{% if messages %}
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        {% for message in messages %}
+            <div class="toast bg-success toast-primary text-white" role="alert" aria-live="assertive" id="djangoMessageToast"
+                 aria-atomic="true">
+                <div class="toast-header bg-success toast-primary text-white">
+                    <strong class="me-auto">{{ message.extra_tags|default:"Notification" }}</strong>
+                    <small class="text-white"><i class="bi bi-clock"></i> Now</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    {{ message|safe }}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+<script type="text/javascript">
+            window.onload = function () {
+                var toastLiveExample = document.getElementById('djangoMessageToast');
+                var toast = new bootstrap.Toast(toastLiveExample);
+                toast.show();
+            };
+
+
+        </script>
+{% endif %}
+

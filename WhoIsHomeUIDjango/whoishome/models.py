@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Model
 from django.utils import timezone
 from datetime import time
 
@@ -38,6 +39,21 @@ def build_timedelta_string(time_delta_object, mobile=False):
             return strfdelta(time_delta_object, "{minutes} minutes.")
 
 
+class DeviceType(models.Model):
+    """
+    Stores the device type and icons available for hosts
+    """
+    name = models.CharField(max_length=64)
+    icon = models.CharField(max_length=64, default='question-circle')
+
+    def __str__(self):
+        return self.name
+
+
+def get_default_device_type():
+    return DeviceType.objects.get_or_create(name__icontains='unknown', icon='question-circle')[0].id
+
+
 class Host(models.Model):
     name = models.CharField(max_length=50)
     mac = models.CharField(max_length=17)
@@ -50,7 +66,7 @@ class Host(models.Model):
     is_home = models.BooleanField(default=False)
     new = models.BooleanField(default=True)
     target = models.BooleanField(default=False)
-    device_type = models.CharField(max_length=50, default="unknown")
+    device_type = models.ForeignKey(DeviceType, on_delete=models.SET_DEFAULT, default=get_default_device_type)
     kid_curfew_mode = models.BooleanField(default=False)
 
     def __str__(self):
@@ -63,10 +79,7 @@ class Host(models.Model):
         self.save()
 
     def show_icon(self):
-        try:
-            return device_types_icons[self.device_type]
-        except KeyError:
-            return device_types_icons['unknown']
+        return self.device_type.icon
 
     def format_last_seen_mobile(self):
         # format 24 Oct. 15:20
