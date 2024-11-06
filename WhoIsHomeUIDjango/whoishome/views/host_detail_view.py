@@ -1,3 +1,5 @@
+from django.contrib import messages
+
 from django.contrib.auth.decorators import user_passes_test
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -35,7 +37,9 @@ def view_host(request, host_id):
         host_name_form = ChangeHostNameForm(request.POST, instance=host)
         if host_form.is_valid():
             host_form.save()
+            messages.success(request, 'Settings saved')
         if host_name_form.is_valid():
+            messages.success(request, 'Settings saved')
             host_name_form.save()
 
     host_form = HostForm(instance=host)

@@ -7,35 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.js"></script>
     <script src="{% static 'timeline.js' %}"></script>
-
-    {% if form_saved %}
-
-        <!-- Toast that shows the host form has been saved -->
-        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-            <div class="toast bg-success text-white" role="alert" aria-live="assertive" id="liveToast"
-                 aria-atomic="true">
-                <div class="toast-header bg-success text-white">
-                    <strong class="me-auto">Saved</strong>
-                    <small class="text-white"><i class="bi bi-clock"></i> Now</small>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-                <div class="toast-body">
-                    Settings saved <i class="bi-hand-thumbs-up"></i>
-                </div>
-            </div>
-        </div>
-
-        <script type="text/javascript">
-            window.onload = function () {
-                var toastLiveExample = document.getElementById('liveToast');
-                var toast = new bootstrap.Toast(toastLiveExample);
-                toast.show();
-            };
-
-
-        </script>
-
-    {% endif %}
     <!--- Beginning of page -->
 
     <!-- modal that allows to change the host name -->
@@ -207,39 +178,39 @@
     {{ timeline.timeline |json_script:"timeline" }}
     {{ timeline.label |json_script:"label" }}
 
-    <script>
+    < script >
 
-        var timeline = JSON.parse(document.getElementById('timeline').textContent);
-        var label = JSON.parse(document.getElementById('label').textContent);
+    var timeline = JSON.parse(document.getElementById('timeline').textContent);
+    var label = JSON.parse(document.getElementById('label').textContent);
 
-        var ctx = document.getElementById("canvas").getContext("2d");
-        var chart = new Chart(ctx, {
-            type: "timeline",
-            options: {
-                maintainAspectRatio: false,
-                elements: {
-                    colorFunction: function (text, data, dataset, index) {
-                        return '#212529';
-                    },
-                    showText: false,
-                    textPadding: 4,
-                },
-                scales: {
-                    yAxes: [{
-                        display: false,
-                        barThickness: 50,
-                    }]
-                },
-            },
-            data: {
-                labels: [label],
-                datasets: [
-                    {
-                        data: timeline,
-                    },
-                ],
-            },
-        });
+    var ctx = document.getElementById("canvas").getContext("2d");
+    var chart = new Chart(ctx, {
+    type: "timeline",
+    options: {
+    maintainAspectRatio: false,
+    elements: {
+    colorFunction: function (text, data, dataset, index) {
+    return '#212529';
+    },
+    showText: false,
+    textPadding: 4,
+    },
+    scales: {
+    yAxes: [{
+    display: false,
+    barThickness: 50,
+    }]
+    },
+    },
+    data: {
+    labels: [label],
+    datasets: [
+    {
+    data: timeline,
+    },
+    ],
+    },
+    });
     </script>
 
 {% endblock content %}

@@ -2,6 +2,7 @@
 
 /* Color Variables */
 :root {
+    --color-primary: #29c3a9;
     --color-highlight: #29c3a9;
     --color-background: #f8f9fa;
     --color-text-primary: #343a40;
@@ -118,4 +119,18 @@ footer {
 
 .icon-secondary {
     color: var(--color-text-secondary); /* Uses the secondary color #6c757d */
+}
+
+
+/* Link Styling */
+.link-primary {
+    color: var(--color-highlight)
+}
+
+.link-secondary {
+    color: var(--color-highlight)
+}
+
+.toast-primary {
+    background-color: var(--color-primary);
 }
