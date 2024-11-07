@@ -37,7 +37,7 @@
 
     <!--- End of change host name modal -->
 
-    <h2 class="px-3">{{ host.name }}</h2>
+    <h2 class="px-3"><i class="bi bi-{{ host.show_icon }}" style="font-size: 2rem;"></i> {{ host.name }}</h2>
     <form action="{{ request.get_full_path }}" method="post" class="p-4 pt-0 shadow-sm rounded border row">
         {% csrf_token %}
         <!-- Modernized table containing host data -->
