@@ -5,6 +5,8 @@ from . import views
 urlpatterns = [
     path('', views.getresults, name='index'),
     path('settings/', views.settings, name='settings'),
+    path('settings/device-types/', views.device_type_settings, name='device_type_settings'),
+    path('setting/device-types/delete/<int:device_type_id>', views.delete_device_type, name='delete_device_type'),
     path('clear_new_hosts/', views.clear_new_hosts, name='clear_new_hosts'),
     # path('now/', views.getresults, name='now'),
     # path('index', views.index, name='index'),

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block title %}| Device Types{% endblock %}
+
+{% block content %}
+
+    <div class="container my-4 align-items-center pb-5">
+        <div class="row">
+            <div class="col-12">
+                <h3>Device Types</h3>
+                <hr/>
+            </div>
+            <!-- Device Type Form -->
+            <form action="" method="post" class="col-10 col-lg-4">
+                <h6>Add new device type</h6>
+                {% csrf_token %}
+                <div>
+                    {{ form.name.label }}
+                    {{ form.name }}
+
+                    {{ form.icon.label }}
+                    {{ form.icon }}
+                </div>
+                <div class="pb-3">
+                    <a href="https://icons.getbootstrap.com/#icons" class="link-secondary">
+                        Click here to view the bootstrap icons and copy the text below the icon.
+                    </a>
+                </div>
+                <button class="btn btn-primary" name="update_scanner_settings" type="submit">Save Settings
+                </button>
+            </form>
+        </div>
+        <hr/>
+        <!-- Existing Device Types -->
+        <div class="col-10 col-lg-4">
+            <h5 class="pb-3">Current Device Types</h5>
+            {% for device in device_types %}
+                <div class="list-group-item list-group-item-action d-flex gap-3 py-3"
+                     aria-current="true">
+                    <div class="d-flex gap-2 w-100 justify-content-between">
+                        <div>
+                            <i class="bi bi-{{ device.icon }}" style="font-size: 1.2rem;"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0"> {{ device.name }} </h6>
+                        </div>
+                        <div>
+                            <a href="{% url 'delete_device_type' device_type_id=device.id %}">
+                                <i class="bi bi-x" style="font-size: 1.2rem; color: red"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}

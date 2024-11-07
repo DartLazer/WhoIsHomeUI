@@ -4,6 +4,37 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
+## [0.6] - 2024-11-7
+
+### New Additions
+
+- **Added custom Device Types** As requested by Mjolinir in pull request 28
+- **Updated to latest Bootstrap icons**
+
+### Bug fixes
+
+- **Minor bugfixes and code refactor**
+
+### Update Instructions
+
+- Run `docker-compose build --no-cache` followed by `docker-compose up -d` to rebuild and apply all changes without
+  caching.
+- 
+
+## [0.54] - 2024-11-02
+
+### Minor updates
+
+- Make device type list alphabetical and title case
+- Code cleanup
+- Change color palette slightly
+- Other minor visual changes
+
+### Update Instructions
+
+- Run `docker-compose build --no-cache` followed by `docker-compose up -d` to rebuild and apply all changes without
+  caching.
+
 ## [0.52] - 2024-10-30
 
 ### Major Fixes
@@ -22,6 +53,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
   devices.
 
 ### Minor fixes
+
 - Text overflow issues on the home page
 - Updated screenshots in the README
 - Remote version not showing on update page

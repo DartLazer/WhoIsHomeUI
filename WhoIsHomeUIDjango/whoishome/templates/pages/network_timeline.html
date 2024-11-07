@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}| Network Timeline{% endblock %}
+
+{% block content %}
+{% if logdata_query %}
+<div class="container">
+    <h4>Network Timeline</h4>
+    <ul class="timeline">
+        {% for log in sorted_log_dict.values %}
+        {% if not log.arrival %}
+
+        <li class="event" data-date="{{log.time|date:' d M G:i'}}">
+            <a href='{% url "view_host" host_id=log.host.id %}' class="text-decoration-none link-secondary"><h3>{{ log.host}} Left Home.</h3></a>
+            <p>After being home for {{ log.logdata.time_home }}</p>
+        </li>
+
+
+        {% else %}
+        <li class="event" data-date="{{log.time|date:' d M G:i'}}">
+            {% if log.logdata.time_away %}
+            <a href='{% url "view_host" host_id=log.host.id %}' class="text-decoration-none link-secondary"><h3>{{ log.host}} came back home.</h3></a>
+            <p>After being away for {{ log.logdata.time_away }}.</p>
+            {% else %}
+            <a href='{% url "view_host" host_id=log.host.id %}' class="text-decoration-none link-secondary"><h3>{{log.host}} Checked in.</h3></a>
+            <p>It's {{log.host}}'s first time!</p>
+            {% endif %}
+        </li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+
+
+{% endblock content %}

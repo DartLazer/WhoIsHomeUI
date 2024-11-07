@@ -2,12 +2,30 @@
 
 /* Color Variables */
 :root {
-    --color-highlight: #29c3a9;
+    --color-primary: #29c3a9;
+    --color-highlight: #208f68;
     --color-background: #f8f9fa;
     --color-text-primary: #343a40;
     --color-text-secondary: #6c757d;
     --color-background-blue: #7a9ec4;
     --color-background-accent: #b0c4de;
+}
+
+/* Update the standard bg-color like bg-primary */
+.bg-primary {
+    background-color: var(--color-highlight) !important;
+}
+
+.bg-secondary {
+    background-color: var(--color-text-secondary) !important;
+}
+
+.bg-light {
+    background-color: var(--color-background) !important;
+}
+
+.bg-dark {
+    background-color: var(--color-text-primary) !important;
 }
 
 /* Body and Background */
@@ -118,4 +136,24 @@ footer {
 
 .icon-secondary {
     color: var(--color-text-secondary); /* Uses the secondary color #6c757d */
+}
+
+
+/* Link Styling */
+.link-primary {
+    color: var(--color-highlight)
+}
+
+.link-secondary {
+    color: var(--color-highlight)
+}
+
+.toast.toast-success {
+    background-color: var(--color-primary) !important; /* Using a custom property */
+    color: #fff; /* Optional: adjust text color for contrast */
+}
+
+.bg-success {
+    background-color: var(--color-primary) !important;
+    color: #fff; /* Optional: ensure text is readable */
 }

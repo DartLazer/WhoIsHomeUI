@@ -1,3 +1,5 @@
+from django.contrib import messages
+
 from django.contrib.auth.decorators import user_passes_test
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -30,28 +32,18 @@ def view_host(request, host_id):
         chart_range = 3
         timeline_dict = generate_timeline_data(host, '3')
 
-    host_form = HostForm(request=request, host=host)
-    host_name_form = ChangeHostNameForm(request=request, host=host)
+    if request.method == 'POST':
+        host_form = HostForm(request.POST, instance=host)
+        host_name_form = ChangeHostNameForm(request.POST, instance=host)
+        if host_form.is_valid():
+            host_form.save()
+            messages.success(request, 'Settings saved')
+        if host_name_form.is_valid():
+            messages.success(request, 'Settings saved')
+            host_name_form.save()
 
-    if 'device_type' in request.POST:
-        form = HostForm(request.POST, request=request, host=host)
-        if form.is_valid():
-            if form.has_changed():
-                for changed_field in form.changed_data:
-                    setattr(host, changed_field, form.cleaned_data[changed_field])
-                host.save()
-                form_saved = True
-                host_form = HostForm(request=request, host=host)
-
-    elif 'ChangeHostNameForm' in request.POST:
-        form = ChangeHostNameForm(request.POST, request=request, host=host)
-        if form.is_valid():
-            if form.has_changed():
-                for changed_field in form.changed_data:
-                    setattr(host, changed_field, form.cleaned_data[changed_field])
-                host.save()
-                form_saved = True
-                host_name_form = ChangeHostNameForm(request=request, host=host)
+    host_form = HostForm(instance=host)
+    host_name_form = ChangeHostNameForm(instance=host)
 
     logdata_query = None
     if LogData.objects.filter(host=host).exists():
@@ -59,7 +51,7 @@ def view_host(request, host_id):
         # contains_logdata = True
 
     return render(request, 'pages/view_host.html', {'host': host, 'host_form': host_form,
-                                                        'host_name_form': host_name_form, 'form_saved': form_saved,
-                                                        'logdata_query': logdata_query,
-                                                        'update_available': update_check(), 'timeline': timeline_dict,
-                                                        'timeline_chart_range:': chart_range})
+                                                    'host_name_form': host_name_form, 'form_saved': form_saved,
+                                                    'logdata_query': logdata_query,
+                                                    'update_available': update_check(), 'timeline': timeline_dict,
+                                                    'timeline_chart_range:': chart_range})

@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
+{% block title %}| Home{% endblock %}
+
 {% block content %}
     {% load crispy_forms_tags %}
     <h4>Target overview:</h4>
@@ -7,16 +9,18 @@
         <a href='{% url "view_host" host_id=target.id %}'
            class="list-group-item list-group-item-action d-flex gap-3 py-3"
            aria-current="true">
-            {% with 'bootstrap/bootstrap-icons-1.7.1/'|add:target.show_icon|add:'.svg' as icon_static %}
-                <img src="{% static icon_static %}" class=" flex-shrink-0" width="32"
-                     height="32">
-            {% endwith %}
+            <i class="bi bi-{{ target.show_icon }}" style="font-size: 2rem;"></i>
             <div class="d-flex gap-2 w-100 justify-content-between">
                 <div>
-                    <h6 class="mb-0"> {{ target.name }} </h6>
-                    <p class="mb-0 opacity-75">{% if target.is_home %} Home {% else %} Not home {% endif %}</p>
+                    <h6 class=""> {{ target.name }} </h6>
+                    <p class="mb-0 opacity-75">
+                        {% if target.is_home %}
+                            <span class="badge rounded-pill bg-primary">Home</span>
+                        {% else %}
+                            <span class="badge rounded-pill bg-secondary">Not Home</span>
+                        {% endif %}</p>
                 </div>
-                <<!-- On big displays show the time since the host arrived or was last seen -->
+                <!-- On big displays show the time since the host arrived or was last seen -->
                 <div class="d-none d-lg-block">
                     <small class="opacity-50 text-nowrap">{% if host.is_home %} Arrived:
                         {{ target.arrival_time|timesince }} ago.
@@ -61,14 +65,11 @@
 
         <a href='{% url "view_host" host_id=host.id %}' class="list-group-item list-group-item-action d-flex gap-3 py-3"
            aria-current="true">
-            {% with 'bootstrap/bootstrap-icons-1.7.1/'|add:host.show_icon|add:'.svg' as icon_static %}
-                <img src="{% static icon_static %}" class=" flex-shrink-0" width="32"
-                     height="32">
-            {% endwith %}
+            <i class="bi bi-{{ host.show_icon }}" style="font-size: 2rem;"></i>
             <div class="d-flex gap-2 w-100 justify-content-between">
                 <div>
                     <h6 class="mb-0"> {{ host.name }}{% if all_devices %} {% if host.is_home %}
-                        <span class="badge rounded-pill bg-success">Online</span> {% else %}
+                        <span class="badge rounded-pill bg-primary">Online</span> {% else %}
                         <span class="badge rounded-pill bg-secondary">Offline</span>{% endif %} {% endif %}</h6>
                     <p class="mb-0 opacity-75"><strong>IP</strong>: {{ host.ip }} {% if all_devices %}
                         <strong>MAC</strong>: {{ host.mac }} {% endif %}</p>
@@ -114,7 +115,7 @@
                 <div class="d-flex gap-2 w-100 justify-content-between">
                     <div>
                         <h6 class="mb-0"> {{ host.name }} {% if host.is_home %}
-                            <span class="badge rounded-pill bg-success">Online</span> {% else %}
+                            <span class="badge rounded-pill bg-primary">Online</span> {% else %}
                             <span class="badge rounded-pill bg-secondary">Offline</span>{% endif %} </h6>
                         <p class="mb-0 opacity-75">{{ host.ip }}</p>
                     </div>

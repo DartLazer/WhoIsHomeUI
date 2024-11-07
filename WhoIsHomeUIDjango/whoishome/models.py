@@ -1,16 +1,7 @@
 from django.db import models
+from django.db.models import Model
 from django.utils import timezone
 from datetime import time
-
-device_types = ['unknown', 'pc', 'phone', 'server', 'laptop', 'tv', "speaker", "Smart Home Device", "tablet"]
-device_types_form_list = [("unknown", "unknown"), ("pc", "pc"), ("phone", "phone"), ("server", "server"),
-                          ("laptop", "laptop"), ("tv", "tv"),
-                          ("speaker", "speaker"),
-                          ("Smart Home Device", "Smart Home Device"), ("tablet", "tablet")]
-device_types_icons = {"unknown": "question-circle", "pc": "pc-display-horizontal", "phone": "phone", "server": "server",
-                      "laptop": "laptop", "tv": "tv",
-                      "speaker": "speaker",
-                      "Smart Home Device": "house", "tablet": "tablet"}
 
 
 def strfdelta(tdelta, fmt):
@@ -38,6 +29,21 @@ def build_timedelta_string(time_delta_object, mobile=False):
             return strfdelta(time_delta_object, "{minutes} minutes.")
 
 
+class DeviceType(models.Model):
+    """
+    Stores the device type and icons available for hosts
+    """
+    name = models.CharField(max_length=64)
+    icon = models.CharField(max_length=64, default='question-circle')
+
+    def __str__(self):
+        return self.name
+
+
+def get_default_device_type():
+    return DeviceType.objects.get_or_create(name__icontains='unknown', icon='question-circle')[0].id
+
+
 class Host(models.Model):
     name = models.CharField(max_length=50)
     mac = models.CharField(max_length=17)
@@ -50,7 +56,7 @@ class Host(models.Model):
     is_home = models.BooleanField(default=False)
     new = models.BooleanField(default=True)
     target = models.BooleanField(default=False)
-    device_type = models.CharField(max_length=50, default="unknown")
+    device_type = models.ForeignKey(DeviceType, on_delete=models.SET_DEFAULT, default=get_default_device_type)
     kid_curfew_mode = models.BooleanField(default=False)
 
     def __str__(self):
@@ -63,10 +69,7 @@ class Host(models.Model):
         self.save()
 
     def show_icon(self):
-        try:
-            return device_types_icons[self.device_type]
-        except KeyError:
-            return device_types_icons['unknown']
+        return self.device_type.icon
 
     def format_last_seen_mobile(self):
         # format 24 Oct. 15:20
@@ -76,14 +79,6 @@ class Host(models.Model):
         # format 1 Day, 2 Hrs, 30 Mins
         time_home = (timezone.now() - self.arrival_time)
         return build_timedelta_string(time_home, mobile=True)
-
-
-class Target(models.Model):
-    name = models.CharField(max_length=50)
-    mac = models.CharField(max_length=17)
-
-    def __str__(self):
-        return self.name
 
 
 class LogData(models.Model):
