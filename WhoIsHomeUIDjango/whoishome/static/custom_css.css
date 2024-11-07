@@ -131,6 +131,12 @@ footer {
     color: var(--color-highlight)
 }
 
-.toast-primary {
-    background-color: var(--color-primary);
+.toast.toast-success {
+    background-color: var(--color-primary) !important; /* Using a custom property */
+    color: #fff; /* Optional: adjust text color for contrast */
+}
+
+.bg-success {
+    background-color: var(--color-primary) !important;
+    color: #fff; /* Optional: ensure text is readable */
 }
