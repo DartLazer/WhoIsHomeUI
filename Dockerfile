@@ -29,19 +29,13 @@ COPY --from=builder /app /app
 # Install necessary packages including perl, arp-scan, and avahi-daemon
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        gnupg2 net-tools arp-scan libcap2-bin perl libwww-perl avahi-daemon avahi-utils \
+        gnupg2 net-tools arp-scan libcap2-bin perl libwww-perl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 # Update ieee-oui.txt using get-oui script
 RUN cd /usr/share/arp-scan \
     && get-oui -v
-
-# Copy the avahi service file to advertise whoishome.local with dynamic port
-RUN echo '<?xml version="1.0" standalone="no"?>\n<!DOCTYPE service-group SYSTEM "avahi-service.dtd">\n<service-group>\n  <name replace-wildcards="yes">WhoIsHome</name>\n  <service>\n    <type>_http._tcp</type>\n    <port>${WHOIH_PORT}</port>\n  </service>\n</service-group>' > /etc/avahi/services/whoishome.service
-
-# Enable avahi-daemon
-RUN systemctl enable avahi-daemon
 
 # Set working directory
 WORKDIR /app
