@@ -191,4 +191,4 @@ def update_page(request):
         'github_version': get_github_version(), 'changelog': changelog
     }
 
-    return render(request, 'whoishome/update.html', context)
+    return render(request, 'pages/settings/update.html', context)

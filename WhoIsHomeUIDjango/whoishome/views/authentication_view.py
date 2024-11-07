@@ -22,4 +22,4 @@ def log_in(request):
                 return redirect(log_in)
 
     password_form = EnterPasswordForm()
-    return render(request, 'whoishome/enter_password.html', {'login_form': password_form})
+    return render(request, 'pages/settings/enter_password.html', {'login_form': password_form})
