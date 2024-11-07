@@ -5,7 +5,7 @@
 
 {% block content %}
     <!-- Targets list group -->
-    <div class="container pt-5 pb-5">
+    <div class="container pt-2 pb-5">
         <h4>Target overview:</h4>
         {% for target in targets %}
             <a href='{% url "view_host" host_id=target.id %}'
