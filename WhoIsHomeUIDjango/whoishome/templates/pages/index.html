@@ -1,129 +1,104 @@
 {% extends "base.html" %}
 {% load static %}
+{% load crispy_forms_tags %}
 {% block title %}| Home{% endblock %}
 
 {% block content %}
-    {% load crispy_forms_tags %}
-    <h4>Target overview:</h4>
-    {% for target in targets %}
-        <a href='{% url "view_host" host_id=target.id %}'
-           class="list-group-item list-group-item-action d-flex gap-3 py-3"
-           aria-current="true">
-            <i class="bi bi-{{ target.show_icon }}" style="font-size: 2rem;"></i>
-            <div class="d-flex gap-2 w-100 justify-content-between">
-                <div>
-                    <h6 class=""> {{ target.name }} </h6>
-                    <p class="mb-0 opacity-75">
-                        {% if target.is_home %}
-                            <span class="badge rounded-pill bg-primary">Home</span>
-                        {% else %}
-                            <span class="badge rounded-pill bg-secondary">Not Home</span>
-                        {% endif %}</p>
-                </div>
-                <!-- On big displays show the time since the host arrived or was last seen -->
-                <div class="d-none d-lg-block">
-                    <small class="opacity-50 text-nowrap">{% if host.is_home %} Arrived:
-                        {{ target.arrival_time|timesince }} ago.
-                    {% else %} Last seen {{ target.last_seen }} {% endif %}</small>
-                </div>
-                <!-- On small displays show the time since the host arrived or was last seen -->
-                <div class="d-lg-none text-end">
-                    <small class="opacity-50 text-nowrap">
-                        {% if target.is_home %}
-                            Arrived
-                        {% else %}
-                            Last seen
-                        {% endif %}
-                    </small>
-                    <small class="opacity-50 text-nowrap">
-                        {% if target.is_home %}
-                            {{ target.format_home_since_mobile }} ago
-                        {% else %}
-                            {{ target.format_last_seen_mobile }}
-                        {% endif %}
-                    </small>
-                </div>
-            </div>
-        </a>
-    {% endfor %}
-    </table>
-    <br/>
-    <br/>
-    <div class="d-flex justify-content-between">
-        {% if all_devices %}
-            <h4>All devices ever seen:</h4>
-        {% else %}
-            <h4>Hosts currently home:</h4>
-        {% endif %}
-        <form action="" method="post" class="justify-content-end">
-            <input type="hidden" id="home_page_settings" name="home_page_settings" value="home_page_settings">
-            {% csrf_token %}
-            {{ home_page_settings_form|crispy }}
-        </form>
-    </div>
-    {% for host in home_hosts_list %}
-
-        <a href='{% url "view_host" host_id=host.id %}' class="list-group-item list-group-item-action d-flex gap-3 py-3"
-           aria-current="true">
-            <i class="bi bi-{{ host.show_icon }}" style="font-size: 2rem;"></i>
-            <div class="d-flex gap-2 w-100 justify-content-between">
-                <div>
-                    <h6 class="mb-0"> {{ host.name }}{% if all_devices %} {% if host.is_home %}
-                        <span class="badge rounded-pill bg-primary">Online</span> {% else %}
-                        <span class="badge rounded-pill bg-secondary">Offline</span>{% endif %} {% endif %}</h6>
-                    <p class="mb-0 opacity-75"><strong>IP</strong>: {{ host.ip }} {% if all_devices %}
-                        <strong>MAC</strong>: {{ host.mac }} {% endif %}</p>
-                </div>
-
-                <!-- On big displays show the time since the host arrived or was last seen -->
-                <div class="d-none d-lg-block">
-                    <small class="opacity-50 text-nowrap">{% if host.is_home %} Arrived:
-                        {{ host.arrival_time|timesince }} ago.
-                    {% else %} Last seen {{ host.last_seen }} {% endif %}</small>
-                </div>
-                <!-- On small displays show the time since the host arrived or was last seen -->
-                <div class="d-lg-none text-end">
-                    <small class="opacity-50 text-nowrap">
-                        {% if host.is_home %}
-                            Arrived
-                        {% else %}
-                            Last seen
-                        {% endif %}
-                    </small>
-                    <small class="opacity-50 text-nowrap">
-                        {% if host.is_home %}
-                            {{ host.format_home_since_mobile }} ago
-                        {% else %}
-                            {{ host.format_last_seen_mobile }}
-                        {% endif %}
-                    </small>
-                </div>
-
-            </div>
-        </a>
-    {% endfor %}
-
-    <br/>
-
-    {% if new_hosts %}
-        <h4>New Hosts Detection:</h4>
-        <a href="{% url 'clear_new_hosts' %}" type="button" class="btn btn-light">Clear all new hosts</a>
-        {% for host in new_hosts %}
-            <a href='{% url "view_host" host_id=host.id %}'
-               class="list-group-item list-group-item-action d-flex gap-3 py-3"
-               aria-current="true">
+    <!-- Targets list group -->
+    <div class="container pt-5 pb-5">
+        <h4>Target overview:</h4>
+        {% for target in targets %}
+            <a href='{% url "view_host" host_id=target.id %}'
+               class="list-group-item list-group-item-action d-flex gap-3 py-3" aria-current="true">
+                <i class="bi bi-{{ target.show_icon }}" style="font-size: 2rem;"></i>
                 <div class="d-flex gap-2 w-100 justify-content-between">
                     <div>
-                        <h6 class="mb-0"> {{ host.name }} {% if host.is_home %}
-                            <span class="badge rounded-pill bg-primary">Online</span> {% else %}
-                            <span class="badge rounded-pill bg-secondary">Offline</span>{% endif %} </h6>
-                        <p class="mb-0 opacity-75">{{ host.ip }}</p>
+                        <h6 class=""> {{ target.name }} </h6>
+                        <p class="mb-0 opacity-75">
+                            {% if target.is_home %}
+                                <span class="badge rounded-pill bg-primary">Home</span>
+                            {% else %}
+                                <span class="badge rounded-pill bg-secondary">Not Home</span>
+                            {% endif %}</p>
                     </div>
                     <!-- On big displays show the time since the host arrived or was last seen -->
                     <div class="d-none d-lg-block">
                         <small class="opacity-50 text-nowrap">{% if host.is_home %} Arrived:
-                            {{ host.arrival_time|timesince }} ago.
-                        {% else %} Last seen {{ host.last_seen }} {% endif %}</small>
+                            {{ target.arrival_time|timesince }} ago.
+                        {% else %} Last seen {{ target.last_seen }} {% endif %}</small>
+                    </div>
+                    <!-- On small displays show the time since the host arrived or was last seen -->
+                    <div class="d-lg-none text-end">
+                        <small class="opacity-50 text-nowrap">
+                            {% if target.is_home %}
+                                Arrived
+                            {% else %}
+                                Last seen
+                            {% endif %}
+                        </small>
+                        <small class="opacity-50 text-nowrap">
+                            {% if target.is_home %}
+                                {{ target.format_home_since_mobile }} ago
+                            {% else %}
+                                {{ target.format_last_seen_mobile }}
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- All devices ever list group -->
+    <div class="container pb-5">
+        <div class="d-flex justify-content-between">
+            {% if all_devices %}
+                <h4>All devices ever seen:</h4>
+            {% else %}
+                <h4>Hosts currently home:</h4>
+            {% endif %}
+            <form action="" method="post" class="justify-content-end">
+                <input type="hidden" id="home_page_settings" name="home_page_settings" value="home_page_settings">
+                {% csrf_token %}
+                {{ home_page_settings_form.show_all_devices }}
+                <span class="px-2 ">
+                Show all
+            </span>
+            </form>
+        </div>
+        {% for host in home_hosts_list %}
+            <a href='{% url "view_host" host_id=host.id %}'
+               class="list-group-item list-group-item-action d-flex gap-3 py-3"
+               aria-current="true">
+                <i class="bi bi-{{ host.show_icon }}" style="font-size: 2rem;"></i>
+                <div class="d-flex gap-2 w-100 justify-content-between">
+                    <div>
+                        <h6 class="mb-0"> {{ host.name }}
+                            {% if all_devices %}
+                                {% if host.is_home %}
+                                    <span class="badge rounded-pill bg-primary">Online</span>
+                                {% else %}
+                                    <span class="badge rounded-pill bg-secondary">Offline</span>
+                                {% endif %}
+                            {% endif %}
+                        </h6>
+                        <p class="mb-0 opacity-75">
+                            <strong>IP</strong>: {{ host.ip }}
+                            {% if all_devices %}
+                                <strong>MAC</strong>: {{ host.mac }}
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <!-- On big displays show the time since the host arrived or was last seen -->
+                    <div class="d-none d-lg-block">
+                        <small class="opacity-50 text-nowrap">
+                            {% if host.is_home %}
+                                Arrived: {{ host.arrival_time|timesince }} ago.
+                            {% else %}
+                                Last seen {{ host.last_seen }}
+                            {% endif %}
+                        </small>
                     </div>
                     <!-- On small displays show the time since the host arrived or was last seen -->
                     <div class="d-lg-none text-end">
@@ -142,11 +117,59 @@
                             {% endif %}
                         </small>
                     </div>
+
                 </div>
             </a>
         {% endfor %}
+    </div>
 
+
+    {% if new_hosts %}
+        <div class="container pb-3">
+            <div class="d-flex justify-content-between">
+                <h4>New Hosts Detection:</h4>
+                <a href="{% url 'clear_new_hosts' %}" type="button" class="btn btn-light">Clear all new hosts</a>
+            </div>
+            {% for host in new_hosts %}
+                <a href='{% url "view_host" host_id=host.id %}'
+                   class="list-group-item list-group-item-action d-flex gap-3 py-3"
+                   aria-current="true">
+                    <div class="d-flex gap-2 w-100 justify-content-between">
+                        <div>
+                            <h6 class="mb-0"> {{ host.name }} {% if host.is_home %}
+                                <span class="badge rounded-pill bg-primary">Online</span> {% else %}
+                                <span class="badge rounded-pill bg-secondary">Offline</span>{% endif %} </h6>
+                            <p class="mb-0 opacity-75">{{ host.ip }}</p>
+                        </div>
+                        <!-- On big displays show the time since the host arrived or was last seen -->
+                        <div class="d-none d-lg-block">
+                            <small class="opacity-50 text-nowrap">{% if host.is_home %} Arrived:
+                                {{ host.arrival_time|timesince }} ago.
+                            {% else %} Last seen {{ host.last_seen }} {% endif %}</small>
+                        </div>
+                        <!-- On small displays show the time since the host arrived or was last seen -->
+                        <div class="d-lg-none text-end">
+                            <small class="opacity-50 text-nowrap">
+                                {% if host.is_home %}
+                                    Arrived
+                                {% else %}
+                                    Last seen
+                                {% endif %}
+                            </small>
+                            <small class="opacity-50 text-nowrap">
+                                {% if host.is_home %}
+                                    {{ host.format_home_since_mobile }} ago
+                                {% else %}
+                                    {{ host.format_last_seen_mobile }}
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
     {% endif %}
-
-
+    <div class="py-5">
+        <!-- Create spacing at bottom of page -->
+    </div>
 {% endblock content %}

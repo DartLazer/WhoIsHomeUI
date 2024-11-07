@@ -29,19 +29,17 @@ class ChangeHostNameForm(forms.ModelForm):
         model = Host
         fields = ('name',)
 
-    name = forms.CharField(widget=forms.TextInput({'class': 'form-control'}), label='Host Name')
+    name = forms.CharField(widget=forms.TextInput({'class': 'form-control'}), label='Host Name', required=False)
 
 
-class HomePageSettingsForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request")
-        super(HomePageSettingsForm, self).__init__(*args, **kwargs)
+class HomePageSettingsForm(forms.ModelForm):
+    class Meta:
+        model = HomePageSettingsConfig
+        fields = ('show_all_devices',)
 
-        home_page_config, created_bool = HomePageSettingsConfig.objects.get_or_create(pk=1)
-
-        self.fields['show_all_devices'] = forms.BooleanField(label='Show all devices',
-                                                             initial=home_page_config.show_all_devices, required=False)
-        self.fields['show_all_devices'].widget.attrs.update(style='max-width: 12em', onchange='form.submit()')
+    show_all_devices = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input', 'onchange': 'form.submit()'}), required=False
+    )
 
 
 class ScannerSettingsForm(forms.Form):
