@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import user_passes_test
+from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
@@ -17,6 +18,7 @@ def getresults(request):
             host_id = int(request.POST.get('host_id'))
             host = Host.objects.get(pk=host_id)
             host.mark_seen()
+            messages.success(request, f'{host} marked as seen')
         elif 'home_page_settings' in request.POST:
             form = HomePageSettingsForm(request.POST, request=request)
             if form.is_valid():
@@ -53,11 +55,8 @@ def getresults(request):
 
 @user_passes_test(user_logged_in_if_locked, login_url='/login/')
 def clear_new_hosts(request):
-    hosts = Host.objects.filter()
-    for host in hosts:
-        host.new = False
-        host.save()
-
+    Host.objects.update(new=False)
+    messages.success(request, f'All hosts set to seen.')
     return HttpResponseRedirect('/whoishome')
 
 

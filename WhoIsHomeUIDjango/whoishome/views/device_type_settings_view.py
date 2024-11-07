@@ -13,6 +13,7 @@ def device_type_settings(request):
         form = AddDeviceTypeForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'New device type added.')
 
     device_types = DeviceType.objects.all().order_by('name')
     form = AddDeviceTypeForm()
