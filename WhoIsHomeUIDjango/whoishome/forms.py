@@ -2,7 +2,7 @@ from calendar import month_name
 from django import forms
 from django.forms import Textarea
 
-from .models import Host, device_types_form_list, ScannerConfig, EmailConfig, DiscordNotificationsConfig, \
+from .models import Host, ScannerConfig, EmailConfig, DiscordNotificationsConfig, \
     HomePageSettingsConfig, AppSettings, TelegramNotificationsConfig, DeviceType
 
 

@@ -3,16 +3,6 @@ from django.db.models import Model
 from django.utils import timezone
 from datetime import time
 
-device_types = ['unknown', 'pc', 'phone', 'server', 'laptop', 'tv', "speaker", "Smart Home Device", "tablet"]
-device_types_form_list = [("unknown", "unknown"), ("pc", "pc"), ("phone", "phone"), ("server", "server"),
-                          ("laptop", "laptop"), ("tv", "tv"),
-                          ("speaker", "speaker"),
-                          ("Smart Home Device", "Smart Home Device"), ("tablet", "tablet")]
-device_types_icons = {"unknown": "question-circle", "pc": "pc-display-horizontal", "phone": "phone", "server": "server",
-                      "laptop": "laptop", "tv": "tv",
-                      "speaker": "speaker",
-                      "Smart Home Device": "house", "tablet": "tablet"}
-
 
 def strfdelta(tdelta, fmt):
     d = {"days": tdelta.days}
