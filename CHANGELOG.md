@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
+## [0.6] - 2024-11-7
+
+### New Additions
+
+- **Added custom Device Types** As requested by Mjolinir in pull request 28
+- **Updated to latest Bootstrap icons**
+
+### Bug fixes
+
+- **Minor bugfixes and code refactor**
+
+### Update Instructions
+
+- Run `docker-compose build --no-cache` followed by `docker-compose up -d` to rebuild and apply all changes without
+  caching.
+- 
+
 ## [0.54] - 2024-11-02
 
 ### Minor updates

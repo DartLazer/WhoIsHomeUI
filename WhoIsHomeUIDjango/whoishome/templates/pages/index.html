@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
+{% block title %}| Home{% endblock %}
+
 {% block content %}
     {% load crispy_forms_tags %}
     <h4>Target overview:</h4>
@@ -7,10 +9,7 @@
         <a href='{% url "view_host" host_id=target.id %}'
            class="list-group-item list-group-item-action d-flex gap-3 py-3"
            aria-current="true">
-            {% with 'bootstrap/bootstrap-icons-1.7.1/'|add:target.show_icon|add:'.svg' as icon_static %}
-                <img src="{% static icon_static %}" class=" flex-shrink-0" width="32"
-                     height="32">
-            {% endwith %}
+            <i class="bi bi-{{ target.show_icon }}" style="font-size: 2rem;"></i>
             <div class="d-flex gap-2 w-100 justify-content-between">
                 <div>
                     <h6 class=""> {{ target.name }} </h6>
@@ -66,10 +65,7 @@
 
         <a href='{% url "view_host" host_id=host.id %}' class="list-group-item list-group-item-action d-flex gap-3 py-3"
            aria-current="true">
-            {% with 'bootstrap/bootstrap-icons-1.7.1/'|add:host.show_icon|add:'.svg' as icon_static %}
-                <img src="{% static icon_static %}" class=" flex-shrink-0" width="32"
-                     height="32">
-            {% endwith %}
+            <i class="bi bi-{{ host.show_icon }}" style="font-size: 2rem;"></i>
             <div class="d-flex gap-2 w-100 justify-content-between">
                 <div>
                     <h6 class="mb-0"> {{ host.name }}{% if all_devices %} {% if host.is_home %}

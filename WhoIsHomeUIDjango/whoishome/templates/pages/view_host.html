@@ -2,40 +2,13 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% load tz %}
+{% block title %}| {{ host.name }} Details{% endblock %}
+
 {% block content %}
 
     <script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.js"></script>
     <script src="{% static 'timeline.js' %}"></script>
-
-    {% if form_saved %}
-
-        <!-- Toast that shows the host form has been saved -->
-        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-            <div class="toast bg-success text-white" role="alert" aria-live="assertive" id="liveToast"
-                 aria-atomic="true">
-                <div class="toast-header bg-success text-white">
-                    <strong class="me-auto">Saved</strong>
-                    <small class="text-white"><i class="bi bi-clock"></i> Now</small>
-                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-                <div class="toast-body">
-                    Settings saved <i class="bi-hand-thumbs-up"></i>
-                </div>
-            </div>
-        </div>
-
-        <script type="text/javascript">
-            window.onload = function () {
-                var toastLiveExample = document.getElementById('liveToast');
-                var toast = new bootstrap.Toast(toastLiveExample);
-                toast.show();
-            };
-
-
-        </script>
-
-    {% endif %}
     <!--- Beginning of page -->
 
     <!-- modal that allows to change the host name -->
@@ -64,25 +37,26 @@
 
     <!--- End of change host name modal -->
 
-<h2 class="px-3">{{ host.name }}</h2>
-<form action="{{ request.get_full_path }}" method="post" class="p-4 pt-0 shadow-sm rounded border">
-    {% csrf_token %}
-    <!-- Modernized table containing host data -->
-    <div class="table-responsive">
-        <table class="table table-borderless">
-            <thead>
+    <h2 class="px-3"><i class="bi bi-{{ host.show_icon }}" style="font-size: 2rem;"></i> {{ host.name }}</h2>
+    <form action="{{ request.get_full_path }}" method="post" class="p-4 pt-0 shadow-sm rounded border row">
+        {% csrf_token %}
+        <!-- Modernized table containing host data -->
+        <div class="table-responsive">
+            <table class="table table-borderless">
+                <thead>
                 <tr>
                     <th scope="col" class="text-uppercase text-secondary" style="width: 20%;"></th>
                     <th scope="col" class="text-uppercase text-secondary" style="width: 80%;"></th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 <tr>
                     <td class="fw-bold">Host Name</td>
                     <td>
                         <i class="bi bi-info-circle-fill text-muted me-2" style="font-size: 1.2rem;"></i>
                         {{ host.name }}
-                        <button type="button" class="btn btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#changeHostNameModal">
+                        <button type="button" class="btn btn-sm ms-2" data-bs-toggle="modal"
+                                data-bs-target="#changeHostNameModal">
                             <i class="bi bi-pencil icon-primary"></i>
                         </button>
                     </td>
@@ -122,22 +96,27 @@
                         {{ host.last_seen }}
                     </td>
                 </tr>
-                <tr>
+                <tr class="py-3">
                     <td class="fw-bold">Target</td>
-                    <td>{{ host_form.target|as_crispy_field }}</td>
+                    <td>{{ host_form.target }}</td>
                 </tr>
-                <tr>
+                <tr class="py-3">
                     <td class="fw-bold">Curfew Mode</td>
-                    <td>{{ host_form.kid_curfew_mode|as_crispy_field }}</td>
+                    <td>{{ host_form.kid_curfew_mode }}</td>
                 </tr>
-                <tr>
-                    <td class="fw-bold">Device Type</td>
-                    <td>{{ host_form.device_type|as_crispy_field }}</td>
+                <tr class="my-3">
+                    <td class="fw-bold pt-3">Device Type</td>
+                    <td>
+                        {{ host_form.device_type }}
+                        <a href="{% url 'device_type_settings' %}" class="link-primary px-1">
+                            Add more device types
+                        </a>
+                    </td>
                 </tr>
-            </tbody>
-        </table>
-    </div>
-</form>
+                </tbody>
+            </table>
+        </div>
+    </form>
 
 
     <br/>
@@ -201,39 +180,39 @@
     {{ timeline.timeline |json_script:"timeline" }}
     {{ timeline.label |json_script:"label" }}
 
-    <script>
+    < script >
 
-        var timeline = JSON.parse(document.getElementById('timeline').textContent);
-        var label = JSON.parse(document.getElementById('label').textContent);
+    var timeline = JSON.parse(document.getElementById('timeline').textContent);
+    var label = JSON.parse(document.getElementById('label').textContent);
 
-        var ctx = document.getElementById("canvas").getContext("2d");
-        var chart = new Chart(ctx, {
-            type: "timeline",
-            options: {
-                maintainAspectRatio: false,
-                elements: {
-                    colorFunction: function (text, data, dataset, index) {
-                        return '#212529';
-                    },
-                    showText: false,
-                    textPadding: 4,
-                },
-                scales: {
-                    yAxes: [{
-                        display: false,
-                        barThickness: 50,
-                    }]
-                },
-            },
-            data: {
-                labels: [label],
-                datasets: [
-                    {
-                        data: timeline,
-                    },
-                ],
-            },
-        });
+    var ctx = document.getElementById("canvas").getContext("2d");
+    var chart = new Chart(ctx, {
+    type: "timeline",
+    options: {
+    maintainAspectRatio: false,
+    elements: {
+    colorFunction: function (text, data, dataset, index) {
+    return '#212529';
+    },
+    showText: false,
+    textPadding: 4,
+    },
+    scales: {
+    yAxes: [{
+    display: false,
+    barThickness: 50,
+    }]
+    },
+    },
+    data: {
+    labels: [label],
+    datasets: [
+    {
+    data: timeline,
+    },
+    ],
+    },
+    });
     </script>
 
 {% endblock content %}

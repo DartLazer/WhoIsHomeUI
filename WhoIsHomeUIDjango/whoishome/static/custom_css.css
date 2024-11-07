@@ -2,6 +2,7 @@
 
 /* Color Variables */
 :root {
+    --color-primary: #29c3a9;
     --color-highlight: #208f68;
     --color-background: #f8f9fa;
     --color-text-primary: #343a40;
@@ -138,3 +139,21 @@ footer {
 }
 
 
+/* Link Styling */
+.link-primary {
+    color: var(--color-highlight)
+}
+
+.link-secondary {
+    color: var(--color-highlight)
+}
+
+.toast.toast-success {
+    background-color: var(--color-primary) !important; /* Using a custom property */
+    color: #fff; /* Optional: adjust text color for contrast */
+}
+
+.bg-success {
+    background-color: var(--color-primary) !important;
+    color: #fff; /* Optional: ensure text is readable */
+}

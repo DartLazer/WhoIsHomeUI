@@ -1,31 +1,35 @@
+from calendar import month_name
 from django import forms
 from django.forms import Textarea
 
 from .models import Host, device_types_form_list, ScannerConfig, EmailConfig, DiscordNotificationsConfig, \
-    HomePageSettingsConfig, AppSettings, TelegramNotificationsConfig
+    HomePageSettingsConfig, AppSettings, TelegramNotificationsConfig, DeviceType
 
 
-class HostForm(forms.Form):
+class HostForm(forms.ModelForm):
+    class Meta:
+        model = Host
+        fields = ('target', 'kid_curfew_mode', 'device_type')
 
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request")
-        self.host = kwargs.pop("host")
-        device_types_list = device_types_form_list
-        device_types_list = sorted(device_types_list, key=lambda x: x[0])
-        for i, item in enumerate(device_types_list):
-             if item[0].lower() == self.host.device_type.lower():
-                device_types_list.pop(i)
-                break
-        device_types_list.insert(0, (self.host.device_type, self.host.device_type))
-        super(HostForm, self).__init__(*args, **kwargs)
-        self.fields["device_type"] = forms.ChoiceField(
-            choices=device_types_list, required=False, label=False)
-        self.fields['device_type'].widget.attrs.update(style='max-width: 12em', onchange='form.submit()')
-        self.fields['target'] = forms.BooleanField(initial=self.host.target, required=False, label='')
-        self.fields['target'].widget.attrs.update(style='max-width: 12em', onchange='form.submit()')
-        self.fields['kid_curfew_mode'] = forms.BooleanField(initial=self.host.kid_curfew_mode, required=False, label="")
-        self.fields['kid_curfew_mode'].widget.attrs.update(style='max-width: 12em', onchange='form.submit()')
-        device_types_list.pop(0)
+    target = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input', 'onchange': 'form.submit()'}), label='Target',
+        required=False)
+    kid_curfew_mode = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input', 'onchange': 'form.submit()'}, ),
+        label='Curfew Mode', required=False
+    )
+    device_type = forms.ModelChoiceField(
+        queryset=DeviceType.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control', 'onchange': 'form.submit()'}), label='Device Type'
+    )
+
+
+class ChangeHostNameForm(forms.ModelForm):
+    class Meta:
+        model = Host
+        fields = ('name',)
+
+    name = forms.CharField(widget=forms.TextInput({'class': 'form-control'}), label='Host Name')
 
 
 class HomePageSettingsForm(forms.Form):
@@ -38,14 +42,6 @@ class HomePageSettingsForm(forms.Form):
         self.fields['show_all_devices'] = forms.BooleanField(label='Show all devices',
                                                              initial=home_page_config.show_all_devices, required=False)
         self.fields['show_all_devices'].widget.attrs.update(style='max-width: 12em', onchange='form.submit()')
-
-
-class ChangeHostNameForm(forms.Form):
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop("request")
-        self.host = kwargs.pop("host")
-        super(ChangeHostNameForm, self).__init__(*args, **kwargs)
-        self.fields['name'] = forms.CharField(initial=self.host.name, max_length=50)
 
 
 class ScannerSettingsForm(forms.Form):
@@ -190,3 +186,18 @@ class TelegramNotificationsConfigForm(forms.ModelForm):
             'curfew_message': 'Curfew Violation Message',
             'new_connection_message': 'New Connection Message',
         }
+
+
+class AddDeviceTypeForm(forms.ModelForm):
+    class Meta:
+        model = DeviceType
+        fields = ('name', 'icon')
+
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label='Device type *')
+    icon = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label='Icon code *')
+
+    def clean_icon(self):
+        """
+        Lowercase the icon to work with bootstrap icons
+        """
+        return self.cleaned_data.get('icon').lower()

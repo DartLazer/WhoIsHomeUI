@@ -146,7 +146,7 @@ def settings(request):
     telegram_config_form = TelegramNotificationsConfigForm(instance=telegram_config)
     auto_delete_form = AutoDeleteAfterXDaysForm(instance=app_settings)
     print(app_settings.curfew_enabled)
-    return render(request, 'pages/settings.html',
+    return render(request, 'pages/settings/settings.html',
                   {'email': email_settings, 'scanner_settings_form': scanner_settings_form,
                    'email_settings_form': email_settings_form,
                    'discord_form': discord_form,
@@ -191,4 +191,4 @@ def update_page(request):
         'github_version': get_github_version(), 'changelog': changelog
     }
 
-    return render(request, 'whoishome/update.html', context)
+    return render(request, 'pages/settings/update.html', context)
