@@ -1,7 +1,7 @@
 services:
   web:
     network_mode: "host"
-    build: .
+    image: dartlazer/whoishome-ui:v0.7
     command: sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:${WHOIH_PORT:-8000}"
     environment:
       - DJANGO_TZ=${WHOIH_TZ}
@@ -13,7 +13,7 @@ services:
   scanner:
     network_mode: "host"
     image: byrnedo/alpine-curl
-    command: ["sleep", "60s", "&&", "curl", "-s", "http://0.0.0.0:${WHOIH_PORT}/scan/"]
+    command: [ "sh", "-c", "sleep 60 && curl -s http://0.0.0.0:${WHOIH_PORT}/scan/" ]
     restart: always
 
 volumes:
