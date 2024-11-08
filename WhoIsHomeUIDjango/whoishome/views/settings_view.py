@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 
-from whoishome.forms import ScannerSettingsForm, EmailSettingsForm, DiscordNotificationsForm, LockAppForm, \
-    AutoDeleteAfterXDaysForm, TelegramNotificationsConfigForm, CurfewTimesForm
+from whoishome.forms import ScannerSettingsForm, EmailSettingsForm, DiscordNotificationsForm, AppSettingsForm, \
+    TelegramNotificationsConfigForm
 from whoishome.models import EmailConfig, DiscordNotificationsConfig, TelegramNotificationsConfig, ScannerConfig, \
     AppSettings
 from whoishome.notification_functions import discord_test_message
@@ -27,89 +27,49 @@ def settings(request):
     scanner_running = True if scanner_config.scanner_enabled else False
 
     if 'update_scanner_settings' in request.POST:
-        scanner_settings_form = ScannerSettingsForm(request.POST, request=request)
+        scanner_settings_form = ScannerSettingsForm(request.POST, instance=scanner_config)
         if scanner_settings_form.is_valid():
-            if scanner_settings_form.has_changed():
-
-                if 'email' in scanner_settings_form.changed_data:
-                    user = request.user
-                    setattr(user, 'email', scanner_settings_form.cleaned_data['email'])
-                    user.save()
-                    scanner_settings_form.changed_data.remove('email')
-                for changed_data in scanner_settings_form.changed_data:
-                    setattr(scanner_config, changed_data, scanner_settings_form.cleaned_data[changed_data])
-
-                    messages.add_message(request, messages.INFO,
-                                         'Scanner settings saved!',
-                                         extra_tags='Saved!')
-
-                scanner_config.save()
+            scanner_settings_form.save()
+            messages.success(request, 'Scanner settings saved')
             logger.warning('Scanner settings updated.')
             return redirect('settings')
 
     elif 'update_email_settings' in request.POST:
-        email_settings_form = EmailSettingsForm(request.POST, request=request)
+        email_settings_form = EmailSettingsForm(request.POST, instance=email_settings)
         if email_settings_form.is_valid():
-            if email_settings_form.has_changed():
-                email_config = EmailConfig.objects.get(pk=1)
-                if 'email' in email_settings_form.changed_data:
-                    user = request.user
-                    setattr(user, 'email', email_settings_form.cleaned_data['email'])
-                    user.save()
-                    email_settings_form.changed_data.remove('email')
-                for changed_data in email_settings_form.changed_data:
-                    setattr(email_config, changed_data, email_settings_form.cleaned_data[changed_data])
-
-                    messages.add_message(request, messages.INFO,
-                                         'Email settings saved!',
-                                         extra_tags='Saved!')
-
-                email_config.save()
+            email_settings_form.save()
+            messages.success(request, 'Email settings saved!')
             logger.warning('Email settings updated.')
             return redirect('settings')
 
-
     elif 'update_discord_settings' in request.POST:
-        discord_form = DiscordNotificationsForm(request.POST, request=request)
+        discord_form = DiscordNotificationsForm(request.POST, instance=discord_config)
         if discord_form.is_valid():
-            if discord_form.has_changed():
-                for changed_data in discord_form.changed_data:
-                    setattr(discord_config, changed_data, discord_form.cleaned_data[changed_data])
-                discord_config.save()
-            if discord_config.webhook_url:
-                discord_test_message(discord_config)
-
-                messages.add_message(request, messages.INFO,
-                                     'Discord settings saved & test message sent!',
-                                     extra_tags='Saved!')
-            logger.warning('Discord settings updated.')
+            discord_config = discord_form.save()
+            messages.success(request, 'Discord settings saved & test message sent!')
+            discord_test_message(discord_config)
+            logger.warning('Discord settings updated and test message sent.')
         return redirect('settings')
 
-    elif 'lock_app_form' in request.POST:
-        lock_app_form = LockAppForm(request.POST, request=request)
-        if lock_app_form.is_valid():
-            if lock_app_form.has_changed():
-                app_settings.login_required = lock_app_form.cleaned_data['login_required']
-                app_settings.save()
-            if User.objects.filter(username='login_user').exists():
-                user = User.objects.get(username='login_user')
-                user.set_password(lock_app_form.cleaned_data['password'])
-                user.save()
-            else:
-                User.objects.create_user(username='login_user', password=lock_app_form.cleaned_data['password'])
-            logger.warning('Password updated')
-            messages.add_message(request, messages.INFO,
-                                 'Password settings changed',
-                                 extra_tags='Saved!')
+    elif 'app_settings' in request.POST:
+        app_settings_form = AppSettingsForm(request.POST, instance=app_settings)
+        if app_settings_form.is_valid():
+            app_settings = app_settings_form.save()
 
-    elif 'auto_delete_after_x_days_form' in request.POST:
-        form = AutoDeleteAfterXDaysForm(request.POST, instance=app_settings)
-        if form.is_valid():
-            form.save()
-            messages.add_message(request, messages.INFO,
-                                 'Auto delete setting saved!',
-                                 extra_tags='Saved!')
-            logger.warning('Auto delete setting updated.')
+            # Handle user password logic after the form is validated
+            if app_settings_form.cleaned_data['login_required']:
+                password = app_settings_form.cleaned_data['password']
+                if User.objects.filter(username='login_user').exists():
+                    user = User.objects.get(username='login_user')
+                    user.set_password(password)
+                    user.save()
+                else:
+                    User.objects.create_user(username='login_user', password=password)
+                messages.success(request, 'Password set')
+            else:
+                messages.success(request, 'App settings saved!')
+        else:
+            messages.error(request, 'Settings not saved, missing password?')
 
     elif 'update_telegram_config' in request.POST:
         form = TelegramNotificationsConfigForm(request.POST, instance=telegram_config)
@@ -120,40 +80,22 @@ def settings(request):
                                  extra_tags='Saved!')
             logger.warning('Auto delete setting updated.')
 
-
-    elif 'curfew_form' in request.POST:
-        curfew_form = CurfewTimesForm(request.POST, request=request)
-        if curfew_form.is_valid():
-            if curfew_form.has_changed():
-                for changed_data in curfew_form.changed_data:
-                    setattr(app_settings, changed_data, curfew_form.cleaned_data[changed_data])
-                app_settings.save()
-                messages.add_message(request, messages.INFO,
-                                     'Curfew settings saved!',
-                                     extra_tags='Saved!')
-                logger.warning('Curfew settings updated.')
-
     with open('logfile.log') as file:
         logfile = file.readlines()
         if len(logfile) > 30:
             logfile = logfile[-30:]
 
-    scanner_settings_form = ScannerSettingsForm(request=request)
-    email_settings_form = EmailSettingsForm(request=request)
-    discord_form = DiscordNotificationsForm(request=request)
-    lock_app_form = LockAppForm(request=request)
-    curfew_form = CurfewTimesForm(request=request)
-    telegram_config_form = TelegramNotificationsConfigForm(instance=telegram_config)
-    auto_delete_form = AutoDeleteAfterXDaysForm(instance=app_settings)
-    print(app_settings.curfew_enabled)
+    scanner_settings_form = ScannerSettingsForm(instance=scanner_config)
+    email_settings_form = EmailSettingsForm(instance=email_settings)
+    discord_form = DiscordNotificationsForm(instance=discord_config)
+    telegram_form = TelegramNotificationsConfigForm(instance=telegram_config)
+    app_settings_form = AppSettingsForm(instance=app_settings)
     return render(request, 'pages/settings/settings.html',
                   {'email': email_settings, 'scanner_settings_form': scanner_settings_form,
                    'email_settings_form': email_settings_form,
                    'discord_form': discord_form,
-                   'lock_app_form': lock_app_form,
-                   'curfew_form': curfew_form,
-                   'auto_delete_form': auto_delete_form,
-                   'telegram_form': telegram_config_form,
+                   'app_settings_form': app_settings_form,
+                   'telegram_form': telegram_form,
                    "logfile": logfile, 'update_available': update_check(), 'scanner_running': scanner_running,
                    "timezone": django_settings.TIME_ZONE})
 

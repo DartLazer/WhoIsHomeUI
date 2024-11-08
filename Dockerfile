@@ -3,7 +3,7 @@ FROM python:3.12-slim-bullseye AS builder
 
 # Install dependencies only once
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends procps gcc \
+    && apt-get install -y --no-install-recommends procps gcc libc-dev build-essential \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -26,7 +26,7 @@ ENV PYTHONUNBUFFERED=1 \
 COPY --from=builder /root/.local /root/.local
 COPY --from=builder /app /app
 
-# Install necessary packages including perl and arp-scan
+# Install necessary packages including perl, arp-scan, and avahi-daemon
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         gnupg2 net-tools arp-scan libcap2-bin perl libwww-perl \

@@ -35,12 +35,13 @@ def view_host(request, host_id):
     if request.method == 'POST':
         host_form = HostForm(request.POST, instance=host)
         host_name_form = ChangeHostNameForm(request.POST, instance=host)
-        if host_form.is_valid():
-            host_form.save()
-            messages.success(request, 'Settings saved')
-        if host_name_form.is_valid():
+        if 'host_name_form' in request.POST:
             messages.success(request, 'Settings saved')
             host_name_form.save()
+        elif host_form.is_valid():
+            host_form.save()
+            messages.success(request, 'Settings saved')
+
 
     host_form = HostForm(instance=host)
     host_name_form = ChangeHostNameForm(instance=host)

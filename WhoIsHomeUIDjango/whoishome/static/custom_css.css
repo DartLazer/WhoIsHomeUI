@@ -157,3 +157,8 @@ footer {
     background-color: var(--color-primary) !important;
     color: #fff; /* Optional: ensure text is readable */
 }
+
+.bg-error {
+    background-color: var(--bs-danger) !important;
+    color: #fff; /* Optional: ensure text is readable */
+}

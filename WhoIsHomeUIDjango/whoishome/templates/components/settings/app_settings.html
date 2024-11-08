@@ -9,45 +9,51 @@
                 <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
             </div>
             <div class="modal-body">
-                <h5>Password Lock</h5>
-                <p>To lock the WhoIsHome app with a password, enter the password below enable the switch.</p>
-                <form action="{% url 'settings' %}" method="post">
-
-                    {% csrf_token %}
-                    {{ lock_app_form | crispy }}
-                    <br/>
-                    <button class="btn btn-primary" name="lock_app_form" type="submit">Save Password Settings
-                    </button>
-                </form>
-                <hr/>
-                <h5>Auto delete scan logs</h5>
-                <p>Automatically delete scan logs after x amounts of days. Enter 0 to keep forever.</p>
-                <form action="{% url 'settings' %}" method="post">
-
-                    {% csrf_token %}
-                    {{ auto_delete_form | crispy }}
-                    <br/>
-                    <button class="btn btn-primary" name="auto_delete_after_x_days_form" type="submit">Save Auto
-                        Delete Setting
-                    </button>
-                </form>
-                <hr/>
-                <h5>Curfew Mode</h5>
-                <p>
-                    Curfew mode disables the regular notification modes and only send notifications when curfew
-                    enabled devices (you can tick the box on the view host page) connect to the network during
-                    curfew mode. <br/>
-                    You could for example switch your kid's device off, if it switches on during the curfew time you
-                    will get an e-mail/discord notification.
-                </p>
-
                 <form action="{% url 'settings' %}" method="post">
                     {% csrf_token %}
-                    {{ curfew_form | crispy }}
-                    <br/>
-                    <button class="btn btn-primary" name="curfew_form" type="submit">Save Curfew</button>
+                    <h5>Password Lock</h5>
+                    <p>To lock the WhoIsHome app with a password, enter the password below and enable the switch.</p>
+                    <div class="form-check mb-3">
+                        {{ app_settings_form.login_required.label }}
+                        {{ app_settings_form.login_required }}
+                    </div>
+                    <div class="mb-3">
+                        {{ app_settings_form.password }}
+                    </div>
+                    <button class="btn btn-primary" name="app_settings" type="submit">Save Password Settings</button>
+                    <hr/>
+
+                    <h5>Auto delete scan logs</h5>
+                    <p>Automatically delete scan logs after x amounts of days. Enter 0 to keep forever.</p>
+                    <div class="mb-3">
+                        {{ app_settings_form.auto_delete_after_x_days }}
+                    </div>
+                    <button class="btn btn-primary" name="app_settings" type="submit">Save Auto Delete Setting</button>
+                    <hr/>
+
+                    <h5>Curfew Mode</h5>
+                    <p>
+                        Curfew mode disables the regular notification modes and only sends notifications when
+                        curfew-enabled devices
+                        (you can tick the box on the view host page) connect to the network during curfew mode. <br/>
+                        You could, for example, switch your kid's device off, and if it switches on during the curfew
+                        time you
+                        will get an e-mail/Discord notification.
+                    </p>
+                    <div class="form-check mb-3">
+                        {{ app_settings_form.curfew_enabled.label }}
+                        {{ app_settings_form.curfew_enabled }}
+                    </div>
+                    <div class="mb-3">
+                        {{ app_settings_form.curfew_start_time }}
+                    </div>
+                    <div class="mb-3">
+                        {{ app_settings_form.curfew_end_time }}
+                    </div>
+                    <button class="btn btn-primary" name="app_settings" type="submit">Save Curfew</button>
                     <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Close</button>
                 </form>
+
             </div>
         </div>
     </div>

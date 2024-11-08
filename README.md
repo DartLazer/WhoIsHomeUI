@@ -64,6 +64,8 @@
 
 ## About The Project
 
+[![WhoIsHomeUI Screen Shot][product-screenshot-main]](https://github.com/DartLazer/WhoIsHomeUI)
+
 [![WhoIsHomeUI Screen Shot][product-screenshot]](https://github.com/DartLazer/WhoIsHomeUI)
 
 WhoIsHomeUI is a webapp that scans your network and allows you to track hosts, give email and discord updates, see new
@@ -131,10 +133,20 @@ These are the steps to setup the project on your system
 
    Timezone format from table TZ database name from https://en.m.wikipedia.org/wiki/List_of_tz_database_time_zones
 
+
 4. In the cloned folder execute the following command to start
     ```sh
-    docker compose up --build -d
+    docker compose up
     ```
+   **If you encounter an issue** where the Docker image is not compatible with your platform or architecture, follow these
+   steps to build the image locally:
+    ```bash
+      cd ~/WhoIsHomeUI  # Adjust to your local path
+      docker build -t dartlazer/whoishome-ui:v0.7 .
+      docker compose up
+      ```
+  
+
 5. The container should now be up and running on your
     ```sh
     your_raspberrypi_ip_address:8000
@@ -235,10 +247,12 @@ That's it!
 - IP range start (first IP to scan within earlier specified range)
 - IP range end (last IP to scan within earlier specified range).
 - Press SAVE. Let the page reload and now enable the scanner
-- **Now supports Discord Notifications as well**. Setup at the settings page! (<a href="https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks">Click here for
+- **Now supports Discord Notifications as well**. Setup at the settings
+  page! (<a href="https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks">Click here for
   instructions on how to setup the discord webhook</a>)
-- **Now Supports Telegram Notifications** ([How to get your telegram bot token and chat ID](https://advancedweb.hu/the-easiest-way-to-set-up-a-chat-with-your-telegram-bot/)
-)
+- **Now Supports Telegram Notifications
+  ** ([How to get your telegram bot token and chat ID](https://advancedweb.hu/the-easiest-way-to-set-up-a-chat-with-your-telegram-bot/)
+  )
 - If you want email notifications set up email settings as well.
 - In the email body and subject you can access the following variables by putting them in curly brackets {}
 - target (gives target name), arrival_time, departure_time , time_away, time_home.
@@ -356,6 +370,8 @@ Project Link: [https://github.com/DartLazer/WhoIsHomeUI](https://github.com/Dart
 [license-shield]: https://img.shields.io/github/license/DartLazer/WhoIsHomeUI.svg?style=for-the-badge
 
 [license-url]: https://github.com/DartLazer/WhoIsHomeUI/blob/master/LICENSE.txt
+
+[product-screenshot-main]: screenshots/readme_screenshot_2.png
 
 [product-screenshot]: screenshots/readme_screenshot.png
 
