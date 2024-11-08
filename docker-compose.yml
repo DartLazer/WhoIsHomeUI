@@ -1,22 +1,19 @@
 services:
   web:
-    ports:
-      - "${WHOIH_PORT:-8000}:${WHOIH_PORT:-8000}"
+    network_mode: "host"
     build: .
-    command: sh -c "dbus-daemon --system --fork && avahi-daemon --no-drop-root & python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:${WHOIH_PORT:-8000}"
+    command: sh -c "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:${WHOIH_PORT:-8000}"
     environment:
       - DJANGO_TZ=${WHOIH_TZ}
       - DJANGO_DBPATH=/dbstore/db.sqlite3
     restart: always
     volumes:
       - dbstore:/dbstore
-      - /var/run/dbus:/var/run/dbus  # Mounts the host's dbus socket
-      - /var/run/avahi-daemon/socket:/var/run/avahi-daemon/socket  # Mounts avahi-daemon socket
 
   scanner:
     network_mode: "host"
     image: byrnedo/alpine-curl
-    command: [ "sleep", "60s", "&&", "curl", "-s", "http://0.0.0.0:${WHOIH_PORT}/scan/" ]
+    command: ["sleep", "60s", "&&", "curl", "-s", "http://0.0.0.0:${WHOIH_PORT}/scan/"]
     restart: always
 
 volumes:
