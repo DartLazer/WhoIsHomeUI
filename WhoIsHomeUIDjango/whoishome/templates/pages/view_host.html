@@ -8,6 +8,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="{% static 'timeline.js' %}"></script>
     <!--- Beginning of page -->
 
@@ -27,7 +29,7 @@
                         {% csrf_token %}
                         {{ host_name_form|crispy }}
                         <br/>
-                        <button type="submit" class="btn btn-secondary" name="host_name_form" >Save</button>
+                        <button type="submit" class="btn btn-secondary" name="host_name_form">Save</button>
                     </form>
                 </div>
             </div>
@@ -180,39 +182,39 @@
     {{ timeline.timeline |json_script:"timeline" }}
     {{ timeline.label |json_script:"label" }}
 
-    < script >
+    <script>
 
-    var timeline = JSON.parse(document.getElementById('timeline').textContent);
-    var label = JSON.parse(document.getElementById('label').textContent);
+        var timeline = JSON.parse(document.getElementById('timeline').textContent);
+        var label = JSON.parse(document.getElementById('label').textContent);
 
-    var ctx = document.getElementById("canvas").getContext("2d");
-    var chart = new Chart(ctx, {
-    type: "timeline",
-    options: {
-    maintainAspectRatio: false,
-    elements: {
-    colorFunction: function (text, data, dataset, index) {
-    return '#212529';
-    },
-    showText: false,
-    textPadding: 4,
-    },
-    scales: {
-    yAxes: [{
-    display: false,
-    barThickness: 50,
-    }]
-    },
-    },
-    data: {
-    labels: [label],
-    datasets: [
-    {
-    data: timeline,
-    },
-    ],
-    },
-    });
+        var ctx = document.getElementById("canvas").getContext("2d");
+        var chart = new Chart(ctx, {
+            type: "timeline",
+            options: {
+                maintainAspectRatio: false,
+                elements: {
+                    colorFunction: function (text, data, dataset, index) {
+                        return '#212529';
+                    },
+                    showText: false,
+                    textPadding: 4,
+                },
+                scales: {
+                    yAxes: [{
+                        display: false,
+                        barThickness: 50,
+                    }]
+                },
+            },
+            data: {
+                labels: [label],
+                datasets: [
+                    {
+                        data: timeline,
+                    },
+                ],
+            },
+        });
     </script>
 
 {% endblock content %}
