@@ -23,8 +23,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ### Update Instructions
 
-- Run `docker-compose build --no-cache` followed by `docker-compose up -d` to rebuild and apply all changes without
-  caching.
+- Since the repo uses Docker-Hub images now running `docker compose up` should be sufficient after running `git pull`.
+- If you encounter an issue where the Docker image is not compatible with your platform or architecture, follow these steps to build the image locally:
+- ```bash
+  cd ~/WhoIsHomeUI  # Adjust to your local path
+  docker build -t dartlazer/whoishome-ui:v0.7 .
+  docker compose up
+```
 
 ## [0.6] - 2024-11-7
 
@@ -41,7 +46,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 - Run `docker-compose build --no-cache` followed by `docker-compose up -d` to rebuild and apply all changes without
   caching.
-- 
 
 ## [0.54] - 2024-11-02
 
