@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
+## [0.70] - 2024-11-8
+
+### DockerHub image available
+- **DockerHub image available** The project is now using a DockerHub image for easier deployment. It's already in use in
+  the docker-compose file, so no changes are needed to use it. This should speed up the deployment process and make it easier.
+
+### Bugfixes
+
+- **Horizontal device history chart** Fixed a bug where the horizontal device history chart was not displaying correctly
+- **Styling issues** on several pages fixed
+
+### Changes
+
+- **Continued major code refactor** so the project will be more maintanable and hopefully easier to contribute to in the
+  future
+- **Updated the readme with new screenshots** to reflect the new changes
+
+### Update Instructions
+
+- Run `docker-compose build --no-cache` followed by `docker-compose up -d` to rebuild and apply all changes without
+  caching.
+
 ## [0.6] - 2024-11-7
 
 ### New Additions
