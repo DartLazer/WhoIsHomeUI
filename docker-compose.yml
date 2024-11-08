@@ -13,7 +13,7 @@ services:
   scanner:
     network_mode: "host"
     image: byrnedo/alpine-curl
-    command: ["sleep", "60s", "&&", "curl", "-s", "http://0.0.0.0:${WHOIH_PORT}/scan/"]
+    command: [ "sleep", "60s", "&&", "curl", "-s", "http://0.0.0.0:${WHOIH_PORT}/scan/" ]
     restart: always
 
 volumes:
