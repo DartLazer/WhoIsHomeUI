@@ -64,6 +64,9 @@
 
 ## About The Project
 
+
+[![WhoIsHomeUI Screen Shot][product-screenshot-main]](https://github.com/DartLazer/WhoIsHomeUI)
+
 [![WhoIsHomeUI Screen Shot][product-screenshot]](https://github.com/DartLazer/WhoIsHomeUI)
 
 WhoIsHomeUI is a webapp that scans your network and allows you to track hosts, give email and discord updates, see new
@@ -357,6 +360,7 @@ Project Link: [https://github.com/DartLazer/WhoIsHomeUI](https://github.com/Dart
 
 [license-url]: https://github.com/DartLazer/WhoIsHomeUI/blob/master/LICENSE.txt
 
+[product-screenshot-main]: screenshots/readme_screenshot_2.png
 [product-screenshot]: screenshots/readme_screenshot.png
 
 [Bootstrap.com]: https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white
