@@ -25,11 +25,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 - Since the repo uses Docker-Hub images now running `docker compose up` should be sufficient after running `git pull`.
 - If you encounter an issue where the Docker image is not compatible with your platform or architecture, follow these steps to build the image locally:
-- ```bash
+  ```bash
   cd ~/WhoIsHomeUI  # Adjust to your local path
   docker build -t dartlazer/whoishome-ui:v0.7 .
   docker compose up
-```
+  ```
 
 ## [0.6] - 2024-11-7
 
